@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AssoPilot — Démo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --i900:#1e1b4b;--i800:#312e81;--i700:#3730a3;--i600:#4f46e5;--i500:#6366f1;--i100:#e0e7ff;--i50:#eef2ff;
+      --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;--g400:#9ca3af;--g500:#6b7280;--g700:#374151;--g900:#111827;
+      --green:#10b981;--amber:#f59e0b;--red:#ef4444;--sf:#00a1e0;--xl:#217346;--ol:#0078d4;
+    }
+    html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;color:var(--g900);background:var(--g50);overflow:hidden}
+
+    /* NAV */
+    .nav{height:50px;background:var(--i900);display:flex;align-items:center;padding:0 1.25rem;gap:.7rem;position:fixed;top:0;left:0;right:0;z-index:200}
+    .nav-logo{display:flex;align-items:center;gap:.4rem;color:#fff;font-weight:800;font-size:1.05rem}
+    .nav-logo span{color:var(--amber)}
+    .nav-sep{width:1px;height:18px;background:rgba(255,255,255,.18)}
+    .nav-asso{color:rgba(255,255,255,.6);font-size:.78rem}
+    .nav-sp{flex:1}
+    .demo-pill{background:rgba(245,158,11,.18);color:#fbbf24;border:1px solid rgba(245,158,11,.4);padding:.18rem .55rem;border-radius:999px;font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+    .savings-pill{display:flex;align-items:center;gap:.4rem;background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.28);padding:.28rem .7rem;border-radius:999px;color:#6ee7b7;font-size:.73rem;font-weight:600}
+    .savings-pill .val{font-size:.92rem;font-weight:800;color:#34d399}
+    .btn-sources{display:flex;align-items:center;gap:.38rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);padding:.28rem .75rem;border-radius:6px;font-size:.73rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+    .btn-sources:hover{background:rgba(255,255,255,.18)}
+    .btn-sources.active{background:rgba(79,70,229,.45);border-color:var(--i500);color:#fff}
+
+    /* LAYOUT */
+    .layout{margin-top:50px;height:calc(100vh - 50px);display:flex;overflow:hidden}
+
+    /* INBOX */
+    .inbox{width:268px;flex-shrink:0;border-right:1px solid var(--g200);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+    .inbox-hd{padding:.7rem 1rem;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .inbox-hd-l{display:flex;align-items:center;gap:.4rem;font-weight:700;font-size:.83rem}
+    .cnt-b{background:var(--i600);color:#fff;font-size:.62rem;font-weight:700;padding:.08rem .38rem;border-radius:999px}
+    .inbox-src{font-size:.68rem;color:var(--ol);font-weight:700}
+    .inbox-scroll{overflow-y:auto;flex:1}
+
+    .er{padding:.68rem .9rem;border-bottom:1px solid var(--g100);cursor:pointer;transition:background .1s;position:relative}
+    .er:hover{background:var(--i50)}
+    .er.active{background:var(--i50);border-left:3px solid var(--i600);padding-left:calc(.9rem - 3px)}
+    .er-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.12rem}
+    .er-name{font-size:.8rem;font-weight:700}
+    .er-time{font-size:.65rem;color:var(--g400);flex-shrink:0}
+    .er-subj{font-size:.75rem;color:var(--g700);margin-bottom:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .er-prev{font-size:.68rem;color:var(--g400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tt{display:inline-block;margin-top:.3rem;font-size:.62rem;font-weight:700;padding:.1rem .4rem;border-radius:999px}
+    .tt-recu{background:#fef3c7;color:#92400e}
+    .tt-arret{background:#fee2e2;color:#991b1b}
+    .tt-dossier{background:#e0e7ff;color:#3730a3}
+    .tt-general{background:#d1fae5;color:#065f46}
+    .tt-coords{background:#dbeafe;color:#1e40af}
+    .tt-reclamation{background:#fce7f3;color:#9d174d}
+    .tt-partenariat{background:#f3e8ff;color:#6b21a8}
+    .tt-sensible{background:#f1f5f9;color:#334155}
+    .udot{width:7px;height:7px;background:var(--i600);border-radius:50%;position:absolute;top:.85rem;right:.85rem}
+
+    /* MAIN */
+    .main{flex:1;overflow-y:auto;padding:1rem;min-width:0}
+    .card{background:#fff;border-radius:12px;border:1px solid var(--g200);overflow:hidden;animation:fadeUp .3s ease;margin-bottom:.75rem}
+
+    .email-hd{padding:.8rem 1.1rem;border-bottom:1px solid var(--g100)}
+    .email-subj{font-size:.95rem;font-weight:700;margin-bottom:.35rem}
+    .email-meta{display:flex;gap:1.25rem;flex-wrap:wrap}
+    .em-i{font-size:.73rem;color:var(--g500)}
+    .em-i b{color:var(--g700)}
+    .email-body{padding:.8rem 1.1rem;font-size:.8rem;line-height:1.65;color:var(--g700);white-space:pre-wrap;border-bottom:1px solid var(--g100)}
+
+    .det{padding:.7rem 1.1rem;background:linear-gradient(135deg,#ede9fe,#fef3c7);border-bottom:1px solid #ddd6fe;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+    .det-l{display:flex;align-items:center;gap:.55rem}
+    .det-ic{font-size:1.1rem}
+    .det-type{font-weight:700;font-size:.8rem;color:var(--i800)}
+    .det-conf{font-size:.65rem;background:#fff;border:1px solid #ddd6fe;color:#6d28d9;padding:.1rem .42rem;border-radius:999px;font-weight:700}
+    .det-r{display:flex;align-items:center;gap:.55rem}
+    .t-bef{font-size:.73rem;color:var(--g400);text-decoration:line-through}
+    .t-arr{font-size:.68rem;color:var(--g300)}
+    .t-aft{font-size:.8rem;font-weight:800;color:var(--green)}
+
+    .steps-blk{padding:.7rem 1.1rem;background:#fafafa;border-bottom:1px solid var(--g100)}
+    .steps-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--g400);margin-bottom:.4rem}
+    .step-row{display:flex;align-items:center;gap:.42rem;font-size:.76rem;color:#4b5563;padding:.2rem 0;transition:all .35s}
+    .step-row.x{text-decoration:line-through;color:var(--g300)}
+    .step-dur{margin-left:auto;font-size:.65rem;color:var(--g400);flex-shrink:0}
+
+    .act-blk{padding:.8rem 1.1rem}
+    .btn-gen{width:100%;padding:.68rem 1.25rem;background:linear-gradient(135deg,#6d28d9,#f59e0b);color:#fff;border:none;border-radius:9px;font-size:.83rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.45rem}
+    .btn-gen:hover:not(:disabled){box-shadow:0 4px 16px rgba(109,40,217,.35);transform:translateY(-1px)}
+    .btn-gen:disabled{opacity:.75;cursor:not-allowed;transform:none}
+    .btn-gen.done{background:var(--green)}
+    .spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+
+    .gen-blk{display:none;padding:.8rem 1.1rem;border-top:1px solid var(--g100);animation:fadeUp .4s ease}
+    .gen-blk.show{display:block}
+    .gen-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem}
+    .gen-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);display:flex;align-items:center;gap:.3rem}
+    .btn-send{padding:.32rem .85rem;background:var(--i600);color:#fff;border:none;border-radius:6px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+    .btn-send:hover{background:var(--i700)}
+    .btn-send.sent{background:var(--green);cursor:default}
+    .gen-prev{background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:.7rem;font-size:.76rem;line-height:1.65;color:var(--g700);white-space:pre-wrap;margin-bottom:.55rem;max-height:190px;overflow-y:auto}
+    .auto-tags{display:flex;flex-wrap:wrap;gap:.3rem}
+    .auto-tag{display:flex;align-items:center;gap:.22rem;padding:.2rem .5rem;border-radius:999px;font-size:.65rem;font-weight:700;background:#d1fae5;color:#065f46}
+
+    /* History emails */
+    .hist-section{background:#fff;border-radius:12px;border:1px solid var(--g200);animation:fadeUp .3s ease;margin-bottom:.75rem}
+    .hist-hd{padding:.65rem 1.1rem;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none;background:#fafafa}
+    .hist-hd:hover{background:var(--g100)}
+    .hist-hd-title{font-size:.78rem;font-weight:700;color:var(--g700);flex:1}
+    .hist-hd-src{font-size:.62rem;padding:.08rem .3rem;border-radius:4px;font-weight:700;background:#dbeafe;color:#1e40af}
+    .hist-toggle{font-size:.75rem;color:var(--g400);transition:transform .2s}
+    .hist-toggle.open{transform:rotate(180deg)}
+    .hist-body{display:none}
+    .hist-body.open{display:block}
+    .hmail{border-bottom:1px solid var(--g100)}
+    .hmail:last-child{border-bottom:none}
+    .hmail-hd{padding:.6rem 1.1rem;cursor:pointer;display:flex;align-items:center;gap:.55rem;transition:background .1s}
+    .hmail-hd:hover{background:var(--g50)}
+    .hmail-dir{font-size:.7rem;font-weight:700;padding:.1rem .38rem;border-radius:4px;flex-shrink:0}
+    .hdir-in{background:#dbeafe;color:#1e40af}
+    .hdir-out{background:#d1fae5;color:#065f46}
+    .hmail-meta{flex:1;min-width:0}
+    .hmail-subj{font-size:.76rem;font-weight:600;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hmail-date{font-size:.65rem;color:var(--g400)}
+    .hmail-exp{font-size:.7rem;color:var(--g400);flex-shrink:0;transition:transform .2s}
+    .hmail-exp.open{transform:rotate(180deg)}
+    .hmail-body{display:none;padding:.65rem 1.1rem .65rem 2.8rem;font-size:.76rem;line-height:1.65;color:#4b5563;white-space:pre-wrap;background:#fafafa;border-top:1px solid var(--g100)}
+    .hmail-body.open{display:block}
+
+    /* PROFILE */
+    .profile-col{width:316px;flex-shrink:0;border-left:1px solid var(--g200);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+    .prof-hd{padding:.8rem 1rem;background:var(--i900);color:#fff;flex-shrink:0}
+    .prof-name{font-size:.93rem;font-weight:800;margin-bottom:.15rem}
+    .prof-sub{font-size:.7rem;color:rgba(255,255,255,.58);margin-bottom:.45rem}
+    .prof-src-row{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.4rem}
+    .src-tag{font-size:.62rem;font-weight:700;padding:.1rem .4rem;border-radius:999px;border:1px solid rgba(255,255,255,.22);color:#fff}
+    .src-sf{background:rgba(0,161,224,.28)}
+    .src-xl{background:rgba(33,115,70,.28)}
+    .src-ol{background:rgba(0,120,212,.28)}
+    .sp{display:inline-flex;align-items:center;gap:.28rem;padding:.15rem .48rem;border-radius:999px;font-size:.65rem;font-weight:700}
+    .sp-champion{background:#fef3c7;color:#92400e}
+    .sp-actif{background:#d1fae5;color:#065f46}
+    .sp-nouveau{background:#e0e7ff;color:#3730a3}
+    .sp-adherent{background:#fce7f3;color:#9d174d}
+    .sp-inactif{background:#f1f5f9;color:#64748b}
+
+    .tabs{display:flex;border-bottom:1px solid var(--g200);flex-shrink:0}
+    .tab-btn{flex:1;padding:.52rem .2rem;font-size:.68rem;font-weight:600;color:var(--g500);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:inherit;white-space:nowrap}
+    .tab-btn:hover{color:var(--i600)}
+    .tab-btn.on{color:var(--i600);border-bottom-color:var(--i600)}
+    .tab-area{flex:1;overflow-y:auto;padding:.8rem}
+    .tab-pane{display:none}
+    .tab-pane.on{display:block}
+
+    .sec{margin-bottom:.9rem}
+    .sec-lbl{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--g400);margin-bottom:.32rem;display:flex;align-items:center;gap:.3rem}
+    .sc{font-size:.58rem;padding:.06rem .28rem;border-radius:4px;font-weight:700}
+    .sc-sf{background:#e0f4ff;color:#0077a8}
+    .sc-xl{background:#dcfce7;color:#166534}
+    .sc-ol{background:#dbeafe;color:#1e40af}
+    .kv{display:flex;justify-content:space-between;padding:.25rem 0;border-bottom:1px solid var(--g100);font-size:.76rem}
+    .kv-k{color:var(--g500)}
+    .kv-v{font-weight:600;color:#1f2937;text-align:right;max-width:60%;word-break:break-word}
+    .note-box{background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:.5rem .65rem;font-size:.73rem;color:#92400e;line-height:1.5;font-style:italic}
+    .don-row{margin-bottom:.4rem}
+    .don-yr{display:flex;justify-content:space-between;font-size:.73rem;margin-bottom:.15rem}
+    .don-yr-l{color:#4b5563;font-weight:600}
+    .don-bar{height:5px;background:var(--g100);border-radius:999px;overflow:hidden}
+    .don-fill{height:100%;background:linear-gradient(90deg,#6d28d9,#f59e0b);border-radius:999px}
+    .total-box{background:var(--i50);border:1px solid var(--i100);border-radius:8px;padding:.5rem .7rem;display:flex;justify-content:space-between;align-items:center;margin-top:.55rem}
+    .total-lbl{font-size:.73rem;font-weight:600;color:var(--i700)}
+    .total-amt{font-size:.98rem;font-weight:800;color:var(--i700)}
+    .tl{display:flex;flex-direction:column}
+    .tl-item{display:flex;gap:.55rem;padding:.42rem 0;position:relative}
+    .tl-item:not(:last-child)::before{content:'';position:absolute;left:9px;top:22px;bottom:-4px;width:1.5px;background:var(--g200)}
+    .tl-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:.58rem}
+    .tl-in{background:#dbeafe;color:#1e40af}
+    .tl-out{background:#d1fae5;color:#065f46}
+    .tl-don{background:#fef3c7;color:#92400e}
+    .tl-dos{background:#fce7f3;color:#9d174d}
+    .tl-ttl{font-size:.76rem;font-weight:600;color:#1f2937}
+    .tl-dt{font-size:.65rem;color:var(--g400)}
+    .dos-card{background:var(--i50);border:1px solid var(--i100);border-radius:8px;padding:.6rem .7rem;margin-bottom:.45rem}
+    .dos-ref{font-size:.65rem;font-weight:700;color:var(--i600);margin-bottom:.18rem}
+    .dos-ttl{font-size:.8rem;font-weight:700;margin-bottom:.22rem}
+    .dos-st{display:flex;align-items:center;gap:.32rem;font-size:.73rem}
+    .dos-dot{width:7px;height:7px;border-radius:50%;background:var(--amber)}
+    .dos-resp{font-size:.7rem;color:var(--g500);margin-top:.22rem}
+    .dos-warn{background:#fef3c7;border:1px solid #fde68a;border-radius:6px;padding:.3rem .5rem;font-size:.7rem;color:#92400e;margin-top:.3rem;display:flex;align-items:center;gap:.28rem}
+
+    /* Empty */
+    .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--g300);text-align:center;gap:.45rem;padding:2rem}
+    .empty .ei{font-size:2.2rem;opacity:.4}
+    .empty p{font-size:.8rem}
+
+    /* ══════════ DATA SOURCES OVERLAY ══════════ */
+    .src-overlay{position:fixed;top:50px;left:0;right:0;bottom:0;background:#fff;z-index:150;display:none;flex-direction:column;animation:fadeUp .2s ease}
+    .src-overlay.show{display:flex}
+    .src-nav{display:flex;align-items:center;gap:.8rem;padding:.65rem 1.25rem;border-bottom:2px solid var(--g200);background:#fff;flex-shrink:0;flex-wrap:wrap}
+    .src-title{font-size:.95rem;font-weight:800;color:var(--g900);display:flex;align-items:center;gap:.45rem;margin-right:.5rem}
+    .src-subtabs{display:flex;gap:.3rem}
+    .src-stab{padding:.35rem .85rem;border-radius:999px;border:1px solid var(--g200);font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;background:transparent;color:var(--g500);transition:all .15s}
+    .src-stab:hover{border-color:var(--i500);color:var(--i600)}
+    .src-stab.on.sf{background:#e0f4ff;border-color:#bae6fd;color:#0077a8}
+    .src-stab.on.xl{background:#dcfce7;border-color:#bbf7d0;color:#166534}
+    .src-row-cnt{margin-left:auto;font-size:.72rem;color:var(--g400);font-weight:600}
+    .btn-close-src{margin-left:.5rem;padding:.32rem .75rem;background:var(--g100);border:1px solid var(--g200);color:var(--g700);border-radius:6px;font-size:.73rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+    .btn-close-src:hover{background:var(--g200)}
+
+    .src-filters{display:flex;align-items:center;gap:.6rem;padding:.55rem 1.25rem;border-bottom:1px solid var(--g100);background:var(--g50);flex-shrink:0;flex-wrap:wrap}
+    .src-search{display:flex;align-items:center;gap:.4rem;background:#fff;border:1px solid var(--g300);border-radius:7px;padding:.32rem .7rem;flex:1;max-width:320px;min-width:180px}
+    .src-search input{border:none;outline:none;font-size:.78rem;font-family:inherit;color:var(--g900);background:transparent;width:100%}
+    .src-search input::placeholder{color:var(--g400)}
+    .filter-grp{display:flex;align-items:center;gap:.3rem}
+    .filter-lbl{font-size:.68rem;font-weight:700;color:var(--g500);white-space:nowrap}
+    .filter-sel{padding:.28rem .55rem;border:1px solid var(--g300);border-radius:6px;font-size:.73rem;font-family:inherit;color:var(--g700);background:#fff;cursor:pointer;outline:none}
+    .filter-sel:focus{border-color:var(--i500)}
+    .filter-reset{padding:.28rem .6rem;border:1px solid var(--g200);border-radius:6px;font-size:.7rem;font-family:inherit;color:var(--g500);background:#fff;cursor:pointer;transition:all .15s}
+    .filter-reset:hover{border-color:var(--red);color:var(--red)}
+
+    .src-tbl-wrap{flex:1;overflow:auto;padding:0}
+    .src-tbl-pane{display:none;height:100%}
+    .src-tbl-pane.on{display:block;height:100%}
+    .src-no-results{display:flex;align-items:center;justify-content:center;height:200px;color:var(--g400);font-size:.8rem;font-style:italic}
+
+    .data-tbl{width:100%;border-collapse:collapse;min-width:900px}
+    .data-tbl thead th{position:sticky;top:0;background:#fff;z-index:10;padding:.55rem .85rem;text-align:left;font-size:.7rem;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--g200);white-space:nowrap;cursor:pointer;user-select:none}
+    .data-tbl thead th:hover{color:var(--i600)}
+    .data-tbl thead th .sort-ic{margin-left:.25rem;opacity:.35;font-size:.65rem}
+    .data-tbl thead th.sort-asc .sort-ic,.data-tbl thead th.sort-desc .sort-ic{opacity:1;color:var(--i600)}
+    .data-tbl tbody tr{border-bottom:1px solid var(--g100);transition:background .1s}
+    .data-tbl tbody tr:hover{background:var(--i50)}
+    .data-tbl tbody tr.hl{background:#fffbeb}
+    .data-tbl td{padding:.52rem .85rem;font-size:.76rem;color:var(--g700);white-space:nowrap}
+    .data-tbl td.wrap{white-space:normal;min-width:140px;max-width:240px}
+    .tbl-pill{display:inline-block;padding:.1rem .42rem;border-radius:999px;font-size:.65rem;font-weight:700}
+    .tp-champion{background:#fef3c7;color:#92400e}
+    .tp-actif{background:#d1fae5;color:#065f46}
+    .tp-nouveau{background:#e0e7ff;color:#3730a3}
+    .tp-adherent{background:#fce7f3;color:#9d174d}
+    .tp-inactif{background:#f1f5f9;color:#64748b}
+    .tp-ok{background:#d1fae5;color:#065f46}
+    .tp-warn{background:#fef3c7;color:#92400e}
+    .tp-type{background:#f3e8ff;color:#6b21a8}
+    .src-sf-badge{display:inline-flex;align-items:center;gap:.22rem;font-size:.65rem;font-weight:700;padding:.12rem .4rem;border-radius:4px;background:#e0f4ff;color:#0077a8;border:1px solid #bae6fd}
+    .src-xl-badge{display:inline-flex;align-items:center;gap:.22rem;font-size:.65rem;font-weight:700;padding:.12rem .4rem;border-radius:4px;background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+    .tbl-total-bar{padding:.5rem 1.25rem;background:var(--g50);border-top:1px solid var(--g200);font-size:.72rem;color:var(--g500);flex-shrink:0;display:flex;align-items:center;gap:1rem}
+    .tbl-stat{font-weight:700;color:var(--g700)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--g300);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--g400)}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo"><span>♥</span> AssoPilot</div>
+  <div class="nav-sep"></div>
+  <div class="nav-asso">Association Leucémie Espoir — Paris</div>
+  <div class="nav-sp"></div>
+  <button class="btn-sources" id="btnSrc" onclick="toggleSources()">🗃️ Données sources</button>
+  <div class="demo-pill">Démo</div>
+  <div class="savings-pill">⚡ Économisé : <span class="val" id="sav">0 min</span></div>
+</nav>
+
+<!-- DATA SOURCES OVERLAY -->
+<div class="src-overlay" id="srcOverlay">
+  <div class="src-nav">
+    <div class="src-title">🗃️ Données sources</div>
+    <div class="src-subtabs">
+      <button class="src-stab sf on" id="stab-sf" onclick="srcTab('sf')">Salesforce <span id="sf-cnt"></span></button>
+      <button class="src-stab xl" id="stab-xl" onclick="srcTab('xl')">Excel — Dons <span id="xl-cnt"></span></button>
+    </div>
+    <span class="src-row-cnt" id="src-row-cnt"></span>
+    <button class="btn-close-src" onclick="toggleSources()">✕ Fermer</button>
+  </div>
+  <div class="src-filters" id="src-filters">
+    <div class="src-search"><span>🔍</span><input type="text" id="src-search-in" placeholder="Rechercher dans les données…" oninput="applyFilters()"></div>
+    <div class="filter-grp" id="fgrp-sf">
+      <span class="filter-lbl">Statut :</span>
+      <select class="filter-sel" id="flt-sf-statut" onchange="applyFilters()"><option value="">Tous</option></select>
+      <span class="filter-lbl">Ville :</span>
+      <select class="filter-sel" id="flt-sf-ville" onchange="applyFilters()"><option value="">Toutes</option></select>
+      <span class="filter-lbl">Don mensuel :</span>
+      <select class="filter-sel" id="flt-sf-don" onchange="applyFilters()"><option value="">Tous</option><option value="oui">Actif</option><option value="non">Inactif / non</option></select>
+    </div>
+    <div class="filter-grp" id="fgrp-xl" style="display:none">
+      <span class="filter-lbl">Type :</span>
+      <select class="filter-sel" id="flt-xl-type" onchange="applyFilters()"><option value="">Tous</option></select>
+      <span class="filter-lbl">Statut reçu :</span>
+      <select class="filter-sel" id="flt-xl-statut" onchange="applyFilters()"><option value="">Tous</option></select>
+      <span class="filter-lbl">Donateur :</span>
+      <select class="filter-sel" id="flt-xl-donor" onchange="applyFilters()"><option value="">Tous</option></select>
+    </div>
+    <button class="filter-reset" onclick="resetFilters()">↺ Réinitialiser</button>
+  </div>
+  <div class="src-tbl-wrap" id="src-tbl-wrap">
+    <div class="src-tbl-pane on" id="pane-sf"><table class="data-tbl" id="tbl-sf"><thead></thead><tbody></tbody></table></div>
+    <div class="src-tbl-pane" id="pane-xl"><table class="data-tbl" id="tbl-xl"><thead></thead><tbody></tbody></table></div>
+  </div>
+  <div class="tbl-total-bar" id="tbl-totals"></div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="layout" id="mainLayout">
+  <div class="inbox">
+    <div class="inbox-hd">
+      <div class="inbox-hd-l">Boîte de réception <span class="cnt-b" id="cnt">10</span></div>
+      <div class="inbox-src">📧 Outlook</div>
+    </div>
+    <div class="inbox-scroll" id="email-list"></div>
+  </div>
+  <div class="main" id="main">
+    <div class="empty" style="height:100%"><div class="ei">📬</div><p>Sélectionnez un email<br>pour voir AssoPilot en action</p></div>
+  </div>
+  <div class="profile-col">
+    <div id="prof-wrap" style="display:flex;flex-direction:column;height:100%">
+      <div class="empty"><div class="ei">👤</div><p>Fiche 360° du donateur<br>s'affiche ici</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════ DATA ═══════════════════════════
+
+const EMAILS = [
+  {
+    id:1,from:"Henri Dupont",fromEmail:"henri.dupont@gmail.com",
+    subject:"Reçu fiscal 2024 — je ne l'ai pas reçu",
+    preview:"Bonjour, je n'ai pas reçu mon reçu fiscal pour mes dons...",
+    body:`Bonjour,
+
+Je n'ai pas reçu mon reçu fiscal pour l'ensemble de mes dons effectués en 2024.
+
+J'en ai besoin pour ma déclaration d'impôts. Pourriez-vous me l'envoyer dans les meilleurs délais ?
+
+Merci d'avance,
+Henri Dupont`,
+    time:"08:14",type:"recu",typeLabel:"Duplicata reçu fiscal",icon:"📄",conf:98,donorId:1,
+    tBefore:"~18 min",tAfter:"~45 sec",saved:17,
+    steps:[
+      {e:"🔍",t:"Rechercher Henri Dupont dans Salesforce",d:"3 min"},
+      {e:"📊",t:"Ouvrir le fichier Excel dons 2024",d:"2 min"},
+      {e:"✏️",t:"Vérifier les 12 mensualités et calculer le total",d:"5 min"},
+      {e:"📝",t:"Ouvrir le modèle Word du reçu fiscal",d:"2 min"},
+      {e:"⌨️",t:"Remplir manuellement les informations",d:"4 min"},
+      {e:"💾",t:"Exporter en PDF et nommer le fichier",d:"1 min"},
+      {e:"📧",t:"Rédiger et envoyer l'email de réponse",d:"1 min"}
+    ],
+    genEmail:`Objet : Votre reçu fiscal 2024 — Association Leucémie Espoir
+
+Bonjour Monsieur Dupont,
+
+Merci pour votre fidélité depuis maintenant 6 ans. Votre soutien mensuel est précieux pour les familles que nous accompagnons.
+
+Vous trouverez en pièce jointe votre reçu fiscal pour l'année 2024, correspondant à un total de 600,00 € (12 mensualités de 50,00 €) — Référence : RF-2024-001847.
+
+Ce document vous permet de bénéficier d'une réduction d'impôt de 66 %, soit 396,00 € déduits de votre impôt.
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["📎 RF-2024-001847 généré & joint","✅ Salesforce : Demande clôturée"]
+  },
+  {
+    id:2,from:"Claire Martin",fromEmail:"claire.martin73@outlook.fr",
+    subject:"Résiliation de mon don mensuel",
+    preview:"Bonjour, je souhaite mettre fin à mon don mensuel de 30€...",
+    body:`Bonjour,
+
+Je vous contacte car je souhaite mettre fin à mon don mensuel de 30 €.
+
+Ma situation personnelle a évolué et je ne suis malheureusement plus en mesure de maintenir cette contribution.
+
+Pouvez-vous procéder à la résiliation et me confirmer la date d'arrêt du prélèvement ?
+
+Cordialement,
+Claire Martin`,
+    time:"08:27",type:"arret",typeLabel:"Arrêt don mensuel",icon:"🔴",conf:96,donorId:2,
+    tBefore:"~12 min",tAfter:"~1 min",saved:11,
+    steps:[
+      {e:"🔍",t:"Localiser Claire Martin dans Salesforce",d:"2 min"},
+      {e:"✏️",t:"Mettre à jour le statut du don",d:"3 min"},
+      {e:"🏦",t:"Notifier l'équipe comptable",d:"3 min"},
+      {e:"📝",t:"Rédiger la lettre de confirmation",d:"3 min"},
+      {e:"📧",t:"Envoyer la confirmation",d:"1 min"}
+    ],
+    genEmail:`Objet : Confirmation — Résiliation de votre don mensuel
+
+Bonjour Madame Martin,
+
+Nous avons bien enregistré votre demande de résiliation de votre don mensuel de 30,00 €.
+
+Cette résiliation prendra effet au 1er juillet 2024. Aucun prélèvement ne sera effectué au-delà de cette date.
+
+Nous vous remercions chaleureusement pour vos 810,00 € de dons cumulés depuis mars 2022.
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["✅ Salesforce : Statut → Ancien donateur","🏦 Comptabilité notifiée : arrêt au 01/07"]
+  },
+  {
+    id:3,from:"Jacques Lebrun",fromEmail:"j.lebrun@free.fr",
+    subject:"Dossier aide — sans nouvelles depuis 6 semaines",
+    preview:"Bonjour, j'ai déposé un dossier en mars et je...",
+    body:`Bonjour,
+
+J'ai déposé un dossier de demande d'aide alimentaire en mars 2024 et je n'ai aucune nouvelle depuis plus de 6 semaines.
+
+Ma situation est de plus en plus difficile. J'ai besoin de savoir où en est ma demande — c'est urgent.
+
+Cordialement,
+Jacques Lebrun`,
+    time:"08:41",type:"dossier",typeLabel:"Suivi dossier en cours",icon:"📋",conf:94,donorId:3,
+    tBefore:"~25 min",tAfter:"~2 min",saved:23,
+    steps:[
+      {e:"🔍",t:"Retrouver le dossier dans Salesforce",d:"4 min"},
+      {e:"📂",t:"Vérifier le statut dans le fichier Excel de suivi",d:"5 min"},
+      {e:"📞",t:"Appeler le service social pour connaître l'état",d:"8 min"},
+      {e:"⏳",t:"Attendre le retour de la responsable",d:"5 min"},
+      {e:"📧",t:"Rédiger la réponse avec les infos obtenues",d:"3 min"}
+    ],
+    genEmail:`Objet : Mise à jour — Dossier DOS-2024-0312 (Aide alimentaire)
+
+Bonjour Monsieur Lebrun,
+
+J'ai immédiatement consulté votre dossier (Réf. DOS-2024-0312, ouvert le 12 mars 2024).
+
+Votre demande est en cours d'examen par notre comité d'attribution depuis le 8 avril 2024. La responsable est Mme Marie Duval (service social) — je lui transmets votre message en priorité absolue.
+
+Elle vous contactera avant le vendredi 7 juin 2024. Si c'est urgent, appelez-moi au 01 42 18 30 XX.
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["📋 DOS-2024-0312 marqué PRIORITAIRE","📩 Mme Duval notifiée","⏰ Relance le 07/06"]
+  },
+  {
+    id:4,from:"Sophie Renard",fromEmail:"sophie.renard@nantes.fr",
+    subject:"Mon reçu fiscal + comment m'impliquer davantage ?",
+    preview:"Bonjour, j'ai fait un don en novembre et je voudrais...",
+    body:`Bonjour,
+
+J'ai effectué un don de 150 € en novembre 2024. Est-ce que je recevrai un reçu fiscal ?
+
+Par ailleurs, je souhaiterais vraiment m'impliquer davantage dans votre association. Avez-vous des opportunités de bénévolat à Nantes ?
+
+Bien cordialement,
+Sophie Renard`,
+    time:"09:03",type:"general",typeLabel:"Reçu fiscal + Engagement",icon:"🌱",conf:91,donorId:4,
+    tBefore:"~15 min",tAfter:"~1 min 30",saved:14,
+    steps:[
+      {e:"🔍",t:"Trouver Sophie Renard dans Salesforce",d:"3 min"},
+      {e:"📊",t:"Vérifier son don dans Excel 2024",d:"2 min"},
+      {e:"📝",t:"Préparer le reçu fiscal manuellement",d:"5 min"},
+      {e:"🗂️",t:"Consulter les opportunités bénévolat Nantes",d:"3 min"},
+      {e:"📧",t:"Rédiger une réponse personnalisée",d:"2 min"}
+    ],
+    genEmail:`Objet : Votre reçu fiscal 2024 + Bénévolat à Nantes
+
+Bonjour Madame Renard,
+
+Bienvenue dans la communauté de l'Association Leucémie Espoir !
+
+1/ Reçu fiscal — votre don de 150,00 € du 14/11/2024 ouvre droit à 99,00 € de réduction d'impôt (66%). Reçu RF-2024-004291 joint.
+
+2/ Bénévolat Nantes — 3 opportunités pour vous :
+  • Marche solidaire du 14 juin 2025 (coordination logistique)
+  • Permanence téléphonique — 1 samedi/mois
+  • Journée portes ouvertes du 27 sept. 2025
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["📎 RF-2024-004291 généré","✅ Tag Bénévolat ajouté Salesforce"]
+  },
+  {
+    id:5,from:"Pierre Moreau",fromEmail:"p.moreau.retraite@gmail.com",
+    subject:"Reçu fiscal 2022 jamais reçu — besoin urgent",
+    preview:"Bonjour, en refaisant mes archives je réalise que...",
+    body:`Bonjour,
+
+En refaisant mes archives fiscales, je réalise que je n'ai jamais reçu mon reçu fiscal pour l'année 2022.
+
+Est-il encore possible d'en obtenir un ? Le contrôleur des impôts me le réclame.
+
+Merci beaucoup,
+Pierre Moreau`,
+    time:"09:18",type:"recu",typeLabel:"Duplicata reçu fiscal",icon:"📄",conf:97,donorId:5,
+    tBefore:"~20 min",tAfter:"~45 sec",saved:19,
+    steps:[
+      {e:"🔍",t:"Retrouver Pierre Moreau dans Salesforce",d:"3 min"},
+      {e:"📊",t:"Ouvrir l'archive Excel dons 2022",d:"3 min"},
+      {e:"✏️",t:"Reconstituer l'historique des dons 2022",d:"6 min"},
+      {e:"📝",t:"Utiliser l'ancien modèle Word 2022",d:"3 min"},
+      {e:"⌨️",t:"Remplir et vérifier les montants",d:"3 min"},
+      {e:"💾",t:"Exporter et archiver le PDF",d:"1 min"},
+      {e:"📧",t:"Envoyer avec explication du délai",d:"1 min"}
+    ],
+    genEmail:`Objet : Votre reçu fiscal 2022 — émis rétroactivement
+
+Bonjour Monsieur Moreau,
+
+Nous vous présentons nos excuses pour ce document non envoyé en temps voulu.
+
+Vous trouverez en pièce jointe votre reçu fiscal rectificatif pour l'année 2022, correspondant à un total de 480,00 € (Référence : RF-2022-000634-R).
+
+Ce document est valide auprès de l'administration fiscale même émis rétroactivement.
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["📎 RF-2022-000634-R généré (rétroactif)","✅ Salesforce : Demande clôturée","📁 Archivé dossier fiscal 2022"]
+  },
+  {
+    id:6,from:"Marie-Claire Fontaine",fromEmail:"mcfontaine.archi@outlook.com",
+    subject:"Mise à jour de mes coordonnées",
+    preview:"Bonjour, je viens de déménager et je souhaitais mettre...",
+    body:`Bonjour,
+
+Je viens de déménager et je souhaite mettre à jour mes coordonnées dans vos fichiers.
+
+Ma nouvelle adresse : 47 avenue des Pins, 31000 Toulouse
+Mon nouveau numéro : 06 44 21 87 53
+
+Mon adresse email reste inchangée.
+
+Merci,
+Marie-Claire Fontaine`,
+    time:"09:34",type:"coords",typeLabel:"Mise à jour coordonnées",icon:"📍",conf:99,donorId:6,
+    tBefore:"~8 min",tAfter:"~30 sec",saved:8,
+    steps:[
+      {e:"🔍",t:"Retrouver la fiche dans Salesforce",d:"2 min"},
+      {e:"✏️",t:"Modifier l'adresse dans le CRM",d:"2 min"},
+      {e:"📊",t:"Mettre à jour le fichier Excel des adhérents",d:"2 min"},
+      {e:"📧",t:"Confirmer la mise à jour par email",d:"2 min"}
+    ],
+    genEmail:`Objet : Confirmation — Mise à jour de vos coordonnées
+
+Bonjour Madame Fontaine,
+
+Nous avons bien mis à jour vos coordonnées dans notre système :
+
+  Nouvelle adresse : 47 avenue des Pins, 31000 Toulouse
+  Nouveau téléphone : 06 44 21 87 53
+
+Ces modifications sont effectives immédiatement.
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["✅ Salesforce mis à jour","✅ Excel adhérents mis à jour","📮 Adresse postale modifiée"]
+  },
+  {
+    id:7,from:"Thomas Durand",fromEmail:"thomas.durand.25@gmail.com",
+    subject:"Question sur le programme soutien jeunes aidants",
+    preview:"Bonjour, je suis jeune aidant auprès de mon père et j'ai...",
+    body:`Bonjour,
+
+Je suis jeune aidant auprès de mon père, atteint d'une leucémie. J'ai 25 ans et j'ai du mal à concilier mes études et cette situation.
+
+J'ai entendu parler d'un programme d'accompagnement pour les jeunes aidants. Pourriez-vous m'en dire plus ? Notamment sur les aides financières et le soutien psychologique ?
+
+Merci d'avance,
+Thomas Durand`,
+    time:"09:47",type:"general",typeLabel:"Question programme",icon:"❓",conf:88,donorId:7,
+    tBefore:"~18 min",tAfter:"~2 min",saved:16,
+    steps:[
+      {e:"🔍",t:"Identifier Thomas Durand dans Salesforce",d:"3 min"},
+      {e:"🗂️",t:"Consulter les fiches programmes internes",d:"5 min"},
+      {e:"📞",t:"Vérifier les disponibilités avec l'équipe sociale",d:"5 min"},
+      {e:"📝",t:"Rédiger une réponse complète et personnalisée",d:"4 min"},
+      {e:"📧",t:"Envoyer avec les brochures appropriées",d:"1 min"}
+    ],
+    genEmail:`Objet : Programme Jeunes Aidants — Association Leucémie Espoir
+
+Bonjour Monsieur Durand,
+
+Merci pour votre message. La situation que vous décrivez est difficile et nous sommes là pour vous accompagner.
+
+Notre Programme Jeunes Aidants comprend :
+  • Soutien psychologique individuel (4 séances gratuites/an)
+  • Groupe de parole mensuel à Paris (prochain : 18 juin)
+  • Aide financière d'urgence possible (dossier à constituer)
+  • Mise en relation avec l'assistante sociale de l'établissement de votre père
+
+Je vous transmets votre demande à Mme Isabelle Moreau (coordinatrice du programme) qui vous recontactera sous 48h.
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["📋 Dossier créé : DOS-2024-0721","📩 Mme I. Moreau notifiée","📎 Brochure Jeunes Aidants jointe"]
+  },
+  {
+    id:8,from:"Isabelle Petit",fromEmail:"isabelle.petit.stras@wanadoo.fr",
+    subject:"Réclamation — courrier envoyé à la mauvaise adresse",
+    preview:"Bonjour, j'ai reçu un courrier destiné à quelqu'un d'autre...",
+    body:`Bonjour,
+
+J'ai reçu dans ma boîte aux lettres un courrier de votre association adressé à un certain "M. Robert Guillot" alors que je suis à cette adresse depuis 3 ans.
+
+Ce n'est pas la première fois — j'ai déjà signalé ce problème en février. Est-ce que vous pouvez enfin corriger votre base de données ?
+
+Par ailleurs, cela soulève des questions sur la confidentialité des données de vos adhérents.
+
+Cordialement,
+Isabelle Petit`,
+    time:"10:03",type:"reclamation",typeLabel:"Réclamation RGPD",icon:"⚠️",conf:95,donorId:8,
+    tBefore:"~30 min",tAfter:"~3 min",saved:27,
+    steps:[
+      {e:"🔍",t:"Rechercher 'Robert Guillot' dans Salesforce",d:"3 min"},
+      {e:"📊",t:"Vérifier l'adresse dans l'Excel des adhérents",d:"3 min"},
+      {e:"🔎",t:"Identifier la source de l'erreur d'adresse",d:"8 min"},
+      {e:"✏️",t:"Corriger l'adresse dans tous les systèmes",d:"5 min"},
+      {e:"📝",t:"Rédiger une réponse conforme RGPD",d:"8 min"},
+      {e:"📧",t:"Envoyer les excuses et la confirmation",d:"3 min"}
+    ],
+    genEmail:`Objet : Réclamation reçue — Correction effectuée, excuses sincères
+
+Bonjour Madame Petit,
+
+Je vous présente nos sincères excuses pour cette situation répétée et inconfortable.
+
+Nous avons immédiatement :
+  1. Localisé et corrigé l'adresse erronée dans l'ensemble de nos systèmes (CRM + fichiers de courrier)
+  2. Identifié que l'erreur provenait d'un ancien import de données non vérifié — les équipes techniques sont informées
+
+Conformément au RGPD, je vous confirme qu'aucun document vous concernant n'a été envoyé à cette adresse par erreur.
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["✅ Adresse R. Guillot corrigée (CRM+Excel)","⚠️ Incident RGPD signalé DPO","🛡️ Ticket correction base créé"]
+  },
+  {
+    id:9,from:"François Bernard",fromEmail:"f.bernard@grouperenov.fr",
+    subject:"Proposition de partenariat entreprise",
+    preview:"Bonjour, je suis directeur d'une PME de 45 personnes et...",
+    body:`Bonjour,
+
+Je suis directeur d'une PME de 45 personnes (rénovation énergétique) basée à Bordeaux.
+
+Nous souhaitons nous engager dans une démarche RSE et votre association nous a été recommandée. Nous envisageons un partenariat incluant :
+- Un don annuel de l'entreprise
+- Des journées bénévolat pour nos équipes
+- Un partenariat de communication
+
+Quel est le bon contact pour discuter de cela ?
+
+François Bernard`,
+    time:"10:22",type:"partenariat",typeLabel:"Partenariat entreprise",icon:"🤝",conf:92,donorId:9,
+    tBefore:"~15 min",tAfter:"~1 min",saved:14,
+    steps:[
+      {e:"🔍",t:"Vérifier si François Bernard existe dans Salesforce",d:"2 min"},
+      {e:"📝",t:"Créer une fiche Prospect/Partenaire",d:"4 min"},
+      {e:"📞",t:"Contacter la responsable partenariats",d:"4 min"},
+      {e:"📧",t:"Rédiger une réponse avec les bonnes infos",d:"4 min"},
+      {e:"📅",t:"Proposer un créneau de réunion",d:"1 min"}
+    ],
+    genEmail:`Objet : Votre proposition de partenariat — Association Leucémie Espoir
+
+Bonjour Monsieur Bernard,
+
+Merci pour cette démarche — votre intérêt pour un engagement RSE concret nous touche.
+
+Votre interlocutrice pour les partenariats entreprises est Mme Céline Dupré (directrice des partenariats), que je mets en copie de cet email. Elle reviendra vers vous dans les 48h.
+
+En attendant, je vous joins notre dossier partenariat 2024 qui détaille les différentes formules (mécénat, bénévolat de compétences, co-branding).
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["📋 Prospect créé : Groupe Renov","📩 Mme C. Dupré notifiée","📎 Dossier partenariat joint"]
+  },
+  {
+    id:10,from:"Nathalie Rousseau",fromEmail:"nathalie.rousseau62@gmail.com",
+    subject:"Décès de mon mari — il souhaitait continuer ses dons",
+    preview:"Bonjour, c'est avec beaucoup de peine que je vous contacte...",
+    body:`Bonjour,
+
+C'est avec beaucoup de peine que je vous contacte pour vous informer du décès de mon mari, Jean-Paul Rousseau, survenu le 2 juin dernier.
+
+Jean-Paul était donateur auprès de votre association depuis 2015 et tenait énormément à soutenir votre cause — notre fils aîné était patient chez vous il y a dix ans.
+
+Il avait exprimé le souhait que ses dons continuent après sa mort. Je souhaite les reprendre en son nom. Comment procéder ?
+
+Avec mes sincères salutations,
+Nathalie Rousseau`,
+    time:"10:45",type:"sensible",typeLabel:"Situation sensible",icon:"🕯️",conf:85,donorId:10,
+    tBefore:"~35 min",tAfter:"~5 min",saved:30,
+    steps:[
+      {e:"🔍",t:"Retrouver le dossier de Jean-Paul Rousseau",d:"4 min"},
+      {e:"📊",t:"Consulter l'historique complet des dons",d:"3 min"},
+      {e:"📞",t:"Consulter la coordinatrice pour la procédure décès",d:"10 min"},
+      {e:"📝",t:"Rédiger une réponse appropriée et empathique",d:"12 min"},
+      {e:"📋",t:"Préparer le formulaire de transfert de don",d:"5 min"},
+      {e:"📧",t:"Envoyer avec les documents adaptés",d:"1 min"}
+    ],
+    genEmail:`Objet : Nos sincères condoléances — et merci pour votre message
+
+Chère Madame Rousseau,
+
+Toute l'équipe de l'Association Leucémie Espoir s'associe à votre douleur. Jean-Paul était l'un de nos donateurs les plus fidèles depuis 2015.
+
+Pour honorer sa mémoire et reprendre ses dons, voici la marche à suivre :
+  1. Renvoyez-nous le formulaire joint, dûment complété
+  2. Un nouveau mandat SEPA sera établi à votre nom
+  3. Vous pouvez choisir de dédier les dons à la mémoire de Jean-Paul — son nom apparaîtra dans notre rapport annuel
+
+Notre coordinatrice Mme Laure Martin prendra contact avec vous cette semaine.
+
+Avec toute notre sympathie,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["📋 Dossier 'Don en mémoire' créé","📩 Mme L. Martin notifiée","📎 Formulaire transfert joint","🕯️ Jean-Paul Rousseau : mention rapport annuel"]
+  }
+];
+
+const DONORS = {
+  1:{prenom:"Henri",nom:"Dupont",age:67,job:"Retraité (ancien directeur commercial)",ville:"Paris",email:"henri.dupont@gmail.com",tel:"06 12 34 56 78",sfId:"SF-00142847",since:"Janvier 2019",status:"champion",statusLbl:"Champion",tags:["Don mensuel","Bénévole"],
+  note:"Père de Marie Dupont, ancienne patiente — en rémission depuis mars 2021. Très fidèle, disponible pour témoignages.",
+  dons:[{yr:2024,amt:600,dtl:"12×50€"},{yr:2023,amt:600,dtl:"12×50€"},{yr:2022,amt:600,dtl:"12×50€"},{yr:2021,amt:600,dtl:"12×50€"},{yr:2020,amt:600,dtl:"12×50€"},{yr:2019,amt:600,dtl:"12×50€"}],total:3600,
+  emailHistory:[
+    {dir:"out",date:"12 mars 2024",subject:"Invitation — Gala annuel 2024",body:`Cher Monsieur Dupont,
+
+Nous avons le plaisir de vous convier à notre Gala annuel de soutien, qui se tiendra le 15 juin 2024 au Pavillon Gabriel, Paris 8e.
+
+En tant que donateur Champion, votre table est réservée. Merci de confirmer votre présence avant le 1er mai.
+
+Bien cordialement, Mathieu Leroux`},
+    {dir:"in",date:"14 fév. 2023",subject:"Question sur le programme enfants",body:`Bonjour,
+
+Je souhaitais avoir des nouvelles du programme d'accueil des fratries que vous aviez lancé l'année dernière. Est-il toujours actif ?
+
+Ma fille Marie suit bien ses contrôles et va très bien.
+
+Bien à vous, Henri Dupont`},
+    {dir:"out",date:"10 jan. 2023",subject:"Votre reçu fiscal 2022",body:`Cher Monsieur Dupont,
+
+Veuillez trouver ci-joint votre reçu fiscal pour l'année 2022 (600,00 €, réf. RF-2022-001203).
+
+Bien cordialement, Mathieu Leroux`}
+  ],
+  dossiers:[],
+  sfRow:{id:"SF-00142847",prenom:"Henri",nom:"Dupont",email:"henri.dupont@gmail.com",ville:"Paris",statut:"Champion",total:"3 600 €",donMensuel:"50 €/m",benevole:"Oui",depuis:"2019-01-15"},
+  xlRows:[
+    {ref:"DON-2024-012",donateur:"Henri Dupont",date:"01/12/2024",montant:"50,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-001847",statut:"Émis"},
+    {ref:"DON-2024-011",donateur:"Henri Dupont",date:"01/11/2024",montant:"50,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-001847",statut:"Émis"},
+    {ref:"DON-2024-001",donateur:"Henri Dupont",date:"01/01/2024",montant:"50,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-001847",statut:"Émis"},
+    {ref:"DON-2023-012",donateur:"Henri Dupont",date:"01/12/2023",montant:"50,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2023-001203",statut:"Émis"}
+  ]},
+  2:{prenom:"Claire",nom:"Martin",age:45,job:"Infirmière en chef (CHU Lyon)",ville:"Lyon",email:"claire.martin73@outlook.fr",tel:"06 87 45 12 36",sfId:"SF-00387124",since:"Mars 2022",status:"actif",statusLbl:"Actif",tags:["Don mensuel","Marche 2023"],
+  note:"Participé à la marche solidaire 2023 avec l'équipe soignante du CHU. Sensible à l'accompagnement psy des familles.",
+  dons:[{yr:2024,amt:150,dtl:"5×30€ (jan–mai)"},{yr:2023,amt:360,dtl:"12×30€"},{yr:2022,amt:300,dtl:"10×30€"}],total:810,
+  emailHistory:[
+    {dir:"out",date:"4 jan. 2024",subject:"Votre reçu fiscal 2023",body:`Chère Madame Martin,
+
+Votre reçu fiscal 2023 (360,00 €, réf. RF-2023-004512) est joint à cet email.
+
+Merci pour votre engagement continu.
+
+Bien cordialement, Mathieu Leroux`},
+    {dir:"in",date:"17 oct. 2023",subject:"Question marche solidaire",body:`Bonjour,
+
+Avec mes collègues du CHU, nous serions intéressées pour participer à votre marche solidaire en équipe. Est-ce possible de s'inscrire en groupe ?
+
+Merci, Claire Martin`}
+  ],
+  dossiers:[],
+  sfRow:{id:"SF-00387124",prenom:"Claire",nom:"Martin",email:"claire.martin73@outlook.fr",ville:"Lyon",statut:"Actif",total:"810 €",donMensuel:"30 €/m",benevole:"Oui",depuis:"2022-03-01"},
+  xlRows:[
+    {ref:"DON-2024-005",donateur:"Claire Martin",date:"01/05/2024",montant:"30,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-007821",statut:"Émis"},
+    {ref:"DON-2024-001",donateur:"Claire Martin",date:"01/01/2024",montant:"30,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-007821",statut:"Émis"},
+    {ref:"DON-2023-012",donateur:"Claire Martin",date:"01/12/2023",montant:"30,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2023-004512",statut:"Émis"}
+  ]},
+  3:{prenom:"Jacques",nom:"Lebrun",age:58,job:"Employé municipal (arrêt maladie)",ville:"Bordeaux",email:"j.lebrun@free.fr",tel:"05 56 34 87 12",sfId:"SF-00521033",since:"Février 2022",status:"adherent",statusLbl:"Adhérent + Bénéficiaire",tags:["Adhérent","Don annuel","Dossier actif"],
+  note:"Situation difficile depuis arrêt maladie. Fils de 14 ans, ancien patient. Dossier aide alimentaire urgent.",
+  dons:[{yr:2024,amt:100,dtl:"1 don annuel"},{yr:2023,amt:100,dtl:"1 don annuel"},{yr:2022,amt:100,dtl:"1 don annuel"}],total:300,
+  emailHistory:[
+    {dir:"in",date:"15 avr. 2024",subject:"Relance dossier DOS-2024-0312",body:`Bonjour,
+
+Je vous relance concernant mon dossier d'aide alimentaire déposé le 12 mars. Cela fait un mois sans nouvelles.
+
+Jacques Lebrun`},
+    {dir:"out",date:"16 avr. 2024",subject:"RE : Dossier DOS-2024-0312 — en cours",body:`Bonjour Monsieur Lebrun,
+
+Votre dossier a bien été transmis au comité d'attribution le 8 avril. Nous reviendrons vers vous d'ici fin avril.
+
+Bien cordialement, Mathieu Leroux`}
+  ],
+  dossiers:[{ref:"DOS-2024-0312",type:"Aide alimentaire mensuelle",opened:"12 mars 2024",status:"En attente validation comité",warn:"⚠️ Bloqué depuis 8 semaines — relance urgente",responsible:"Mme Marie Duval — Service social"}],
+  sfRow:{id:"SF-00521033",prenom:"Jacques",nom:"Lebrun",email:"j.lebrun@free.fr",ville:"Bordeaux",statut:"Adhérent",total:"300 €",donMensuel:"—",benevole:"Non",depuis:"2022-02-10"},
+  xlRows:[
+    {ref:"DON-2024-001",donateur:"Jacques Lebrun",date:"15/01/2024",montant:"100,00 €",type:"Annuel",prelev:"Virement",recuFiscal:"RF-2024-002341",statut:"Émis"},
+    {ref:"DON-2023-001",donateur:"Jacques Lebrun",date:"20/01/2023",montant:"100,00 €",type:"Annuel",prelev:"Virement",recuFiscal:"RF-2023-008234",statut:"Émis"}
+  ]},
+  4:{prenom:"Sophie",nom:"Renard",age:34,job:"Chargée de communication",ville:"Nantes",email:"sophie.renard@nantes.fr",tel:"07 62 18 45 73",sfId:"SF-00694827",since:"Novembre 2024",status:"nouveau",statusLbl:"Nouveau donateur",tags:["1er don","Intérêt bénévolat"],
+  note:"Profil à fort potentiel. Background comm utile pour l'équipe bénévoles de Nantes.",
+  dons:[{yr:2024,amt:150,dtl:"1 don ponctuel (nov.)"}],total:150,
+  emailHistory:[],
+  dossiers:[],
+  sfRow:{id:"SF-00694827",prenom:"Sophie",nom:"Renard",email:"sophie.renard@nantes.fr",ville:"Nantes",statut:"Nouveau",total:"150 €",donMensuel:"—",benevole:"Oui",depuis:"2024-11-14"},
+  xlRows:[{ref:"DON-2024-001",donateur:"Sophie Renard",date:"14/11/2024",montant:"150,00 €",type:"Ponctuel",prelev:"CB en ligne",recuFiscal:"RF-2024-004291",statut:"Émis"}]},
+  5:{prenom:"Pierre",nom:"Moreau",age:72,job:"Retraité (enseignant)",ville:"Marseille",email:"p.moreau.retraite@gmail.com",tel:"04 91 23 45 67",sfId:"SF-00298411",since:"Avril 2018",status:"actif",statusLbl:"Actif",tags:["Don trimestriel","Fidèle"],
+  note:"Donateur très régulier depuis 2018. Discret mais fidèle. A perdu un neveu en 2017.",
+  dons:[{yr:2024,amt:480,dtl:"4×120€"},{yr:2023,amt:480,dtl:"4×120€"},{yr:2022,amt:480,dtl:"4×120€"},{yr:2021,amt:480,dtl:"4×120€"},{yr:2020,amt:480,dtl:"4×120€"},{yr:2019,amt:480,dtl:"4×120€"},{yr:2018,amt:240,dtl:"2×120€"}],total:3120,
+  emailHistory:[
+    {dir:"out",date:"10 jan. 2024",subject:"Votre reçu fiscal 2023",body:`Cher Monsieur Moreau,
+
+Votre reçu fiscal 2023 (480,00 €, réf. RF-2023-000412) est joint.
+
+Merci pour votre soutien régulier depuis 6 ans.
+
+Bien cordialement, Mathieu Leroux`}
+  ],
+  dossiers:[],
+  sfRow:{id:"SF-00298411",prenom:"Pierre",nom:"Moreau",email:"p.moreau.retraite@gmail.com",ville:"Marseille",statut:"Actif",total:"3 120 €",donMensuel:"120 €/trim.",benevole:"Non",depuis:"2018-04-01"},
+  xlRows:[
+    {ref:"DON-2024-004",donateur:"Pierre Moreau",date:"01/10/2024",montant:"120,00 €",type:"Trimestriel",prelev:"SEPA",recuFiscal:"RF-2024-000298",statut:"Émis"},
+    {ref:"DON-2024-001",donateur:"Pierre Moreau",date:"02/01/2024",montant:"120,00 €",type:"Trimestriel",prelev:"SEPA",recuFiscal:"RF-2024-000298",statut:"Émis"},
+    {ref:"DON-2022-004",donateur:"Pierre Moreau",date:"01/10/2022",montant:"120,00 €",type:"Trimestriel",prelev:"SEPA",recuFiscal:"RF-2022-000634",statut:"Non émis"}
+  ]},
+  6:{prenom:"Marie-Claire",nom:"Fontaine",age:38,job:"Architecte indépendante",ville:"Toulouse",email:"mcfontaine.archi@outlook.com",tel:"06 44 21 87 53",sfId:"SF-00445872",since:"Septembre 2020",status:"actif",statusLbl:"Actif",tags:["Don mensuel"],
+  note:"Donatrice régulière, peu de contact direct. Vient de déménager de Paris à Toulouse.",
+  dons:[{yr:2024,amt:240,dtl:"12×20€"},{yr:2023,amt:240,dtl:"12×20€"},{yr:2022,amt:240,dtl:"12×20€"},{yr:2021,amt:240,dtl:"12×20€"},{yr:2020,amt:80,dtl:"4×20€"}],total:1040,
+  emailHistory:[
+    {dir:"out",date:"8 jan. 2024",subject:"Votre reçu fiscal 2023",body:`Chère Madame Fontaine,
+
+Votre reçu fiscal 2023 (240,00 €, réf. RF-2023-005671) est joint.
+
+Bien cordialement, Mathieu Leroux`}
+  ],
+  dossiers:[],
+  sfRow:{id:"SF-00445872",prenom:"Marie-Claire",nom:"Fontaine",email:"mcfontaine.archi@outlook.com",ville:"Toulouse",statut:"Actif",total:"1 040 €",donMensuel:"20 €/m",benevole:"Non",depuis:"2020-09-01"},
+  xlRows:[
+    {ref:"DON-2024-012",donateur:"Marie-Claire Fontaine",date:"01/12/2024",montant:"20,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-009812",statut:"Émis"},
+    {ref:"DON-2024-001",donateur:"Marie-Claire Fontaine",date:"01/01/2024",montant:"20,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-009812",statut:"Émis"}
+  ]},
+  7:{prenom:"Thomas",nom:"Durand",age:25,job:"Étudiant (Sciences Po Paris)",ville:"Paris",email:"thomas.durand.25@gmail.com",tel:"07 89 34 12 45",sfId:"SF-00712341",since:"Juin 2024",status:"nouveau",statusLbl:"Nouveau contact",tags:["Jeune aidant","Non donateur"],
+  note:"Fils aidant d'un patient actuel. Pas encore donateur. Profil à accompagner avec le programme jeunes aidants.",
+  dons:[],total:0,emailHistory:[],dossiers:[],
+  sfRow:{id:"SF-00712341",prenom:"Thomas",nom:"Durand",email:"thomas.durand.25@gmail.com",ville:"Paris",statut:"Nouveau",total:"0 €",donMensuel:"—",benevole:"Non",depuis:"2024-06-09"},
+  xlRows:[]},
+  8:{prenom:"Isabelle",nom:"Petit",age:55,job:"Comptable (cabinet Duval & Assoc.)",ville:"Strasbourg",email:"isabelle.petit.stras@wanadoo.fr",tel:"03 88 41 22 17",sfId:"SF-00523801",since:"Non donateur",status:"inactif",statusLbl:"Non-donateur",tags:["Réclamation RGPD"],
+  note:"Reçoit des courriers destinés à Robert Guillot (ancien occupant). Deuxième signalement. Aucune relation de don.",
+  dons:[],total:0,
+  emailHistory:[
+    {dir:"in",date:"14 fév. 2024",subject:"Courrier pour une autre personne (1er signalement)",body:`Bonjour,
+
+J'ai encore reçu un courrier destiné à un certain M. Robert Guillot. Pouvez-vous corriger cela ?
+
+Isabelle Petit`}
+  ],
+  dossiers:[],
+  sfRow:{id:"SF-00523801",prenom:"Isabelle",nom:"Petit",email:"isabelle.petit.stras@wanadoo.fr",ville:"Strasbourg",statut:"Inactif",total:"0 €",donMensuel:"—",benevole:"Non",depuis:"—"},
+  xlRows:[]},
+  9:{prenom:"François",nom:"Bernard",age:48,job:"Directeur général (Groupe Renov, PME 45 pers.)",ville:"Bordeaux",email:"f.bernard@grouperenov.fr",tel:"05 56 87 41 23",sfId:"SF-00798234",since:"Nouveau prospect",status:"nouveau",statusLbl:"Prospect partenariat",tags:["Entreprise","RSE","Partenariat"],
+  note:"PME 45 salariés, rénovation énergétique. Budget RSE 2025 estimé à 10–20k€.",
+  dons:[],total:0,emailHistory:[],dossiers:[],
+  sfRow:{id:"SF-00798234",prenom:"François",nom:"Bernard",email:"f.bernard@grouperenov.fr",ville:"Bordeaux",statut:"Nouveau",total:"0 €",donMensuel:"—",benevole:"Non",depuis:"2025-06-17"},
+  xlRows:[]},
+  10:{prenom:"Nathalie",nom:"Rousseau",age:61,job:"Retraitée (ex-infirmière)",ville:"Lyon",email:"nathalie.rousseau62@gmail.com",tel:"04 78 23 11 45",sfId:"SF-00341122",since:"Don en mémoire (†02/06/2025)",status:"nouveau",statusLbl:"Don en mémoire",tags:["Sensible","Deuil","Don mémoire"],
+  note:"Femme de Jean-Paul Rousseau, donateur depuis 2015 (†02/06/2025). Fils Antoine, ancien patient (2015). Traiter avec la plus grande délicatesse.",
+  dons:[{yr:2024,amt:200,dtl:"Dons J-P. Rousseau"},{yr:2023,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2022,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2021,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2020,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2019,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2018,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2017,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2016,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2015,amt:400,dtl:"Dons J-P. Rousseau"}],total:3800,
+  emailHistory:[
+    {dir:"out",date:"10 jan. 2025",subject:"Reçu fiscal 2024 — Jean-Paul Rousseau",body:`Cher Monsieur Rousseau,
+
+Votre reçu fiscal 2024 (200,00 €, réf. RF-2024-003892) est joint.
+
+Merci pour votre fidélité depuis 2015.
+
+Bien cordialement, Mathieu Leroux`}
+  ],
+  dossiers:[],
+  sfRow:{id:"SF-00341122",prenom:"Jean-Paul",nom:"Rousseau (†)",email:"nathalie.rousseau62@gmail.com",ville:"Lyon",statut:"Don en mémoire",total:"3 800 €",donMensuel:"200 €/sem.",benevole:"Non",depuis:"2015-04-01"},
+  xlRows:[
+    {ref:"DON-2025-001",donateur:"Jean-Paul Rousseau",date:"01/02/2025",montant:"200,00 €",type:"Semestriel",prelev:"Virement",recuFiscal:"RF-2024-003892",statut:"Émis"},
+    {ref:"DON-2024-001",donateur:"Jean-Paul Rousseau",date:"05/01/2024",montant:"200,00 €",type:"Semestriel",prelev:"Virement",recuFiscal:"RF-2024-003892",statut:"Émis"}
+  ]}
+};
+
+// ═══════════════════════════ FLAT TABLES ═══════════════════════════
+
+const SF_ROWS = Object.values(DONORS).map(d => d.sfRow);
+const XL_ROWS = Object.values(DONORS).flatMap(d => d.xlRows || []);
+
+// ═══════════════════════════ STATE ═══════════════════════════
+
+let activeId = null, generated = new Set(), totalSaved = 0, activeTab = {};
+let srcActive = 'sf', srcSort = {col: null, dir: 1};
+
+// ═══════════════════════════ INBOX ═══════════════════════════
+
+function init() { renderList(); buildSrcFilters(); }
+
+function renderList() {
+  const tc = {recu:"tt-recu",arret:"tt-arret",dossier:"tt-dossier",general:"tt-general",coords:"tt-coords",reclamation:"tt-reclamation",partenariat:"tt-partenariat",sensible:"tt-sensible"};
+  document.getElementById('email-list').innerHTML = EMAILS.map(e=>`
+    <div class="er${activeId===e.id?' active':''}" onclick="sel(${e.id})">
+      ${!generated.has(e.id)?'<div class="udot"></div>':''}
+      <div class="er-top"><span class="er-name">${e.from}</span><span class="er-time">${e.time}</span></div>
+      <div class="er-subj">${e.subject}</div>
+      <div class="er-prev">${e.preview}</div>
+      <span class="tt ${tc[e.type]}">${e.icon} ${e.typeLabel}</span>
+    </div>`).join('');
+}
+
+function sel(id) {
+  activeId=id; renderList();
+  renderEmail(id);
+  renderProfile(EMAILS.find(e=>e.id===id).donorId);
+}
+
+// ═══════════════════════════ EMAIL VIEW ═══════════════════════════
+
+function renderEmail(id) {
+  const e = EMAILS.find(x=>x.id===id);
+  const d = DONORS[e.donorId];
+  const done = generated.has(id);
+  const steps = e.steps.map((s,i)=>`<div class="step-row${done?' x':''}" id="sr-${id}-${i}"><span>${s.e}</span><span>${s.t}</span><span class="step-dur">${s.d}</span></div>`).join('');
+  const tags = e.autoTags.map(t=>`<span class="auto-tag">${t}</span>`).join('');
+
+  document.getElementById('main').innerHTML = `
+    <div class="card">
+      <div class="email-hd">
+        <div class="email-subj">${e.subject}</div>
+        <div class="email-meta">
+          <div class="em-i"><b>De :</b> ${e.from} &lt;${e.fromEmail}&gt;</div>
+          <div class="em-i"><b>Heure :</b> ${e.time}</div>
+        </div>
+      </div>
+      <div class="email-body">${e.body}</div>
+      <div class="det">
+        <div class="det-l"><span class="det-ic">${e.icon}</span><span class="det-type">Type détecté : ${e.typeLabel}</span><span class="det-conf">Confiance ${e.conf}%</span></div>
+        <div class="det-r"><span class="t-bef">Sans outil : ${e.tBefore}</span><span class="t-arr">→</span><span class="t-aft">Avec AssoPilot : ${e.tAfter}</span></div>
+      </div>
+      <div class="steps-blk">
+        <div class="steps-lbl">✋ Étapes manuelles éliminées</div>
+        <div id="steps-${id}">${steps}</div>
+      </div>
+      <div class="act-blk">
+        <button class="btn-gen${done?' done':''}" id="bg-${id}" onclick="gen(${id})" ${done?'disabled':''}>
+          ${done?'✓ Réponse générée et envoyée':'⚡ Générer la réponse automatiquement'}
+        </button>
+      </div>
+      <div class="gen-blk${done?' show':''}" id="gb-${id}">
+        <div class="gen-hd">
+          <div class="gen-lbl">✓ Réponse générée par AssoPilot</div>
+          <button class="btn-send${done?' sent':''}" id="bs-${id}" onclick="markSent(${id})">${done?'✓ Envoyé':'📤 Envoyer'}</button>
+        </div>
+        <div class="gen-prev">${e.genEmail}</div>
+        <div class="auto-tags">${tags}</div>
+      </div>
+    </div>
+    ${renderEmailHistory(e.donorId, id)}`;
+}
+
+function renderEmailHistory(donorId, currentEmailId) {
+  const d = DONORS[donorId];
+  if (!d.emailHistory || d.emailHistory.length === 0) {
+    return `<div class="hist-section"><div class="hist-hd"><span class="hist-hd-title">Historique des échanges avec ${d.prenom} ${d.nom}</span><span class="hist-hd-src">Outlook</span><span style="margin-left:auto;font-size:.7rem;color:var(--g400)">Aucun échange précédent</span></div></div>`;
+  }
+  const items = d.emailHistory.map((h,i) => `
+    <div class="hmail">
+      <div class="hmail-hd" onclick="toggleMail('hm-${currentEmailId}-${i}',this)">
+        <span class="hmail-dir ${h.dir==='in'?'hdir-in':'hdir-out'}">${h.dir==='in'?'← Reçu':'→ Envoyé'}</span>
+        <div class="hmail-meta"><div class="hmail-subj">${h.subject}</div><div class="hmail-date">${h.date}</div></div>
+        <span class="hmail-exp" id="hme-${currentEmailId}-${i}">▼</span>
+      </div>
+      <div class="hmail-body" id="hm-${currentEmailId}-${i}">${h.body}</div>
+    </div>`).join('');
+  return `
+    <div class="hist-section">
+      <div class="hist-hd" onclick="toggleHist('hb-${currentEmailId}',this)">
+        <span class="hist-hd-title">Historique des échanges avec ${d.prenom} ${d.nom}</span>
+        <span class="hist-hd-src">Outlook</span>
+        <span style="margin-left:auto;font-size:.72rem;font-weight:600;color:var(--g500)">${d.emailHistory.length} échange${d.emailHistory.length>1?'s':''}</span>
+        <span class="hist-toggle" id="ht-${currentEmailId}">▼</span>
+      </div>
+      <div class="hist-body" id="hb-${currentEmailId}">${items}</div>
+    </div>`;
+}
+
+function toggleHist(bodyId, hdEl) {
+  const body=document.getElementById(bodyId), btn=hdEl.querySelector('.hist-toggle');
+  if(!body) return;
+  const open=body.classList.toggle('open');
+  if(btn) btn.classList.toggle('open',open);
+}
+function toggleMail(bodyId, hdEl) {
+  const body=document.getElementById(bodyId), exp=hdEl.querySelector('.hmail-exp');
+  if(!body) return;
+  const open=body.classList.toggle('open');
+  if(exp) exp.classList.toggle('open',open);
+}
+
+// ═══════════════════════════ GENERATE ═══════════════════════════
+
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+async function gen(id) {
+  const e = EMAILS.find(x=>x.id===id);
+  const btn = document.getElementById('bg-'+id);
+  if(!btn) return;
+  btn.disabled=true;
+  btn.innerHTML='<div class="spinner"></div> Lecture des sources…';
+  await sleep(550);
+  btn.innerHTML='<div class="spinner"></div> Croisement Salesforce + Excel…';
+  await sleep(500);
+  btn.innerHTML='<div class="spinner"></div> Génération de la réponse…';
+  for(let i=0;i<e.steps.length;i++){await sleep(170);const s=document.getElementById(`sr-${id}-${i}`);if(s)s.classList.add('x');}
+  await sleep(300);
+  btn.innerHTML='✓ Réponse générée et envoyée';btn.classList.add('done');
+  const gb=document.getElementById('gb-'+id);if(gb)gb.classList.add('show');
+  generated.add(id);totalSaved+=e.saved;
+  document.getElementById('sav').textContent=totalSaved+' min';
+  document.getElementById('cnt').textContent=EMAILS.filter(x=>!generated.has(x.id)).length;
+  renderList();
+}
+
+function markSent(id) {
+  const b=document.getElementById('bs-'+id);if(b){b.textContent='✓ Envoyé';b.classList.add('sent');}
+}
+
+// ═══════════════════════════ PROFILE ═══════════════════════════
+
+function renderProfile(donorId) {
+  const d=DONORS[donorId];
+  if(!activeTab[donorId]) activeTab[donorId]='profil';
+  const sc={champion:'sp-champion',actif:'sp-actif',nouveau:'sp-nouveau',adherent:'sp-adherent',inactif:'sp-inactif'};
+  const tgs=d.tags.map(t=>`<span style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.78);font-size:.6rem;padding:.08rem .38rem;border-radius:999px;font-weight:600">${t}</span>`).join(' ');
+  const hasDoss=d.dossiers&&d.dossiers.length>0;
+  const hCount=d.emailHistory?d.emailHistory.length:0;
+  document.getElementById('prof-wrap').innerHTML=`
+    <div class="prof-hd">
+      <div class="prof-name">${d.prenom} ${d.nom} <span style="font-size:.68rem;font-weight:400;opacity:.55">— ${d.age} ans</span></div>
+      <div class="prof-sub">${d.job} · ${d.ville}</div>
+      <div class="prof-src-row"><span class="src-tag src-sf">Salesforce</span><span class="src-tag src-xl">Excel</span><span class="src-tag src-ol">Outlook</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.3rem">
+        <span class="sp ${sc[d.status]||'sp-nouveau'}">${d.statusLbl}</span>
+        <div style="display:flex;gap:.22rem;flex-wrap:wrap">${tgs}</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn${activeTab[donorId]==='profil'?' on':''}" onclick="ptab(${donorId},'profil')">Profil</button>
+      <button class="tab-btn${activeTab[donorId]==='dons'?' on':''}" onclick="ptab(${donorId},'dons')">Dons</button>
+      <button class="tab-btn${activeTab[donorId]==='hist'?' on':''}" onclick="ptab(${donorId},'hist')">Historique${hCount>0?` <span style="background:var(--ol);color:#fff;font-size:.55rem;padding:.05rem .28rem;border-radius:999px;font-weight:700">${hCount}</span>`:''}</button>
+      <button class="tab-btn${activeTab[donorId]==='dos'?' on':''}" onclick="ptab(${donorId},'dos')">Dossiers${hasDoss?` <span style="background:#ef4444;color:#fff;font-size:.55rem;padding:.05rem .28rem;border-radius:999px;font-weight:700">${d.dossiers.length}</span>`:''}</button>
+    </div>
+    <div class="tab-area">
+      <div class="tab-pane${activeTab[donorId]==='profil'?' on':''}">
+        <div class="sec"><div class="sec-lbl">Identité <span class="sc sc-sf">Salesforce</span></div>
+          <div class="kv"><span class="kv-k">Nom</span><span class="kv-v">${d.prenom} ${d.nom}</span></div>
+          <div class="kv"><span class="kv-k">Âge</span><span class="kv-v">${d.age} ans</span></div>
+          <div class="kv"><span class="kv-k">Profession</span><span class="kv-v">${d.job}</span></div>
+          <div class="kv"><span class="kv-k">Ville</span><span class="kv-v">${d.ville}</span></div>
+          <div class="kv"><span class="kv-k">Email</span><span class="kv-v">${d.email}</span></div>
+          <div class="kv"><span class="kv-k">Téléphone</span><span class="kv-v">${d.tel}</span></div>
+          <div class="kv"><span class="kv-k">ID Salesforce</span><span class="kv-v">${d.sfId}</span></div>
+          <div class="kv"><span class="kv-k">Donateur depuis</span><span class="kv-v">${d.since}</span></div>
+        </div>
+        <div class="sec"><div class="sec-lbl">Note interne <span class="sc sc-sf">Salesforce</span></div><div class="note-box">${d.note}</div></div>
+      </div>
+      <div class="tab-pane${activeTab[donorId]==='dons'?' on':''}">
+        ${d.dons.length===0?'<div class="empty" style="height:180px"><div class="ei" style="font-size:1.8rem">💰</div><p>Aucun don enregistré</p></div>':renderDonsHtml(d)}
+      </div>
+      <div class="tab-pane${activeTab[donorId]==='hist'?' on':''}">
+        ${renderHistHtml(d)}
+      </div>
+      <div class="tab-pane${activeTab[donorId]==='dos'?' on':''}">
+        ${renderDosHtml(d)}
+      </div>
+    </div>`;
+}
+
+function ptab(donorId,t){activeTab[donorId]=t;renderProfile(donorId);}
+
+function renderDonsHtml(d) {
+  const max=Math.max(...d.dons.map(x=>x.amt),1);
+  return `<div class="sec"><div class="sec-lbl">Historique des dons <span class="sc sc-xl">Excel</span></div>
+    ${d.dons.map(x=>`<div class="don-row"><div class="don-yr"><span class="don-yr-l">${x.yr} <span style="font-weight:400;color:var(--g400);font-size:.68rem">(${x.dtl})</span></span><span style="font-weight:700;font-size:.73rem">${x.amt.toLocaleString('fr-FR')} €</span></div><div class="don-bar"><div class="don-fill" style="width:${(x.amt/max*100).toFixed(0)}%"></div></div></div>`).join('')}
+    <div class="total-box"><span class="total-lbl">Total cumulé</span><span class="total-amt">${d.total.toLocaleString('fr-FR')} €</span></div></div>`;
+}
+
+function renderHistHtml(d) {
+  if(!d.emailHistory||d.emailHistory.length===0) return '<div class="empty" style="height:180px"><div class="ei" style="font-size:1.8rem">📭</div><p>Aucun échange précédent</p></div>';
+  return `<div class="sec"><div class="sec-lbl">Échanges <span class="sc sc-ol">Outlook</span></div><div class="tl">
+    ${d.emailHistory.map((h,i)=>`<div class="tl-item"><div class="tl-dot ${h.dir==='in'?'tl-in':'tl-out'}">${h.dir==='in'?'←':'→'}</div><div style="flex:1;min-width:0"><div class="tl-ttl" style="cursor:pointer" onclick="toggleProfMail('pm-${d.sfId}-${i}',this)">${h.subject} <span style="font-size:.65rem;color:var(--i600)">▼</span></div><div class="tl-dt">${h.date}</div><div id="pm-${d.sfId}-${i}" style="display:none;margin-top:.4rem;background:var(--g50);border:1px solid var(--g200);border-radius:6px;padding:.5rem .6rem;font-size:.72rem;line-height:1.6;color:#4b5563;white-space:pre-wrap">${h.body}</div></div></div>`).join('')}
+  </div></div>`;
+}
+
+function toggleProfMail(id,el) {
+  const box=document.getElementById(id);if(!box)return;
+  const show=box.style.display==='none';box.style.display=show?'block':'none';
+  const arr=el.querySelector('span');if(arr)arr.textContent=show?'▲':'▼';
+}
+
+function renderDosHtml(d) {
+  if(!d.dossiers||d.dossiers.length===0) return '<div class="empty" style="height:180px"><div class="ei" style="font-size:1.8rem">📂</div><p>Aucun dossier en cours</p></div>';
+  return d.dossiers.map(dos=>`<div class="dos-card"><div class="dos-ref">${dos.ref}</div><div class="dos-ttl">${dos.type}</div><div class="dos-st"><div class="dos-dot"></div>${dos.status}</div><div class="dos-resp">Responsable : ${dos.responsible}</div>${dos.warn?`<div class="dos-warn">${dos.warn}</div>`:''}</div>`).join('');
+}
+
+// ═══════════════════════════ DATA SOURCES OVERLAY ═══════════════════════════
+
+function toggleSources() {
+  const overlay=document.getElementById('srcOverlay');
+  const btn=document.getElementById('btnSrc');
+  const isOpen=overlay.classList.toggle('show');
+  btn.classList.toggle('active',isOpen);
+  if(isOpen) renderSrcTable();
+}
+
+function srcTab(tab) {
+  srcActive=tab;
+  document.getElementById('stab-sf').className='src-stab sf'+(tab==='sf'?' on':'');
+  document.getElementById('stab-xl').className='src-stab xl'+(tab==='xl'?' on':'');
+  document.getElementById('pane-sf').className='src-tbl-pane'+(tab==='sf'?' on':'');
+  document.getElementById('pane-xl').className='src-tbl-pane'+(tab==='xl'?' on':'');
+  document.getElementById('fgrp-sf').style.display=tab==='sf'?'flex':'none';
+  document.getElementById('fgrp-xl').style.display=tab==='xl'?'flex':'none';
+  resetFilters();
+  renderSrcTable();
+}
+
+function buildSrcFilters() {
+  // SF statut
+  const statuts=[...new Set(SF_ROWS.map(r=>r.statut))].sort();
+  const selSt=document.getElementById('flt-sf-statut');
+  statuts.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;selSt.appendChild(o);});
+  // SF ville
+  const villes=[...new Set(SF_ROWS.map(r=>r.ville).filter(Boolean))].sort();
+  const selVl=document.getElementById('flt-sf-ville');
+  villes.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;selVl.appendChild(o);});
+  // XL type
+  const types=[...new Set(XL_ROWS.map(r=>r.type))].sort();
+  const selTp=document.getElementById('flt-xl-type');
+  types.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;selTp.appendChild(o);});
+  // XL statut
+  const xStatuts=[...new Set(XL_ROWS.map(r=>r.statut))].sort();
+  const selXS=document.getElementById('flt-xl-statut');
+  xStatuts.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;selXS.appendChild(o);});
+  // XL donor
+  const donors=[...new Set(XL_ROWS.map(r=>r.donateur))].sort();
+  const selDo=document.getElementById('flt-xl-donor');
+  donors.forEach(dn=>{const o=document.createElement('option');o.value=dn;o.textContent=dn;selDo.appendChild(o);});
+  // counts
+  document.getElementById('sf-cnt').textContent='('+SF_ROWS.length+')';
+  document.getElementById('xl-cnt').textContent='('+XL_ROWS.length+')';
+}
+
+function resetFilters() {
+  document.getElementById('src-search-in').value='';
+  ['flt-sf-statut','flt-sf-ville','flt-sf-don','flt-xl-type','flt-xl-statut','flt-xl-donor'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  renderSrcTable();
+}
+
+function applyFilters() { renderSrcTable(); }
+
+function getFilteredRows() {
+  const q=(document.getElementById('src-search-in').value||'').toLowerCase().trim();
+  if(srcActive==='sf') {
+    const st=document.getElementById('flt-sf-statut').value;
+    const vl=document.getElementById('flt-sf-ville').value;
+    const dn=document.getElementById('flt-sf-don').value;
+    return SF_ROWS.filter(r=>{
+      if(st&&r.statut!==st) return false;
+      if(vl&&r.ville!==vl) return false;
+      if(dn==='oui'&&r.donMensuel==='—') return false;
+      if(dn==='non'&&r.donMensuel!=='—') return false;
+      if(q) {
+        const haystack=Object.values(r).join(' ').toLowerCase();
+        if(!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+  } else {
+    const tp=document.getElementById('flt-xl-type').value;
+    const xs=document.getElementById('flt-xl-statut').value;
+    const do_=document.getElementById('flt-xl-donor').value;
+    return XL_ROWS.filter(r=>{
+      if(tp&&r.type!==tp) return false;
+      if(xs&&r.statut!==xs) return false;
+      if(do_&&r.donateur!==do_) return false;
+      if(q){const hay=Object.values(r).join(' ').toLowerCase();if(!hay.includes(q))return false;}
+      return true;
+    });
+  }
+}
+
+const SF_COLS=[
+  {key:'id',label:'ID Salesforce'},
+  {key:'prenom',label:'Prénom'},
+  {key:'nom',label:'Nom'},
+  {key:'email',label:'Email'},
+  {key:'ville',label:'Ville'},
+  {key:'statut',label:'Statut'},
+  {key:'total',label:'Total dons'},
+  {key:'donMensuel',label:'Don récurrent'},
+  {key:'benevole',label:'Bénévole'},
+  {key:'depuis',label:'Depuis'}
+];
+const XL_COLS=[
+  {key:'ref',label:'Réf.'},
+  {key:'donateur',label:'Donateur'},
+  {key:'date',label:'Date'},
+  {key:'montant',label:'Montant'},
+  {key:'type',label:'Type'},
+  {key:'prelev',label:'Prélèvement'},
+  {key:'recuFiscal',label:'Reçu fiscal'},
+  {key:'statut',label:'Statut'}
+];
+
+const SF_STAT_COLOR={Champion:'tp-champion',Actif:'tp-actif',Nouveau:'tp-nouveau',Adhérent:'tp-adherent',Inactif:'tp-inactif','Don en mémoire':'tp-adherent'};
+
+function renderSrcTable() {
+  const rows=getFilteredRows();
+  const cols=srcActive==='sf'?SF_COLS:XL_COLS;
+  const tblId=srcActive==='sf'?'tbl-sf':'tbl-xl';
+  const tbl=document.getElementById(tblId);
+
+  // header
+  tbl.querySelector('thead').innerHTML='<tr>'+cols.map(c=>{
+    const sorted=srcSort.col===c.key;
+    const ic=sorted?(srcSort.dir===1?'▲':'▼'):'⇅';
+    return `<th onclick="sortBy('${c.key}')" class="${sorted?(srcSort.dir===1?'sort-asc':'sort-desc'):''}">${c.label} <span class="sort-ic">${ic}</span></th>`;
+  }).join('')+'</tr>';
+
+  // body
+  if(rows.length===0){
+    tbl.querySelector('tbody').innerHTML=`<tr><td colspan="${cols.length}"><div class="src-no-results">Aucun résultat pour ces filtres</div></td></tr>`;
+  } else {
+    tbl.querySelector('tbody').innerHTML=rows.map(r=>'<tr>'+cols.map(c=>{
+      const v=r[c.key]||'—';
+      if(c.key==='statut'&&srcActive==='sf') return `<td><span class="tbl-pill ${SF_STAT_COLOR[v]||'tp-nouveau'}">${v}</span></td>`;
+      if(c.key==='statut'&&srcActive==='xl') {
+        const cls=v==='Émis'?'tp-ok':'tp-warn';
+        return `<td><span class="tbl-pill ${cls}">${v==='Émis'?'✅ Émis':'⚠️ '+v}</span></td>`;
+      }
+      if(c.key==='type') return `<td><span class="tbl-pill tp-type">${v}</span></td>`;
+      if(c.key==='benevole') return `<td>${v==='Oui'?'<span style="color:var(--green);font-weight:700">✓ Oui</span>':'<span style="color:var(--g300)">—</span>'}</td>`;
+      if(c.key==='email') return `<td style="color:var(--i600)">${v}</td>`;
+      if(c.key==='total'&&v!=='—') return `<td style="font-weight:700;color:var(--g900)">${v}</td>`;
+      if(c.key==='donMensuel'&&v!=='—') return `<td style="font-weight:600;color:var(--green)">${v}</td>`;
+      return `<td>${v}</td>`;
+    }).join('')+'</tr>').join('');
+  }
+
+  // stats bar
+  const totalEl=document.getElementById('tbl-totals');
+  const rowCntEl=document.getElementById('src-row-cnt');
+  if(srcActive==='sf'){
+    const shown=rows.length, total=SF_ROWS.length;
+    rowCntEl.textContent=shown===total?`${total} contacts`:`${shown} / ${total} contacts`;
+    const totalDons=rows.reduce((a,r)=>a+parseFloat((r.total||'0').replace(/[^0-9.]/g,'')||0),0);
+    const actifs=rows.filter(r=>['Champion','Actif'].includes(r.statut)).length;
+    const mensuel=rows.filter(r=>r.donMensuel!=='—').length;
+    totalEl.innerHTML=`<span>Affiché : <span class="tbl-stat">${shown} contacts</span></span><span>Total dons cumulés : <span class="tbl-stat">${totalDons.toLocaleString('fr-FR')} €</span></span><span>Donateurs actifs : <span class="tbl-stat">${actifs}</span></span><span>Dons récurrents : <span class="tbl-stat">${mensuel}</span></span>`;
+  } else {
+    const shown=rows.length, total=XL_ROWS.length;
+    rowCntEl.textContent=shown===total?`${total} lignes`:`${shown} / ${total} lignes`;
+    const sumMontant=rows.reduce((a,r)=>a+parseFloat((r.montant||'0').replace(',','.').replace(/[^0-9.]/g,'')||0),0);
+    const emis=rows.filter(r=>r.statut==='Émis').length;
+    totalEl.innerHTML=`<span>Affiché : <span class="tbl-stat">${shown} lignes</span></span><span>Montant total : <span class="tbl-stat">${sumMontant.toLocaleString('fr-FR',{minimumFractionDigits:2})} €</span></span><span>Reçus émis : <span class="tbl-stat">${emis} / ${shown}</span></span>`;
+  }
+}
+
+function sortBy(col) {
+  if(srcSort.col===col) srcSort.dir*=-1; else {srcSort.col=col;srcSort.dir=1;}
+  const rows=srcActive==='sf'?SF_ROWS:XL_ROWS;
+  rows.sort((a,b)=>{
+    const va=a[col]||'',vb=b[col]||'';
+    return va<vb?-srcSort.dir:va>vb?srcSort.dir:0;
+  });
+  renderSrcTable();
+}
+
+init();
+</script>
+</body>
+</html>
