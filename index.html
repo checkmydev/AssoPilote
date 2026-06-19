@@ -315,6 +315,51 @@
     .atr-spk.cal{background:#dbeafe;color:#1e40af}
     .atr-txt{font-size:.76rem;line-height:1.6;color:var(--g700)}
 
+    /* ── Pièces jointes ── */
+    .att-list{padding:.5rem 1rem .65rem;border-top:1px solid var(--g100);display:flex;flex-wrap:wrap;gap:.4rem}
+    .att-chip{display:inline-flex;align-items:center;gap:.32rem;padding:.22rem .65rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;font-size:.78rem;cursor:pointer;font-family:inherit;transition:all .15s;color:var(--g700)}
+    .att-chip:hover{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+    /* Document modal */
+    .doc-modal-box{width:min(660px,96vw);max-height:90vh}
+    .doc-scroll{flex:1;overflow-y:auto;background:#f1f5f9;padding:1.4rem;display:flex;justify-content:center}
+    /* Reçu fiscal */
+    .rf-doc{background:#fff;border:1.5px solid #1e3a5f;padding:1.6rem;max-width:560px;width:100%;font-family:'Times New Roman',serif;font-size:.83rem;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+    .rf-cerfa{text-align:right;font-size:.7rem;color:#666;margin-bottom:.4rem;font-family:Arial,sans-serif}
+    .rf-title{text-align:center;font-size:.88rem;font-weight:700;text-transform:uppercase;color:#1e3a5f;border-top:2px solid #1e3a5f;border-bottom:2px solid #1e3a5f;padding:.5rem 0;margin-bottom:1rem;line-height:1.5}
+    .rf-section{border:1px solid #bbb;padding:.6rem .8rem;margin:.5rem 0;line-height:1.7}
+    .rf-section h4{margin:0 0 .3rem;font-size:.72rem;text-transform:uppercase;color:#1e3a5f;font-family:Arial,sans-serif;letter-spacing:.04em}
+    .rf-amount{font-size:1.1rem;font-weight:700;color:#1e3a5f;text-align:center;padding:.6rem;border:2px solid #1e3a5f;margin:.7rem 0}
+    .rf-footer{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.2rem}
+    .rf-sign{font-size:.78rem;color:#333;line-height:1.8}
+    .rf-stamp{border:1px dashed #999;min-height:72px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:.74rem;font-style:italic;font-family:Arial,sans-serif;text-align:center}
+    /* Chèque */
+    .chq-doc{background:#fff;border:1.5px solid #aaa;padding:1.3rem;max-width:560px;width:100%;font-family:Arial,sans-serif;font-size:.83rem;position:relative;box-shadow:0 2px 12px rgba(0,0,0,.1);overflow:hidden}
+    .chq-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4rem;font-weight:900;color:rgba(26,60,110,.05);transform:rotate(-18deg);pointer-events:none;white-space:nowrap}
+    .chq-bank{font-size:.98rem;font-weight:700;color:#1a3c6e;border-bottom:3px solid #1a3c6e;padding-bottom:.4rem;margin-bottom:.8rem}
+    .chq-words{font-size:.88rem;border-bottom:1px solid #aaa;padding-bottom:.35rem;margin:.45rem 0;font-style:italic;color:#222}
+    .chq-num{display:inline-block;border:1.5px solid #333;padding:.3rem .75rem;font-size:1rem;font-weight:700;margin:.3rem 0}
+    .chq-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;font-size:.75rem;color:#444;margin-top:.8rem;border-top:1px solid #eee;padding-top:.6rem}
+    .chq-meta label{display:block;color:#999;font-size:.67rem;margin-bottom:.12rem}
+    .chq-rib{font-family:monospace;font-size:.71rem;color:#777;background:#f8f8f8;padding:.3rem .5rem;margin-top:.4rem;letter-spacing:.04em}
+    .chq-sig{text-align:right;font-family:'Segoe Script','Comic Sans MS',cursive;font-size:1.1rem;color:#1a3c6e;margin-top:.8rem;border-top:1px solid #eee;padding-top:.5rem}
+    /* Lettre de confirmation */
+    .conf-doc{background:#fff;max-width:560px;width:100%;padding:1.6rem;font-family:'Times New Roman',serif;font-size:.84rem;line-height:1.85;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+    .conf-letterhead{display:flex;justify-content:space-between;margin-bottom:1.2rem;padding-bottom:.7rem;border-bottom:2px solid #0f766e;font-family:Arial,sans-serif;font-size:.78rem;gap:1rem}
+    .conf-org{font-size:.98rem;font-weight:700;color:#0f766e;margin-bottom:.2rem}
+    .conf-ref{font-size:.75rem;color:#555;text-align:right;line-height:1.8;flex-shrink:0}
+    .conf-body{white-space:pre-line;color:#222}
+    .conf-seal{width:62px;height:62px;border-radius:50%;border:2px solid #0f766e;display:flex;align-items:center;justify-content:center;font-size:.48rem;text-align:center;color:#0f766e;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:1rem auto 0;line-height:1.4}
+    /* Formulaire don en mémoire */
+    .mem-doc{background:#fff;max-width:560px;width:100%;padding:1.6rem;font-family:Arial,sans-serif;font-size:.83rem;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+    .mem-header{text-align:center;border-bottom:2px solid #7c3aed;margin-bottom:1.1rem;padding-bottom:.8rem}
+    .mem-org{font-size:.84rem;font-weight:700;color:#7c3aed}
+    .mem-title{font-size:.98rem;font-weight:700;text-transform:uppercase;color:#4c1d95;margin:.3rem 0}
+    .mem-field{display:flex;gap:.5rem;margin:.35rem 0;font-size:.82rem;align-items:baseline;border-bottom:1px dotted #e9d5ff;padding-bottom:.3rem}
+    .mem-field label{font-weight:700;color:#5b21b6;flex-shrink:0;min-width:110px}
+    .mem-mention{background:#faf5ff;border:1px solid #e9d5ff;border-left:3px solid #7c3aed;padding:.7rem .9rem;border-radius:0 6px 6px 0;font-size:.8rem;color:#374151;margin:.8rem 0;line-height:1.7;font-style:italic}
+    .mem-sign{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.2rem;font-size:.77rem;color:#555}
+    .mem-sign-box{border-top:1px solid #bbb;padding-top:.4rem}
+
     @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     @keyframes spin{to{transform:rotate(360deg)}}
@@ -841,7 +886,11 @@ Votre fiche donateur a été créée dans notre système (réf. SF-00812543).
 
 Avec toute notre gratitude,
 Mathieu Leroux — Service Donateurs`,
-    autoTags:["💳 Chèque 1483721 — 200 € enregistré","👤 Fiche créée SF-00812543","📎 RF-2024-006147 généré","📮 Reçu papier à expédier"]
+    autoTags:["💳 Chèque 1483721 — 200 € enregistré","👤 Fiche créée SF-00812543","📎 RF-2024-006147 généré","📮 Reçu papier à expédier"],
+    attachments:[
+      {name:"Chèque BNP N°1483721",icon:"🏦",type:"cheque",num:"1483721",bank:"BNP Paribas — Agence Clermont-Ferrand",amount:200,amountWords:"Deux cents euros",date:"05/03/2025",beneficiary:"Association Leucémie Espoir",signatory:"René Gauthier"},
+      {name:"Reçu fiscal RF-2024-006147",icon:"📋",type:"receipt",donor:"René Gauthier",address:"12 rue du Moulin Vieux, 63000 Clermont-Ferrand",amount:200,date:"06/03/2025",ref:"RF-2024-006147",form:"chèque BNP N°1483721"}
+    ]
   },
   {
     id:12,from:"Madeleine Charpentier",fromEmail:"Courrier postal",
@@ -971,7 +1020,11 @@ Les dons antérieurs à votre nom restent dans nos archives pour votre historiqu
 
 Bien cordialement,
 Mathieu Leroux — Service Donateurs`,
-    autoTags:["👤 Fiche Francine Beaumont créée (SF-00912847)","✅ Transfert dons confirmé","📊 Excel mis à jour"]
+    autoTags:["👤 Fiche Francine Beaumont créée (SF-00912847)","✅ Transfert dons confirmé","📊 Excel mis à jour"],
+    attachments:[
+      {name:"Reçu fiscal RF-2024-006148",icon:"📋",type:"receipt",donor:"Yves Beaumont",address:"47 avenue des Cèdres, 69003 Lyon",amount:150,date:"18/06/2024",ref:"RF-2024-006148",form:"virement bancaire"},
+      {name:"Confirmation de virement",icon:"✅",type:"confirm",donor:"Yves Beaumont",amount:150,date:"18/06/2024",ref:"VIR-2024-003892"}
+    ]
   },
   {
     id:14,from:"Sandrine Mercier",fromEmail:"06 53 28 74 91",audioSrc:"assets/G%C3%A9rard%20Mercier.wav",
@@ -1036,7 +1089,11 @@ Notre coordinatrice Mme Laure Martin vous contactera personnellement cette semai
 
 Avec toute notre sympathie,
 Mathieu Leroux — Service Donateurs`,
-    autoTags:["🕯️ Marc Mercier : mention rapport annuel 2024","📋 Dossier Don en Mémoire créé","📩 Mme L. Martin notifiée","👤 Fiche Sandrine Mercier créée"]
+    autoTags:["🕯️ Marc Mercier : mention rapport annuel 2024","📋 Dossier Don en Mémoire créé","📩 Mme L. Martin notifiée","👤 Fiche Sandrine Mercier créée"],
+    attachments:[
+      {name:"Formulaire don en mémoire",icon:"💐",type:"memorial",donor:"Sandrine Mercier",email:"s.mercier@hotmail.fr",address:"23 rue de la Paix, 13000 Marseille",amount:500,deceased:"Marc Mercier",mention:"Marc Mercier figurera dans le rapport annuel 2024 de l'Association Leucémie Espoir, sous la rubrique « En leur mémoire »."},
+      {name:"Reçu fiscal RF-2024-006149",icon:"📋",type:"receipt",donor:"Sandrine Mercier",address:"23 rue de la Paix, 13000 Marseille",amount:500,date:"19/06/2024",ref:"RF-2024-006149",form:"virement bancaire"}
+    ]
   }
 ];
 
@@ -1346,6 +1403,7 @@ function renderEmail(id) {
         </div>
         <div class="gen-prev">${e.genEmail}</div>
         <div class="auto-tags">${tags}</div>
+        ${e.attachments?`<div class="att-list">${e.attachments.map((a,i)=>`<button class="att-chip" onclick="openDoc(${id},${i})">${a.icon} ${a.name}</button>`).join('')}</div>`:``}
       </div>
     </div>
     ${renderEmailHistory(e.donorId, id)}`;
@@ -1854,7 +1912,113 @@ function _speakIdx(idx) {
   window.speechSynthesis.speak(utt);
 }
 
-document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closePdf();closeAudio();}});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closePdf();closeAudio();closeDoc();}});
+
+// ═══════════════════════════ DOCUMENT MODAL ═══════════════════════════
+
+function openDoc(emailId, attIdx) {
+  const e = EMAILS.find(x=>x.id===emailId);
+  if(!e||!e.attachments) return;
+  const att = e.attachments[attIdx];
+  if(!att) return;
+  document.getElementById('docFilename').textContent = att.name;
+  document.getElementById('docContent').innerHTML = _renderDoc(att);
+  document.getElementById('docOverlay').classList.add('show');
+}
+
+function closeDoc() {
+  document.getElementById('docOverlay').classList.remove('show');
+}
+
+function _renderDoc(a) {
+  if(a.type==='receipt')  return _docReceipt(a);
+  if(a.type==='cheque')   return _docCheque(a);
+  if(a.type==='confirm')  return _docConfirm(a);
+  if(a.type==='memorial') return _docMemorial(a);
+  return '<div style="padding:2rem;text-align:center;color:#999">Document non disponible.</div>';
+}
+
+function _docReceipt(a) {
+  const red = Math.round(a.amount*.66);
+  return `<div class="rf-doc">
+  <div class="rf-cerfa">CERFA N° 11580*03 — Formulaire homologué DGFIP</div>
+  <div class="rf-title">Reçu au titre des dons à des organismes d'intérêt général<br><span style="font-size:.76rem;font-weight:400">(Art. 200, 238 bis et 978 du Code Général des Impôts)</span></div>
+  <div class="rf-section"><h4>Organisme bénéficiaire</h4><strong>Association Leucémie Espoir</strong><br>47 rue Championnet, 75018 Paris — RNA W751234567<br><em style="font-size:.78rem">Association loi 1901 reconnue d'utilité publique — Éligible art. 200 CGI</em></div>
+  <div class="rf-section"><h4>Donateur</h4><strong>${a.donor}</strong><br>${a.address}</div>
+  <div class="rf-amount">Montant du don : ${a.amount.toLocaleString('fr-FR')},00 €</div>
+  <div class="rf-section"><strong>Forme du don :</strong> ${a.form||'virement bancaire'}<br><strong>Date :</strong> ${a.date}<br><strong>Référence :</strong> ${a.ref}</div>
+  <div class="rf-footer">
+    <div class="rf-sign"><strong>Fait à Paris, le ${a.date}</strong><br><br>Ce reçu permet de bénéficier d'une réduction d'impôt de 66% du montant versé, soit <strong>${red},00 €</strong>.</div>
+    <div class="rf-stamp">Signature et cachet<br>de l'organisme</div>
+  </div>
+</div>`;
+}
+
+function _docCheque(a) {
+  return `<div class="chq-doc">
+  <div class="chq-bg">BNP PARIBAS</div>
+  <div class="chq-bank">🏦 ${a.bank}</div>
+  <div style="font-size:.84rem;margin:.3rem 0">Payez contre ce chèque non endossable (sauf au profit d'une banque ou d'un établissement assimilé)</div>
+  <div class="chq-words">La somme de : <em>${a.amountWords}</em> ———————————————————————————</div>
+  <div style="display:flex;align-items:center;gap:1rem;margin:.4rem 0">
+    <div class="chq-num">${a.amount.toLocaleString('fr-FR')},00 €</div>
+    <div style="font-size:.82rem">À l'ordre de :<br><strong>${a.beneficiary}</strong></div>
+  </div>
+  <div class="chq-meta">
+    <div><label>N° de chèque</label><strong>${a.num}</strong></div>
+    <div><label>Date</label><strong>${a.date}</strong></div>
+    <div><label>Agence</label><strong>${(a.bank.split('—')[1]||'').trim()||'France'}</strong></div>
+  </div>
+  <div class="chq-rib">CMC7 : ⑆30004⑆ ⑆00800⑆ 00012345678⑆97⑆ — Clé RIB 97</div>
+  <div class="chq-sig">${a.signatory}</div>
+</div>`;
+}
+
+function _docConfirm(a) {
+  return `<div class="conf-doc">
+  <div class="conf-letterhead">
+    <div><div class="conf-org">Association Leucémie Espoir</div><div style="color:#555;margin-top:.2rem;font-size:.76rem">47 rue Championnet — 75018 Paris<br>contact@leucemie-espoir.org — 01 42 38 65 90</div></div>
+    <div class="conf-ref">Réf. : ${a.ref}<br>Paris, le ${a.date}<br>Service Donateurs</div>
+  </div>
+  <div class="conf-body">Objet : Confirmation de réception de votre virement
+
+Monsieur ${a.donor},
+
+Nous avons le plaisir de vous confirmer la bonne réception de votre virement bancaire d'un montant de ${a.amount.toLocaleString('fr-FR')},00 €, enregistré le ${a.date} sous la référence ${a.ref}.
+
+Ce don a été intégré à votre dossier donateur. Vous recevrez votre reçu fiscal dans un délai de 8 jours ouvrés.
+
+Nous vous remercions chaleureusement de votre soutien précieux à nos actions.
+
+Bien cordialement,
+
+Mathieu Leroux
+Responsable du Service Donateurs
+Association Leucémie Espoir</div>
+  <div class="conf-seal">Association<br>Leucémie<br>Espoir<br>✦</div>
+</div>`;
+}
+
+function _docMemorial(a) {
+  const refNum = 'MEM-2024-' + String((a.donor.charCodeAt(0)*37+a.amount)%900+100);
+  return `<div class="mem-doc">
+  <div class="mem-header">
+    <div class="mem-org">🎗️ Association Leucémie Espoir</div>
+    <div class="mem-title">Formulaire — Don en Mémoire</div>
+    <div style="font-size:.73rem;color:#7c3aed;margin-top:.2rem">Réf. ${refNum}</div>
+  </div>
+  <div class="mem-field"><label>Personne honorée :</label><strong>${a.deceased}</strong></div>
+  <div class="mem-field"><label>Donateur :</label>${a.donor}</div>
+  <div class="mem-field"><label>Email :</label>${a.email}</div>
+  <div class="mem-field"><label>Adresse :</label>${a.address}</div>
+  <div class="mem-field"><label>Montant du don :</label><strong>${a.amount.toLocaleString('fr-FR')},00 €</strong></div>
+  <div class="mem-mention">${a.mention}</div>
+  <div class="mem-sign">
+    <div class="mem-sign-box"><div style="color:#9ca3af;font-size:.7rem;margin-bottom:.4rem">Signature du donateur</div><div style="height:38px"></div></div>
+    <div class="mem-sign-box" style="text-align:right"><div style="color:#9ca3af;font-size:.7rem;margin-bottom:.4rem">Cachet de l'association</div><div style="height:38px"></div></div>
+  </div>
+</div>`;
+}
 </script>
 
 <!-- PDF Viewer Modal -->
@@ -1892,5 +2056,17 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closePdf();closeA
 </div>
 
 <audio id="audioFileEl" style="display:none" preload="none"></audio>
+
+<!-- Document Viewer Modal -->
+<div class="modal-ov" id="docOverlay" onclick="if(event.target===this)closeDoc()">
+  <div class="modal-box doc-modal-box">
+    <div class="mhd">
+      <span class="mhd-title">📎 Pièce jointe</span>
+      <span class="mhd-sub" id="docFilename"></span>
+      <button class="mhd-close" onclick="closeDoc()">✕ Fermer</button>
+    </div>
+    <div class="doc-scroll"><div id="docContent"></div></div>
+  </div>
+</div>
 </body>
 </html>
