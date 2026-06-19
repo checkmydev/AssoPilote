@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
@@ -561,6 +561,7 @@ Mathieu Leroux — Service Donateurs`,
     attachments:[
       {name:"Confirmation de résiliation",icon:"✅",type:"confirm",title:"Confirmation de résiliation de don mensuel",donor:"Claire Martin",body:"Objet : Confirmation de résiliation de votre don mensuel\n\nChère Madame Martin,\n\nNous vous confirmons la résiliation de votre don mensuel de 30,00 €, effective au 1er juillet 2024.\n\nAucun prélèvement ne sera effectué au-delà de cette date.\n\nNous vous remercions chaleureusement pour vos 810,00 € de dons cumulés depuis mars 2022. Votre soutien au fil des années a été précieux pour nos bénéficiaires.\n\nBien cordialement,\n\nMathieu Leroux\nResponsable du Service Donateurs\nAssociation Leucémie Espoir",ref:"RES-2024-000823",date:"18/06/2024"}
     ]
+    ,dataUpdates:{donor:{status:'inactif',statusLbl:'Ancien donateur'},sfRow:{statut:'Ancien donateur',donMensuel:'—'}}
   },
   {
     id:3,from:"Jacques Lebrun",fromEmail:"j.lebrun@free.fr",
@@ -722,6 +723,7 @@ Mathieu Leroux — Service Donateurs`,
     attachments:[
       {name:"Confirmation MAJ coordonnées",icon:"📍",type:"confirm",title:"Confirmation de mise à jour de vos coordonnées",donor:"Marie-Claire Fontaine",body:"Objet : Confirmation de mise à jour de vos coordonnées\n\nChère Madame Fontaine,\n\nNous vous confirmons la mise à jour de vos coordonnées dans l'ensemble de nos systèmes :\n\n• Nouvelle adresse : 47 avenue des Pins, 31000 Toulouse\n• Nouveau téléphone : 06 44 21 87 53\n• Adresse email : inchangée\n\nCes modifications sont effectives immédiatement (CRM Salesforce, fichier adhérents, liste de diffusion courrier).\n\nBien cordialement,\n\nMathieu Leroux\nResponsable du Service Donateurs\nAssociation Leucémie Espoir",ref:"MAJ-2024-001247",date:"18/06/2024"}
     ]
+    ,dataUpdates:{donor:{adresse:'47 avenue des Pins, 31000 Toulouse',ville:'Toulouse',tel:'06 44 21 87 53'},sfRow:{adresse:'47 avenue des Pins, 31000 Toulouse',ville:'Toulouse'}}
   },
   {
     id:7,from:"Thomas Durand",fromEmail:"thomas.durand.25@gmail.com",
@@ -1108,6 +1110,7 @@ Mathieu Leroux — Service Donateurs`,
       {name:"Reçu fiscal RF-2024-006148",icon:"📋",type:"receipt",donor:"Yves Beaumont",address:"47 avenue des Cèdres, 69003 Lyon",amount:150,date:"18/06/2024",ref:"RF-2024-006148",form:"virement bancaire (Crédit Agricole)"},
       {name:"Confirmation de virement",icon:"✅",type:"confirm",donor:"Yves Beaumont",amount:150,date:"18/06/2024",ref:"VIR-2024-003892"}
     ]
+    ,dataUpdates:{donor:{email:'yves.beaumont@orange.fr'},sfRow:{email:'yves.beaumont@orange.fr'}}
   },
   {
     id:14,from:"Sandrine Mercier",fromEmail:"06 53 28 74 91",audioSrc:"assets/G%C3%A9rard%20Mercier.wav",
@@ -1192,7 +1195,7 @@ Mathieu Leroux — Service Donateurs`,
 ];
 
 const DONORS = {
-  1:{prenom:"Henri",nom:"Dupont",age:67,job:"Retraité (ancien directeur commercial)",ville:"Paris",email:"henri.dupont@gmail.com",tel:"06 12 34 56 78",sfId:"SF-00142847",since:"Janvier 2019",status:"champion",statusLbl:"Champion",tags:["Don mensuel","Bénévole"],
+  1:{prenom:"Henri",nom:"Dupont",age:67,job:"Retraité (ancien directeur commercial)",ville:"Paris",adresse:"23 rue des Lilas, 75011 Paris",email:"henri.dupont@gmail.com",tel:"06 12 34 56 78",sfId:"SF-00142847",since:"Janvier 2019",status:"champion",statusLbl:"Champion",tags:["Don mensuel","Bénévole"],
   note:"Père de Marie Dupont, ancienne patiente — en rémission depuis mars 2021. Très fidèle, disponible pour témoignages.",
   dons:[{yr:2024,amt:600,dtl:"12×50€"},{yr:2023,amt:600,dtl:"12×50€"},{yr:2022,amt:600,dtl:"12×50€"},{yr:2021,amt:600,dtl:"12×50€"},{yr:2020,amt:600,dtl:"12×50€"},{yr:2019,amt:600,dtl:"12×50€"}],total:3600,
   emailHistory:[
@@ -1217,14 +1220,14 @@ Veuillez trouver ci-joint votre reçu fiscal pour l'année 2022 (600,00 €, ré
 Bien cordialement, Mathieu Leroux`}
   ],
   dossiers:[],
-  sfRow:{id:"SF-00142847",prenom:"Henri",nom:"Dupont",email:"henri.dupont@gmail.com",ville:"Paris",statut:"Champion",total:"3 600 €",donMensuel:"50 €/m",benevole:"Oui",depuis:"2019-01-15"},
+  sfRow:{id:"SF-00142847",prenom:"Henri",nom:"Dupont",email:"henri.dupont@gmail.com",adresse:"23 rue des Lilas, 75011 Paris",ville:"Paris",statut:"Champion",total:"3 600 €",donMensuel:"50 €/m",benevole:"Oui",depuis:"2019-01-15"},
   xlRows:[
     {ref:"DON-2024-012",donateur:"Henri Dupont",date:"01/12/2024",montant:"50,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-001847",statut:"Émis"},
     {ref:"DON-2024-011",donateur:"Henri Dupont",date:"01/11/2024",montant:"50,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-001847",statut:"Émis"},
     {ref:"DON-2024-001",donateur:"Henri Dupont",date:"01/01/2024",montant:"50,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-001847",statut:"Émis"},
     {ref:"DON-2023-012",donateur:"Henri Dupont",date:"01/12/2023",montant:"50,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2023-001203",statut:"Émis"}
   ]},
-  2:{prenom:"Claire",nom:"Martin",age:45,job:"Infirmière en chef (CHU Lyon)",ville:"Lyon",email:"claire.martin73@outlook.fr",tel:"06 87 45 12 36",sfId:"SF-00387124",since:"Mars 2022",status:"actif",statusLbl:"Actif",tags:["Don mensuel","Marche 2023"],
+  2:{prenom:"Claire",nom:"Martin",age:45,job:"Infirmière en chef (CHU Lyon)",ville:"Lyon",adresse:"8 allée des Roses, 69007 Lyon",email:"claire.martin73@outlook.fr",tel:"06 87 45 12 36",sfId:"SF-00387124",since:"Mars 2022",status:"actif",statusLbl:"Actif",tags:["Don mensuel","Marche 2023"],
   note:"Participé à la marche solidaire 2023 avec l'équipe soignante du CHU. Sensible à l'accompagnement psy des familles.",
   dons:[{yr:2024,amt:150,dtl:"5×30€ (jan–mai)"},{yr:2023,amt:360,dtl:"12×30€"},{yr:2022,amt:300,dtl:"10×30€"}],total:810,
   emailHistory:[
@@ -1242,13 +1245,13 @@ Avec mes collègues du CHU, nous serions intéressées pour participer à votre 
 Merci, Claire Martin`}
   ],
   dossiers:[],
-  sfRow:{id:"SF-00387124",prenom:"Claire",nom:"Martin",email:"claire.martin73@outlook.fr",ville:"Lyon",statut:"Actif",total:"810 €",donMensuel:"30 €/m",benevole:"Oui",depuis:"2022-03-01"},
+  sfRow:{id:"SF-00387124",prenom:"Claire",nom:"Martin",email:"claire.martin73@outlook.fr",adresse:"8 allée des Roses, 69007 Lyon",ville:"Lyon",statut:"Actif",total:"810 €",donMensuel:"30 €/m",benevole:"Oui",depuis:"2022-03-01"},
   xlRows:[
     {ref:"DON-2024-005",donateur:"Claire Martin",date:"01/05/2024",montant:"30,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-007821",statut:"Émis"},
     {ref:"DON-2024-001",donateur:"Claire Martin",date:"01/01/2024",montant:"30,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-007821",statut:"Émis"},
     {ref:"DON-2023-012",donateur:"Claire Martin",date:"01/12/2023",montant:"30,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2023-004512",statut:"Émis"}
   ]},
-  3:{prenom:"Jacques",nom:"Lebrun",age:58,job:"Employé municipal (arrêt maladie)",ville:"Bordeaux",email:"j.lebrun@free.fr",tel:"05 56 34 87 12",sfId:"SF-00521033",since:"Février 2022",status:"adherent",statusLbl:"Adhérent + Bénéficiaire",tags:["Adhérent","Don annuel","Dossier actif"],
+  3:{prenom:"Jacques",nom:"Lebrun",age:58,job:"Employé municipal (arrêt maladie)",ville:"Bordeaux",adresse:"14 cours du Médoc, 33000 Bordeaux",email:"j.lebrun@free.fr",tel:"05 56 34 87 12",sfId:"SF-00521033",since:"Février 2022",status:"adherent",statusLbl:"Adhérent + Bénéficiaire",tags:["Adhérent","Don annuel","Dossier actif"],
   note:"Situation difficile depuis arrêt maladie. Fils de 14 ans, ancien patient. Dossier aide alimentaire urgent.",
   dons:[{yr:2024,amt:100,dtl:"1 don annuel"},{yr:2023,amt:100,dtl:"1 don annuel"},{yr:2022,amt:100,dtl:"1 don annuel"}],total:300,
   emailHistory:[
@@ -1264,19 +1267,19 @@ Votre dossier a bien été transmis au comité d'attribution le 8 avril. Nous re
 Bien cordialement, Mathieu Leroux`}
   ],
   dossiers:[{ref:"DOS-2024-0312",type:"Aide alimentaire mensuelle",opened:"12 mars 2024",status:"En attente validation comité",warn:"⚠️ Bloqué depuis 8 semaines — relance urgente",responsible:"Mme Marie Duval — Service social"}],
-  sfRow:{id:"SF-00521033",prenom:"Jacques",nom:"Lebrun",email:"j.lebrun@free.fr",ville:"Bordeaux",statut:"Adhérent",total:"300 €",donMensuel:"—",benevole:"Non",depuis:"2022-02-10"},
+  sfRow:{id:"SF-00521033",prenom:"Jacques",nom:"Lebrun",email:"j.lebrun@free.fr",adresse:"14 cours du Médoc, 33000 Bordeaux",ville:"Bordeaux",statut:"Adhérent",total:"300 €",donMensuel:"—",benevole:"Non",depuis:"2022-02-10"},
   xlRows:[
     {ref:"DON-2024-001",donateur:"Jacques Lebrun",date:"15/01/2024",montant:"100,00 €",type:"Annuel",prelev:"Virement",recuFiscal:"RF-2024-002341",statut:"Émis"},
     {ref:"DON-2023-001",donateur:"Jacques Lebrun",date:"20/01/2023",montant:"100,00 €",type:"Annuel",prelev:"Virement",recuFiscal:"RF-2023-008234",statut:"Émis"}
   ]},
-  4:{prenom:"Sophie",nom:"Renard",age:34,job:"Chargée de communication",ville:"Nantes",email:"sophie.renard@nantes.fr",tel:"07 62 18 45 73",sfId:"SF-00694827",since:"Novembre 2024",status:"nouveau",statusLbl:"Nouveau donateur",tags:["1er don","Intérêt bénévolat"],
+  4:{prenom:"Sophie",nom:"Renard",age:34,job:"Chargée de communication",ville:"Nantes",adresse:"14 rue des Genêts, 44000 Nantes",email:"sophie.renard@nantes.fr",tel:"07 62 18 45 73",sfId:"SF-00694827",since:"Novembre 2024",status:"nouveau",statusLbl:"Nouveau donateur",tags:["1er don","Intérêt bénévolat"],
   note:"Profil à fort potentiel. Background comm utile pour l'équipe bénévoles de Nantes.",
   dons:[{yr:2024,amt:150,dtl:"1 don ponctuel (nov.)"}],total:150,
   emailHistory:[],
   dossiers:[],
-  sfRow:{id:"SF-00694827",prenom:"Sophie",nom:"Renard",email:"sophie.renard@nantes.fr",ville:"Nantes",statut:"Nouveau",total:"150 €",donMensuel:"—",benevole:"Oui",depuis:"2024-11-14"},
+  sfRow:{id:"SF-00694827",prenom:"Sophie",nom:"Renard",email:"sophie.renard@nantes.fr",adresse:"14 rue des Genêts, 44000 Nantes",ville:"Nantes",statut:"Nouveau",total:"150 €",donMensuel:"—",benevole:"Oui",depuis:"2024-11-14"},
   xlRows:[{ref:"DON-2024-001",donateur:"Sophie Renard",date:"14/11/2024",montant:"150,00 €",type:"Ponctuel",prelev:"CB en ligne",recuFiscal:"RF-2024-004291",statut:"Émis"}]},
-  5:{prenom:"Pierre",nom:"Moreau",age:72,job:"Retraité (enseignant)",ville:"Marseille",email:"p.moreau.retraite@gmail.com",tel:"04 91 23 45 67",sfId:"SF-00298411",since:"Avril 2018",status:"actif",statusLbl:"Actif",tags:["Don trimestriel","Fidèle"],
+  5:{prenom:"Pierre",nom:"Moreau",age:72,job:"Retraité (enseignant)",ville:"Marseille",adresse:"12 avenue du Prado, 13008 Marseille",email:"p.moreau.retraite@gmail.com",tel:"04 91 23 45 67",sfId:"SF-00298411",since:"Avril 2018",status:"actif",statusLbl:"Actif",tags:["Don trimestriel","Fidèle"],
   note:"Donateur très régulier depuis 2018. Discret mais fidèle. A perdu un neveu en 2017.",
   dons:[{yr:2024,amt:480,dtl:"4×120€"},{yr:2023,amt:480,dtl:"4×120€"},{yr:2022,amt:480,dtl:"4×120€"},{yr:2021,amt:480,dtl:"4×120€"},{yr:2020,amt:480,dtl:"4×120€"},{yr:2019,amt:480,dtl:"4×120€"},{yr:2018,amt:240,dtl:"2×120€"}],total:3120,
   emailHistory:[
@@ -1289,13 +1292,13 @@ Merci pour votre soutien régulier depuis 6 ans.
 Bien cordialement, Mathieu Leroux`}
   ],
   dossiers:[],
-  sfRow:{id:"SF-00298411",prenom:"Pierre",nom:"Moreau",email:"p.moreau.retraite@gmail.com",ville:"Marseille",statut:"Actif",total:"3 120 €",donMensuel:"120 €/trim.",benevole:"Non",depuis:"2018-04-01"},
+  sfRow:{id:"SF-00298411",prenom:"Pierre",nom:"Moreau",email:"p.moreau.retraite@gmail.com",adresse:"12 avenue du Prado, 13008 Marseille",ville:"Marseille",statut:"Actif",total:"3 120 €",donMensuel:"120 €/trim.",benevole:"Non",depuis:"2018-04-01"},
   xlRows:[
     {ref:"DON-2024-004",donateur:"Pierre Moreau",date:"01/10/2024",montant:"120,00 €",type:"Trimestriel",prelev:"SEPA",recuFiscal:"RF-2024-000298",statut:"Émis"},
     {ref:"DON-2024-001",donateur:"Pierre Moreau",date:"02/01/2024",montant:"120,00 €",type:"Trimestriel",prelev:"SEPA",recuFiscal:"RF-2024-000298",statut:"Émis"},
     {ref:"DON-2022-004",donateur:"Pierre Moreau",date:"01/10/2022",montant:"120,00 €",type:"Trimestriel",prelev:"SEPA",recuFiscal:"RF-2022-000634",statut:"Non émis"}
   ]},
-  6:{prenom:"Marie-Claire",nom:"Fontaine",age:38,job:"Architecte indépendante",ville:"Toulouse",email:"mcfontaine.archi@outlook.com",tel:"06 44 21 87 53",sfId:"SF-00445872",since:"Septembre 2020",status:"actif",statusLbl:"Actif",tags:["Don mensuel"],
+  6:{prenom:"Marie-Claire",nom:"Fontaine",age:38,job:"Architecte indépendante",ville:"Paris",adresse:"28 rue de Rivoli, 75001 Paris",email:"mcfontaine.archi@outlook.com",tel:"06 32 18 97 42",sfId:"SF-00445872",since:"Septembre 2020",status:"actif",statusLbl:"Actif",tags:["Don mensuel"],
   note:"Donatrice régulière, peu de contact direct. Vient de déménager de Paris à Toulouse.",
   dons:[{yr:2024,amt:240,dtl:"12×20€"},{yr:2023,amt:240,dtl:"12×20€"},{yr:2022,amt:240,dtl:"12×20€"},{yr:2021,amt:240,dtl:"12×20€"},{yr:2020,amt:80,dtl:"4×20€"}],total:1040,
   emailHistory:[
@@ -1306,17 +1309,17 @@ Votre reçu fiscal 2023 (240,00 €, réf. RF-2023-005671) est joint.
 Bien cordialement, Mathieu Leroux`}
   ],
   dossiers:[],
-  sfRow:{id:"SF-00445872",prenom:"Marie-Claire",nom:"Fontaine",email:"mcfontaine.archi@outlook.com",ville:"Toulouse",statut:"Actif",total:"1 040 €",donMensuel:"20 €/m",benevole:"Non",depuis:"2020-09-01"},
+  sfRow:{id:"SF-00445872",prenom:"Marie-Claire",nom:"Fontaine",email:"mcfontaine.archi@outlook.com",adresse:"28 rue de Rivoli, 75001 Paris",ville:"Paris",statut:"Actif",total:"1 040 €",donMensuel:"20 €/m",benevole:"Non",depuis:"2020-09-01"},
   xlRows:[
     {ref:"DON-2024-012",donateur:"Marie-Claire Fontaine",date:"01/12/2024",montant:"20,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-009812",statut:"Émis"},
     {ref:"DON-2024-001",donateur:"Marie-Claire Fontaine",date:"01/01/2024",montant:"20,00 €",type:"Mensuel",prelev:"SEPA",recuFiscal:"RF-2024-009812",statut:"Émis"}
   ]},
-  7:{prenom:"Thomas",nom:"Durand",age:25,job:"Étudiant (Sciences Po Paris)",ville:"Paris",email:"thomas.durand.25@gmail.com",tel:"07 89 34 12 45",sfId:"SF-00712341",since:"Juin 2024",status:"nouveau",statusLbl:"Nouveau contact",tags:["Jeune aidant","Non donateur"],
+  7:{prenom:"Thomas",nom:"Durand",age:25,job:"Étudiant (Sciences Po Paris)",ville:"Paris",adresse:"7 rue Saint-Jacques, 75005 Paris",email:"thomas.durand.25@gmail.com",tel:"07 89 34 12 45",sfId:"SF-00712341",since:"Juin 2024",status:"nouveau",statusLbl:"Nouveau contact",tags:["Jeune aidant","Non donateur"],
   note:"Fils aidant d'un patient actuel. Pas encore donateur. Profil à accompagner avec le programme jeunes aidants.",
   dons:[],total:0,emailHistory:[],dossiers:[],
-  sfRow:{id:"SF-00712341",prenom:"Thomas",nom:"Durand",email:"thomas.durand.25@gmail.com",ville:"Paris",statut:"Nouveau",total:"0 €",donMensuel:"—",benevole:"Non",depuis:"2024-06-09"},
+  sfRow:{id:"SF-00712341",prenom:"Thomas",nom:"Durand",email:"thomas.durand.25@gmail.com",adresse:"7 rue Saint-Jacques, 75005 Paris",ville:"Paris",statut:"Nouveau",total:"0 €",donMensuel:"—",benevole:"Non",depuis:"2024-06-09"},
   xlRows:[]},
-  8:{prenom:"Isabelle",nom:"Petit",age:55,job:"Comptable (cabinet Duval & Assoc.)",ville:"Strasbourg",email:"isabelle.petit.stras@wanadoo.fr",tel:"03 88 41 22 17",sfId:"SF-00523801",since:"Non donateur",status:"inactif",statusLbl:"Non-donateur",tags:["Réclamation RGPD"],
+  8:{prenom:"Isabelle",nom:"Petit",age:55,job:"Comptable (cabinet Duval & Assoc.)",ville:"Strasbourg",adresse:"15 rue des Bouchers, 67000 Strasbourg",email:"isabelle.petit.stras@wanadoo.fr",tel:"03 88 41 22 17",sfId:"SF-00523801",since:"Non donateur",status:"inactif",statusLbl:"Non-donateur",tags:["Réclamation RGPD"],
   note:"Reçoit des courriers destinés à Robert Guillot (ancien occupant). Deuxième signalement. Aucune relation de don.",
   dons:[],total:0,
   emailHistory:[
@@ -1327,14 +1330,14 @@ J'ai encore reçu un courrier destiné à un certain M. Robert Guillot. Pouvez-v
 Isabelle Petit`}
   ],
   dossiers:[],
-  sfRow:{id:"SF-00523801",prenom:"Isabelle",nom:"Petit",email:"isabelle.petit.stras@wanadoo.fr",ville:"Strasbourg",statut:"Inactif",total:"0 €",donMensuel:"—",benevole:"Non",depuis:"—"},
+  sfRow:{id:"SF-00523801",prenom:"Isabelle",nom:"Petit",email:"isabelle.petit.stras@wanadoo.fr",adresse:"15 rue des Bouchers, 67000 Strasbourg",ville:"Strasbourg",statut:"Inactif",total:"0 €",donMensuel:"—",benevole:"Non",depuis:"—"},
   xlRows:[]},
-  9:{prenom:"François",nom:"Bernard",age:48,job:"Directeur général (Groupe Renov, PME 45 pers.)",ville:"Bordeaux",email:"f.bernard@grouperenov.fr",tel:"05 56 87 41 23",sfId:"SF-00798234",since:"Nouveau prospect",status:"nouveau",statusLbl:"Prospect partenariat",tags:["Entreprise","RSE","Partenariat"],
+  9:{prenom:"François",nom:"Bernard",age:48,job:"Directeur général (Groupe Renov, PME 45 pers.)",ville:"Bordeaux",adresse:"3 place du Parlement, 33000 Bordeaux",email:"f.bernard@grouperenov.fr",tel:"05 56 87 41 23",sfId:"SF-00798234",since:"Nouveau prospect",status:"nouveau",statusLbl:"Prospect partenariat",tags:["Entreprise","RSE","Partenariat"],
   note:"PME 45 salariés, rénovation énergétique. Budget RSE 2025 estimé à 10–20k€.",
   dons:[],total:0,emailHistory:[],dossiers:[],
-  sfRow:{id:"SF-00798234",prenom:"François",nom:"Bernard",email:"f.bernard@grouperenov.fr",ville:"Bordeaux",statut:"Nouveau",total:"0 €",donMensuel:"—",benevole:"Non",depuis:"2025-06-17"},
+  sfRow:{id:"SF-00798234",prenom:"François",nom:"Bernard",email:"f.bernard@grouperenov.fr",adresse:"3 place du Parlement, 33000 Bordeaux",ville:"Bordeaux",statut:"Nouveau",total:"0 €",donMensuel:"—",benevole:"Non",depuis:"2025-06-17"},
   xlRows:[]},
-  10:{prenom:"Nathalie",nom:"Rousseau",age:61,job:"Retraitée (ex-infirmière)",ville:"Lyon",email:"nathalie.rousseau62@gmail.com",tel:"04 78 23 11 45",sfId:"SF-00341122",since:"Don en mémoire (†02/06/2025)",status:"nouveau",statusLbl:"Don en mémoire",tags:["Sensible","Deuil","Don mémoire"],
+  10:{prenom:"Nathalie",nom:"Rousseau",age:61,job:"Retraitée (ex-infirmière)",ville:"Lyon",adresse:"22 quai Fulchiron, 69005 Lyon",email:"nathalie.rousseau62@gmail.com",tel:"04 78 23 11 45",sfId:"SF-00341122",since:"Don en mémoire (†02/06/2025)",status:"nouveau",statusLbl:"Don en mémoire",tags:["Sensible","Deuil","Don mémoire"],
   note:"Femme de Jean-Paul Rousseau, donateur depuis 2015 (†02/06/2025). Fils Antoine, ancien patient (2015). Traiter avec la plus grande délicatesse.",
   dons:[{yr:2024,amt:200,dtl:"Dons J-P. Rousseau"},{yr:2023,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2022,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2021,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2020,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2019,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2018,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2017,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2016,amt:400,dtl:"Dons J-P. Rousseau"},{yr:2015,amt:400,dtl:"Dons J-P. Rousseau"}],total:3800,
   emailHistory:[
@@ -1347,41 +1350,41 @@ Merci pour votre fidélité depuis 2015.
 Bien cordialement, Mathieu Leroux`}
   ],
   dossiers:[],
-  sfRow:{id:"SF-00341122",prenom:"Jean-Paul",nom:"Rousseau (†)",email:"nathalie.rousseau62@gmail.com",ville:"Lyon",statut:"Don en mémoire",total:"3 800 €",donMensuel:"200 €/sem.",benevole:"Non",depuis:"2015-04-01"},
+  sfRow:{id:"SF-00341122",prenom:"Jean-Paul",nom:"Rousseau (†)",email:"nathalie.rousseau62@gmail.com",adresse:"22 quai Fulchiron, 69005 Lyon",ville:"Lyon",statut:"Don en mémoire",total:"3 800 €",donMensuel:"200 €/sem.",benevole:"Non",depuis:"2015-04-01"},
   xlRows:[
     {ref:"DON-2025-001",donateur:"Jean-Paul Rousseau",date:"01/02/2025",montant:"200,00 €",type:"Semestriel",prelev:"Virement",recuFiscal:"RF-2024-003892",statut:"Émis"},
     {ref:"DON-2024-001",donateur:"Jean-Paul Rousseau",date:"05/01/2024",montant:"200,00 €",type:"Semestriel",prelev:"Virement",recuFiscal:"RF-2024-003892",statut:"Émis"}
   ]},
-  11:{prenom:"René",nom:"Gauthier",age:78,job:"Retraité (ancien instituteur)",ville:"Clermont-Ferrand",email:"—",tel:"04 73 42 18 97",sfId:"SF-00812543",since:"Juin 2024",status:"nouveau",statusLbl:"Nouveau donateur",tags:["Courrier papier","Chèque"],
+  11:{prenom:"René",nom:"Gauthier",age:78,job:"Retraité (ancien instituteur)",ville:"Clermont-Ferrand",adresse:"12 rue du Moulin Vieux, 63000 Clermont-Ferrand",email:"—",tel:"04 73 42 18 97",sfId:"SF-00812543",since:"Juin 2024",status:"nouveau",statusLbl:"Nouveau donateur",tags:["Courrier papier","Chèque"],
   note:"Première prise de contact par lettre manuscrite. Fille Émilie, ancienne patiente (2019). Pas d'adresse email connue — correspondance uniquement par courrier.",
   dons:[{yr:2024,amt:200,dtl:"1 chèque (juin)"}],total:200,
   emailHistory:[],dossiers:[],
-  sfRow:{id:"SF-00812543",prenom:"René",nom:"Gauthier",email:"—",ville:"Clermont-Ferrand",statut:"Nouveau",total:"200 €",donMensuel:"—",benevole:"Non",depuis:"2024-06-18"},
+  sfRow:{id:"SF-00812543",prenom:"René",nom:"Gauthier",email:"—",adresse:"12 rue du Moulin Vieux, 63000 Clermont-Ferrand",ville:"Clermont-Ferrand",statut:"Nouveau",total:"200 €",donMensuel:"—",benevole:"Non",depuis:"2024-06-18"},
   xlRows:[{ref:"DON-2024-013",donateur:"René Gauthier",date:"18/06/2024",montant:"200,00 €",type:"Ponctuel",prelev:"Chèque",recuFiscal:"RF-2024-006147",statut:"Émis"}]},
-  12:{prenom:"Madeleine",nom:"Charpentier",age:69,job:"Retraitée (professeure de piano)",ville:"Nantes",email:"—",tel:"—",sfId:"SF-00247158",since:"Janvier 2019",status:"actif",statusLbl:"Active",tags:["Don annuel","Courrier papier"],
+  12:{prenom:"Madeleine",nom:"Charpentier",age:69,job:"Retraitée (professeure de piano)",ville:"Nantes",adresse:"8 impasse des Lilas, 44000 Nantes",email:"—",tel:"—",sfId:"SF-00247158",since:"Janvier 2019",status:"actif",statusLbl:"Active",tags:["Don annuel","Courrier papier"],
   note:"Préfère exclusivement la correspondance par courrier postal. Aucune adresse email connue. Donatrice fidèle depuis 2019.",
   dons:[{yr:2024,amt:120,dtl:"1×120€"},{yr:2023,amt:240,dtl:"2×120€"},{yr:2022,amt:120,dtl:"1×120€"},{yr:2021,amt:120,dtl:"1×120€"},{yr:2020,amt:120,dtl:"1×120€"},{yr:2019,amt:120,dtl:"1×120€"}],total:840,
   emailHistory:[],dossiers:[],
-  sfRow:{id:"SF-00247158",prenom:"Madeleine",nom:"Charpentier",email:"—",ville:"Nantes",statut:"Actif",total:"840 €",donMensuel:"—",benevole:"Non",depuis:"2019-01-15"},
+  sfRow:{id:"SF-00247158",prenom:"Madeleine",nom:"Charpentier",email:"—",adresse:"8 impasse des Lilas, 44000 Nantes",ville:"Nantes",statut:"Actif",total:"840 €",donMensuel:"—",benevole:"Non",depuis:"2019-01-15"},
   xlRows:[
     {ref:"DON-2024-014",donateur:"Madeleine Charpentier",date:"15/03/2024",montant:"120,00 €",type:"Annuel",prelev:"Chèque",recuFiscal:"RF-2024-007234",statut:"Émis"},
     {ref:"DON-2023-002",donateur:"Madeleine Charpentier",date:"12/04/2023",montant:"120,00 €",type:"Annuel",prelev:"Chèque",recuFiscal:"RF-2023-003847",statut:"Non envoyé"}
   ]},
-  13:{prenom:"Yves",nom:"Beaumont",age:62,job:"Directeur de production (retraité anticipé)",ville:"Lyon",email:"yves.beaumont.69@gmail.com",tel:"06 71 84 32 17",sfId:"SF-00647293",since:"Avril 2021",status:"actif",statusLbl:"Actif",tags:["Don trimestriel","Appel entrant"],
+  13:{prenom:"Yves",nom:"Beaumont",age:62,job:"Directeur de production (retraité anticipé)",ville:"Lyon",adresse:"47 avenue des Cèdres, 69003 Lyon",email:"yves.beaumont.69@gmail.com",tel:"06 71 84 32 17",sfId:"SF-00647293",since:"Avril 2021",status:"actif",statusLbl:"Actif",tags:["Don trimestriel","Appel entrant"],
   note:"Souhaite transférer dons au nom de son épouse Francine Beaumont (06 84 32 17 59). Même adresse. Fiche Francine à créer.",
   dons:[{yr:2024,amt:300,dtl:"3×100€"},{yr:2023,amt:400,dtl:"4×100€"},{yr:2022,amt:400,dtl:"4×100€"},{yr:2021,amt:300,dtl:"3×100€"}],total:1400,
   emailHistory:[],dossiers:[],
-  sfRow:{id:"SF-00647293",prenom:"Yves",nom:"Beaumont",email:"yves.beaumont.69@gmail.com",ville:"Lyon",statut:"Actif",total:"1 400 €",donMensuel:"—",benevole:"Non",depuis:"2021-04-01"},
+  sfRow:{id:"SF-00647293",prenom:"Yves",nom:"Beaumont",email:"yves.beaumont.69@gmail.com",adresse:"47 avenue des Cèdres, 69003 Lyon",ville:"Lyon",statut:"Actif",total:"1 400 €",donMensuel:"—",benevole:"Non",depuis:"2021-04-01"},
   xlRows:[
     {ref:"DON-2024-003",donateur:"Yves Beaumont",date:"01/04/2024",montant:"100,00 €",type:"Trimestriel",prelev:"Virement",recuFiscal:"RF-2024-008123",statut:"Émis"},
     {ref:"DON-2024-001",donateur:"Yves Beaumont",date:"10/01/2024",montant:"100,00 €",type:"Trimestriel",prelev:"Virement",recuFiscal:"RF-2024-008123",statut:"Émis"}
   ]},
-  14:{prenom:"Sandrine",nom:"Mercier",age:47,job:"Responsable RH",ville:"Marseille",email:"s.mercier@hotmail.fr",tel:"06 53 28 74 91",sfId:"À CRÉER",since:"Juin 2024",status:"nouveau",statusLbl:"Nouveau contact",tags:["Don en mémoire","Appel entrant","Situation sensible"],
+  14:{prenom:"Sandrine",nom:"Mercier",age:47,job:"Responsable RH",ville:"Marseille",adresse:"5 rue Paradis, 13006 Marseille",email:"s.mercier@hotmail.fr",tel:"06 53 28 74 91",sfId:"À CRÉER",since:"Juin 2024",status:"nouveau",statusLbl:"Nouveau contact",tags:["Don en mémoire","Appel entrant","Situation sensible"],
   note:"Sœur de Marc Mercier, ancien patient décédé le 11/06/2024. Don de 500 € en sa mémoire. À créer dans Salesforce. Contacter Mme Laure Martin (coordinatrice).",
   dons:[{yr:2024,amt:500,dtl:"1 don en mémoire (juin)"}],total:500,
   emailHistory:[],
   dossiers:[{ref:"DOS-2024-0847",type:"Don en mémoire — Marc Mercier",opened:"18 juin 2024",status:"En attente formulaire signé",warn:"",responsible:"Mme Laure Martin — Coordinatrice"}],
-  sfRow:{id:"À CRÉER",prenom:"Sandrine",nom:"Mercier",email:"s.mercier@hotmail.fr",ville:"Marseille",statut:"Nouveau",total:"500 €",donMensuel:"—",benevole:"Non",depuis:"2024-06-18"},
+  sfRow:{id:"À CRÉER",prenom:"Sandrine",nom:"Mercier",email:"s.mercier@hotmail.fr",adresse:"5 rue Paradis, 13006 Marseille",ville:"Marseille",statut:"Nouveau",total:"500 €",donMensuel:"—",benevole:"Non",depuis:"2024-06-18"},
   xlRows:[{ref:"DON-2024-015",donateur:"Sandrine Mercier",date:"18/06/2024",montant:"500,00 €",type:"Don en mémoire",prelev:"À confirmer",recuFiscal:"En attente",statut:"En attente"}]}
 };
 
@@ -1567,6 +1570,13 @@ async function gen(id) {
   generated.add(id);totalSaved+=e.saved;
   document.getElementById('sav').textContent=totalSaved+' min';
   document.getElementById('cnt').textContent=EMAILS.filter(x=>!generated.has(x.id)).length;
+  if(e.dataUpdates){
+    const d=DONORS[e.donorId];
+    if(e.dataUpdates.donor) Object.assign(d,e.dataUpdates.donor);
+    if(e.dataUpdates.sfRow) Object.assign(d.sfRow,e.dataUpdates.sfRow);
+    renderProfile(e.donorId);
+    if(document.getElementById('srcOverlay').classList.contains('show')) renderSrcTable();
+  }
   renderList();
 }
 
@@ -1605,6 +1615,7 @@ function renderProfile(donorId) {
           <div class="kv"><span class="kv-k">Nom</span><span class="kv-v">${d.prenom} ${d.nom}</span></div>
           <div class="kv"><span class="kv-k">Âge</span><span class="kv-v">${d.age} ans</span></div>
           <div class="kv"><span class="kv-k">Profession</span><span class="kv-v">${d.job}</span></div>
+          <div class="kv"><span class="kv-k">Adresse</span><span class="kv-v">${d.adresse||'—'}</span></div>
           <div class="kv"><span class="kv-k">Ville</span><span class="kv-v">${d.ville}</span></div>
           <div class="kv"><span class="kv-k">Email</span><span class="kv-v">${d.email}</span></div>
           <div class="kv"><span class="kv-k">Téléphone</span><span class="kv-v">${d.tel}</span></div>
@@ -1746,6 +1757,7 @@ const SF_COLS=[
   {key:'prenom',label:'Prénom'},
   {key:'nom',label:'Nom'},
   {key:'email',label:'Email'},
+  {key:'adresse',label:'Adresse'},
   {key:'ville',label:'Ville'},
   {key:'statut',label:'Statut'},
   {key:'total',label:'Total dons'},
@@ -1764,7 +1776,7 @@ const XL_COLS=[
   {key:'statut',label:'Statut'}
 ];
 
-const SF_STAT_COLOR={Champion:'tp-champion',Actif:'tp-actif',Nouveau:'tp-nouveau',Adhérent:'tp-adherent',Inactif:'tp-inactif','Don en mémoire':'tp-adherent'};
+const SF_STAT_COLOR={Champion:'tp-champion',Actif:'tp-actif',Nouveau:'tp-nouveau',Adhérent:'tp-adherent',Inactif:'tp-inactif','Don en mémoire':'tp-adherent','Ancien donateur':'tp-inactif'};
 
 function renderSrcTable() {
   const rows=getFilteredRows();
