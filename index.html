@@ -480,6 +480,8 @@
     .auth-btn:hover{background:var(--i700)} .auth-btn:disabled{opacity:.6;cursor:wait}
     .auth-err{color:var(--red);font-size:.76rem;min-height:1rem;text-align:center;font-weight:600}
     .auth-foot{margin-top:1.1rem;font-size:.66rem;color:var(--g400)}
+    .auth-link{background:none;border:none;color:var(--i600);font-size:.76rem;font-weight:600;cursor:pointer;margin-top:.9rem;font-family:inherit;text-decoration:underline}
+    .auth-ok{color:#059669;font-size:.78rem;font-weight:600;min-height:1rem;text-align:center}
 
     .user-chip{display:none;align-items:center;gap:.45rem}
     .user-av{width:28px;height:28px;border-radius:50%;background:var(--i500);color:#fff;display:flex;align-items:center;
@@ -552,15 +554,46 @@
   <div class="auth-card">
     <img src="assets/Logo.png" alt="AssoPilot" class="auth-logo">
     <h1>AssoPilot</h1>
-    <div class="auth-sub">Connectez-vous pour accéder à votre espace</div>
-    <form onsubmit="doLogin(event)">
-      <label for="authEmail">Email</label>
-      <input type="email" id="authEmail" autocomplete="username" placeholder="vous@association.org" required>
-      <label for="authPwd">Mot de passe</label>
-      <input type="password" id="authPwd" autocomplete="current-password" placeholder="••••••••" required>
-      <div class="auth-err" id="authErr"></div>
-      <button type="submit" class="auth-btn" id="authBtn">Se connecter</button>
-    </form>
+
+    <!-- Connexion -->
+    <div id="authLogin">
+      <div class="auth-sub">Connectez-vous pour accéder à votre espace</div>
+      <form onsubmit="doLogin(event)">
+        <label for="authEmail">Email</label>
+        <input type="email" id="authEmail" autocomplete="username" placeholder="vous@association.org" required>
+        <label for="authPwd">Mot de passe</label>
+        <input type="password" id="authPwd" autocomplete="current-password" placeholder="••••••••" required>
+        <div class="auth-err" id="authErr"></div>
+        <button type="submit" class="auth-btn" id="authBtn">Se connecter</button>
+      </form>
+      <button type="button" class="auth-link" onclick="authShowForgot()">Mot de passe oublié ?</button>
+    </div>
+
+    <!-- Mot de passe oublié -->
+    <div id="authForgot" style="display:none">
+      <div class="auth-sub">Saisis ton email, on t'envoie un lien de réinitialisation.</div>
+      <form onsubmit="doForgotPassword(event)">
+        <label for="fpEmail">Email</label>
+        <input type="email" id="fpEmail" placeholder="vous@association.org" required>
+        <div class="auth-err" id="fpMsg"></div>
+        <button type="submit" class="auth-btn" id="fpBtn">Envoyer le lien</button>
+      </form>
+      <button type="button" class="auth-link" onclick="authBackToLogin()">← Retour à la connexion</button>
+    </div>
+
+    <!-- Nouveau mot de passe (après clic sur le lien email) -->
+    <div id="authReset" style="display:none">
+      <div class="auth-sub">Choisis ton nouveau mot de passe.</div>
+      <form onsubmit="doResetPassword(event)">
+        <label for="rpPwd">Nouveau mot de passe</label>
+        <input type="password" id="rpPwd" autocomplete="new-password" placeholder="••••••••" required>
+        <label for="rpPwd2">Confirmer</label>
+        <input type="password" id="rpPwd2" autocomplete="new-password" placeholder="••••••••" required>
+        <div class="auth-err" id="rpMsg"></div>
+        <button type="submit" class="auth-btn" id="rpBtn">Mettre à jour</button>
+      </form>
+    </div>
+
     <div class="auth-foot">Association Leucémie Espoir — Démo sécurisée</div>
   </div>
 </div>
@@ -2158,6 +2191,61 @@ async function doLogout() {
   location.reload();
 }
 
+// ── Mot de passe oublié / réinitialisation ──────────────────────
+function authShowForgot() {
+  document.getElementById('authLogin').style.display = 'none';
+  document.getElementById('authReset').style.display = 'none';
+  document.getElementById('authForgot').style.display = '';
+}
+function authBackToLogin() {
+  document.getElementById('authForgot').style.display = 'none';
+  document.getElementById('authReset').style.display = 'none';
+  document.getElementById('authLogin').style.display = '';
+}
+function authShowReset() {
+  document.getElementById('authLogin').style.display = 'none';
+  document.getElementById('authForgot').style.display = 'none';
+  document.getElementById('authReset').style.display = '';
+  document.getElementById('authOverlay').style.display = 'flex';
+}
+
+// Envoie l'email de réinitialisation (redirige vers CETTE app, pas l'autre)
+async function doForgotPassword(ev) {
+  ev.preventDefault();
+  const email = document.getElementById('fpEmail').value.trim();
+  const msg = document.getElementById('fpMsg');
+  const btn = document.getElementById('fpBtn');
+  msg.className = 'auth-err'; msg.textContent = '';
+  if(!SB){ msg.textContent = 'Service indisponible.'; return; }
+  btn.disabled = true; btn.textContent = 'Envoi…';
+  try {
+    const { error } = await SB.auth.resetPasswordForEmail(email,
+      { redirectTo: window.location.origin + window.location.pathname });
+    if(error){ msg.textContent = 'Erreur : ' + error.message; }
+    else { msg.className = 'auth-ok'; msg.textContent = '✓ Email envoyé ! Vérifie ta boîte de réception.'; }
+  } catch(e){ msg.textContent = 'Erreur : ' + (e.message||e); }
+  finally { btn.disabled = false; btn.textContent = 'Envoyer le lien'; }
+}
+
+// Définit le nouveau mot de passe (après clic sur le lien reçu par email)
+async function doResetPassword(ev) {
+  ev.preventDefault();
+  const p1 = document.getElementById('rpPwd').value;
+  const p2 = document.getElementById('rpPwd2').value;
+  const msg = document.getElementById('rpMsg');
+  const btn = document.getElementById('rpBtn');
+  msg.className = 'auth-err'; msg.textContent = '';
+  if(p1.length < 6){ msg.textContent = '6 caractères minimum.'; return; }
+  if(p1 !== p2){ msg.textContent = 'Les mots de passe ne correspondent pas.'; return; }
+  btn.disabled = true; btn.textContent = 'Mise à jour…';
+  try {
+    const { error } = await SB.auth.updateUser({ password: p1 });
+    if(error){ msg.textContent = 'Erreur : ' + error.message; btn.disabled = false; btn.textContent = 'Mettre à jour'; return; }
+    alert('Mot de passe mis à jour. Tu peux maintenant te connecter.');
+    location.href = window.location.origin + window.location.pathname;
+  } catch(e){ msg.textContent = 'Erreur : ' + (e.message||e); btn.disabled = false; btn.textContent = 'Mettre à jour'; }
+}
+
 // Applique le rôle à l'interface
 function applyRole(profile) {
   const isAdmin = profile && profile.role === 'admin';
@@ -2227,12 +2315,20 @@ async function bootstrap(session) {
 }
 
 // Écoute l'état d'authentification au chargement
+const _isRecovery = window.location.hash.indexOf('type=recovery') !== -1;
 if(SB){
-  SB.auth.getSession().then(({ data }) => {
-    if(data && data.session) bootstrap(data.session);
-    // sinon : l'écran de login reste affiché
-  });
+  if(_isRecovery){
+    // Retour du lien « mot de passe oublié » : on affiche le formulaire de reset au lieu d'entrer dans l'app
+    authShowReset();
+  } else {
+    SB.auth.getSession().then(({ data }) => {
+      if(data && data.session) bootstrap(data.session);
+      // sinon : l'écran de login reste affiché
+    });
+  }
   SB.auth.onAuthStateChange((event, session) => {
+    if(event === 'PASSWORD_RECOVERY'){ authShowReset(); return; }
+    if(_isRecovery) return;               // en mode reset : ne pas entrer dans l'app
     if(session && !_booted) bootstrap(session);
   });
 } else {
@@ -2408,7 +2504,7 @@ async function adminCreateUser() {
   try {
     const SB2 = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY,
       { auth: { persistSession:false, autoRefreshToken:false, storageKey:'sb-invite-tmp' } });
-    const { data, error } = await SB2.auth.signUp({ email, password: pwd, options:{ data:{ full_name: name||email } } });
+    const { data, error } = await SB2.auth.signUp({ email, password: pwd, options:{ data:{ full_name: name||email }, emailRedirectTo: window.location.origin + window.location.pathname } });
     if(error){ msg.className='adm-msg err'; msg.textContent='Erreur : ' + error.message; return; }
     const newId = data && data.user && data.user.id;
     if(newId){
