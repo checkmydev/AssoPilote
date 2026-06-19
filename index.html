@@ -407,6 +407,41 @@
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     @keyframes spin{to{transform:rotate(360deg)}}
     ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--g300);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--g400)}
+
+    /* ─── MOBILE ─────────────────────────────────────────────── */
+    .mob-tabs{display:none}
+    @media(max-width:767px){
+      html,body{overflow:hidden}
+      .nav{padding:0 .75rem;gap:.5rem}
+      .nav-asso,.nav-sep,.btn-sources,.demo-pill{display:none}
+      .savings-pill{padding:.18rem .5rem;font-size:.67rem;gap:.25rem}
+      .savings-pill .val{font-size:.82rem}
+
+      .layout{flex-direction:column;height:calc(100vh - 50px - 56px);overflow:hidden}
+      .inbox{width:100%;height:100%;border-right:none}
+      .main{width:100%;height:100%}
+      .profile-col{width:100%;height:100%;border-left:none}
+
+      .layout>.inbox,.layout>.main,.layout>.profile-col{display:none}
+      .layout>.inbox.mob-show{display:flex}
+      .layout>.main.mob-show{display:block}
+      .layout>.profile-col.mob-show{display:flex}
+
+      .src-overlay{top:50px;bottom:56px}
+      .src-nav{flex-wrap:wrap;gap:.3rem;padding:.6rem .9rem}
+
+      .mob-tabs{display:flex;position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;border-top:1px solid var(--g200);z-index:150;box-shadow:0 -2px 8px rgba(0,0,0,.07)}
+      .mob-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:none;background:transparent;color:var(--g400);cursor:pointer;font-family:inherit;padding:.4rem 0;transition:color .15s}
+      .mtab-ic{font-size:1.2rem;line-height:1}
+      .mob-tab>span:last-child{font-size:.58rem;font-weight:600;white-space:nowrap}
+      .mob-tab.active{color:var(--i600)}
+      .mob-tab.active .mtab-ic{filter:drop-shadow(0 0 4px rgba(99,102,241,.4))}
+      .mob-cnt{display:inline-block;background:var(--i600);color:#fff;font-size:.52rem;font-weight:700;padding:.04rem .25rem;border-radius:999px;vertical-align:middle;margin-left:1px}
+      .mob-badge{position:absolute;top:6px;right:calc(50% - 18px);width:7px;height:7px;background:var(--i600);border-radius:50%;border:2px solid #fff}
+
+      .gen-prev,.audio-transcript,.ocr-raw{max-height:none}
+      .email-subj{font-size:.88rem}
+    }
   </style>
 </head>
 <body>
@@ -1397,10 +1432,40 @@ const XL_ROWS = Object.values(DONORS).flatMap(d => d.xlRows || []);
 
 let activeId = null, generated = new Set(), totalSaved = 0, activeTab = {};
 let srcActive = 'sf', srcSort = {col: null, dir: 1};
+let _mobActive = 'inbox';
+
+function isMob() { return window.innerWidth <= 767; }
+
+function mobSel(tab) {
+  if(!isMob()) return;
+  const overlay = document.getElementById('srcOverlay');
+  const srcBtn = document.getElementById('btnSrc');
+  if(tab !== 'sources' && overlay.classList.contains('show')) {
+    overlay.classList.remove('show');
+    srcBtn && srcBtn.classList.remove('active');
+  }
+  if(tab === 'sources') {
+    if(!overlay.classList.contains('show')) { overlay.classList.add('show'); renderSrcTable(); }
+  } else {
+    _mobActive = tab;
+    document.querySelector('.inbox').classList.toggle('mob-show', tab === 'inbox');
+    document.getElementById('main').classList.toggle('mob-show', tab === 'main');
+    document.querySelector('.profile-col').classList.toggle('mob-show', tab === 'profile');
+  }
+  document.querySelectorAll('.mob-tab').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('mtab-' + tab);
+  if(btn) btn.classList.add('active');
+}
+
+function mobInit() {
+  if(!isMob()) return;
+  document.querySelector('.inbox').classList.add('mob-show');
+  document.getElementById('mtab-inbox') && document.getElementById('mtab-inbox').classList.add('active');
+}
 
 // ═══════════════════════════ INBOX ═══════════════════════════
 
-function init() { renderList(); buildSrcFilters(); }
+function init() { renderList(); buildSrcFilters(); mobInit(); }
 
 function renderList() {
   const tc = {recu:"tt-recu",arret:"tt-arret",dossier:"tt-dossier",general:"tt-general",coords:"tt-coords",reclamation:"tt-reclamation",partenariat:"tt-partenariat",sensible:"tt-sensible",courrier:"tt-courrier",appel:"tt-appel"};
@@ -1418,6 +1483,7 @@ function sel(id) {
   activeId=id; renderList();
   renderEmail(id);
   renderProfile(EMAILS.find(e=>e.id===id).donorId);
+  if(isMob()) mobSel('main');
 }
 
 // ═══════════════════════════ EMAIL VIEW ═══════════════════════════
@@ -1569,7 +1635,9 @@ async function gen(id) {
   const gb=document.getElementById('gb-'+id);if(gb)gb.classList.add('show');
   generated.add(id);totalSaved+=e.saved;
   document.getElementById('sav').textContent=totalSaved+' min';
-  document.getElementById('cnt').textContent=EMAILS.filter(x=>!generated.has(x.id)).length;
+  const remaining=EMAILS.filter(x=>!generated.has(x.id)).length;
+  document.getElementById('cnt').textContent=remaining;
+  const mc=document.getElementById('mob-cnt');if(mc)mc.textContent=remaining;
   if(e.dataUpdates){
     const d=DONORS[e.donorId];
     if(e.dataUpdates.donor) Object.assign(d,e.dataUpdates.donor);
@@ -1669,8 +1737,14 @@ function toggleSources() {
   const overlay=document.getElementById('srcOverlay');
   const btn=document.getElementById('btnSrc');
   const isOpen=overlay.classList.toggle('show');
-  btn.classList.toggle('active',isOpen);
+  btn && btn.classList.toggle('active',isOpen);
   if(isOpen) renderSrcTable();
+  if(isMob()) {
+    document.querySelectorAll('.mob-tab').forEach(b=>b.classList.remove('active'));
+    const t=isOpen?'sources':_mobActive;
+    const tb=document.getElementById('mtab-'+t);
+    if(tb) tb.classList.add('active');
+  }
 }
 
 function srcTab(tab) {
@@ -2196,5 +2270,25 @@ function _docRgpd(a) {
     <div class="doc-scroll"><div id="docContent"></div></div>
   </div>
 </div>
+
+<!-- BOTTOM TAB BAR (mobile only) -->
+<nav class="mob-tabs" id="mobTabs">
+  <button class="mob-tab" id="mtab-inbox" onclick="mobSel('inbox')">
+    <span class="mtab-ic">📧</span>
+    <span>Emails <span class="mob-cnt" id="mob-cnt">14</span></span>
+  </button>
+  <button class="mob-tab" id="mtab-main" onclick="mobSel('main')">
+    <span class="mtab-ic">⚡</span>
+    <span>Réponse</span>
+  </button>
+  <button class="mob-tab" id="mtab-profile" onclick="mobSel('profile')">
+    <span class="mtab-ic">👤</span>
+    <span>Fiche</span>
+  </button>
+  <button class="mob-tab" id="mtab-sources" onclick="mobSel('sources')">
+    <span class="mtab-ic">🗃️</span>
+    <span>Données</span>
+  </button>
+</nav>
 </body>
 </html>
