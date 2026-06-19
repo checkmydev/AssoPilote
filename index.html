@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AssoPilot — Démo</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e1b4b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AssoPilot">
+  <link rel="apple-touch-icon" href="icon.svg">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -402,6 +408,16 @@
     .mem-mention{background:#faf5ff;border:1px solid #e9d5ff;border-left:3px solid #7c3aed;padding:.7rem .9rem;border-radius:0 6px 6px 0;font-size:.8rem;color:#374151;margin:.8rem 0;line-height:1.7;font-style:italic}
     .mem-sign{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.2rem;font-size:.77rem;color:#555}
     .mem-sign-box{border-top:1px solid #bbb;padding-top:.4rem}
+
+    /* PWA Install Banner */
+    .pwa-banner{display:none;position:fixed;bottom:56px;left:0;right:0;background:#312e81;color:#fff;padding:.65rem 1rem;gap:.65rem;z-index:200;box-shadow:0 -2px 12px rgba(0,0,0,.35);align-items:center}
+    .pwa-banner.show{display:flex;animation:slideUp .35s ease}
+    .pwa-banner-ic{font-size:1.4rem;flex-shrink:0}
+    .pwa-banner-txt{flex:1;font-size:.74rem;line-height:1.35}
+    .pwa-banner-txt strong{display:block;font-size:.8rem;font-weight:700;margin-bottom:.1rem}
+    .pwa-install-btn{background:#f59e0b;color:#1e1b4b;border:none;border-radius:7px;padding:.32rem .72rem;font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap}
+    .pwa-close-btn{background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;font-size:1.1rem;padding:0;line-height:1;flex-shrink:0}
+    @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 
     @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -2221,6 +2237,53 @@ function _docRgpd(a) {
   const corrections = (a.corrections||[]).map(c=>`<li>${c}</li>`).join('');
   return `<div class="rgpd-doc"><div class="rgpd-header"><div class="rgpd-icon">🛡️</div><div><div class="rgpd-h-title">Attestation de correction de données personnelles</div><div class="rgpd-h-sub">Conformément au Règlement Général sur la Protection des Données (RGPD)</div></div></div><div class="rgpd-body"><div class="rgpd-field"><label>Référence :</label><strong>${a.ref}</strong></div><div class="rgpd-field"><label>Date :</label>${a.date}</div><div class="rgpd-field"><label>Demandeur :</label>${a.demandeur}</div><div class="rgpd-field"><label>Objet :</label>${a.objet}</div><div class="rgpd-corrections"><h4>✅ Corrections effectuées</h4><ul>${corrections}</ul></div><div class="rgpd-seal">Délégué à la Protection des Données — ${a.dpo||'dpo@leucemie-espoir.org'}<br>Association Leucémie Espoir — SIRET 498 123 456 00012</div></div></div>`;
 }
+
+// ═══════════════════════════ PWA ═══════════════════════════
+
+if('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+
+let _deferredInstall = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredInstall = e;
+  if(!sessionStorage.getItem('pwaDismissed')) {
+    document.getElementById('pwaBannerMsg').textContent = 'Disponible comme application mobile';
+    document.getElementById('pwaInstallBtn').style.display = '';
+    document.getElementById('pwaBanner').classList.add('show');
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwaBanner').classList.remove('show');
+  _deferredInstall = null;
+});
+
+// iOS : pas de beforeinstallprompt — affiche une instruction manuelle
+(function() {
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.navigator.standalone === true;
+  if(isIos && !isStandalone && !sessionStorage.getItem('pwaDismissed')) {
+    setTimeout(() => {
+      document.getElementById('pwaBannerMsg').textContent = 'Appuyez sur ⎋ Partager puis « Sur l\'écran d\'accueil »';
+      document.getElementById('pwaInstallBtn').style.display = 'none';
+      document.getElementById('pwaBanner').classList.add('show');
+    }, 2000);
+  }
+})();
+
+function pwaInstall() {
+  if(!_deferredInstall) return;
+  _deferredInstall.prompt();
+  _deferredInstall.userChoice.then(() => { _deferredInstall = null; pwaDismiss(); });
+}
+
+function pwaDismiss() {
+  sessionStorage.setItem('pwaDismissed', '1');
+  document.getElementById('pwaBanner').classList.remove('show');
+}
 </script>
 
 <!-- PDF Viewer Modal -->
@@ -2269,6 +2332,17 @@ function _docRgpd(a) {
     </div>
     <div class="doc-scroll"><div id="docContent"></div></div>
   </div>
+</div>
+
+<!-- PWA Install Banner -->
+<div class="pwa-banner" id="pwaBanner">
+  <span class="pwa-banner-ic">📲</span>
+  <div class="pwa-banner-txt">
+    <strong>Installer AssoPilot</strong>
+    <span id="pwaBannerMsg">Disponible comme application</span>
+  </div>
+  <button class="pwa-install-btn" id="pwaInstallBtn" onclick="pwaInstall()">Installer</button>
+  <button class="pwa-close-btn" onclick="pwaDismiss()" aria-label="Fermer">✕</button>
 </div>
 
 <!-- BOTTOM TAB BAR (mobile only) -->
