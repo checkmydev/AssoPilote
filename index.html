@@ -1711,8 +1711,8 @@ function renderProfile(donorId) {
           <div class="kv"><span class="kv-k">Profession</span><span class="kv-v">${d.job}</span></div>
           <div class="kv"><span class="kv-k">Adresse</span><span class="kv-v">${d.adresse||'—'}</span></div>
           <div class="kv"><span class="kv-k">Ville</span><span class="kv-v">${d.ville}</span></div>
-          <div class="kv"><span class="kv-k">Email</span><span class="kv-v">${d.email&&d.email!=='—'?'<a class="kv-link" href="mailto:'+d.email+'">'+d.email+'</a>':d.email||'—'}</span></div>
-          <div class="kv"><span class="kv-k">Téléphone</span><span class="kv-v">${d.tel&&d.tel!=='—'?'<a class="kv-link" href="tel:'+d.tel.replace(/\s/g,'')+'">'+d.tel+'</a>':d.tel||'—'}</span></div>
+          <div class="kv"><span class="kv-k">Email</span><span class="kv-v" id="pv-email">${d.email||'—'}</span></div>
+          <div class="kv"><span class="kv-k">Téléphone</span><span class="kv-v" id="pv-tel">${d.tel||'—'}</span></div>
           <div class="kv"><span class="kv-k">ID Salesforce</span><span class="kv-v">${d.sfId}</span></div>
           <div class="kv"><span class="kv-k">Donateur depuis</span><span class="kv-v">${d.since}</span></div>
         </div>
@@ -1728,6 +1728,26 @@ function renderProfile(donorId) {
         ${renderDosHtml(d)}
       </div>
     </div>`;
+  const pvEmail=document.getElementById('pv-email');
+  if(pvEmail&&d.email&&d.email!=='—'&&d.email.includes('@')){
+    const a=document.createElement('a');
+    a.href='mailto:'+d.email;
+    a.textContent=d.email;
+    a.style.color='#4f46e5';
+    a.style.textDecoration='underline';
+    pvEmail.textContent='';
+    pvEmail.appendChild(a);
+  }
+  const pvTel=document.getElementById('pv-tel');
+  if(pvTel&&d.tel&&d.tel!=='—'&&/\d/.test(d.tel)){
+    const a=document.createElement('a');
+    a.href='tel:'+d.tel.replace(/\s/g,'');
+    a.textContent=d.tel;
+    a.style.color='#4f46e5';
+    a.style.textDecoration='underline';
+    pvTel.textContent='';
+    pvTel.appendChild(a);
+  }
 }
 
 function ptab(donorId,t){activeTab[donorId]=t;renderProfile(donorId);}
