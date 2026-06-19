@@ -2364,29 +2364,33 @@ function pwaDismiss() {
 // Swipe horizontal pour changer d'onglet (mobile)
 (function(){
   var TABS=['inbox','main','profile','sources'];
-  var sx=0,sy=0;
-  function onSwipeEnd(t){
-    if(!t)return;
-    var dx=t.clientX-sx;
-    var dy=t.clientY-sy;
-    if(Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)*1.2)return;
-    var idx=TABS.indexOf(_mobActive);
-    if(dx<0&&idx<TABS.length-1) mobSel(TABS[idx+1]);
-    else if(dx>0&&idx>0) mobSel(TABS[idx-1]);
+  var sx=0,sy=0,horiz=false;
+  function attachSwipe(el){
+    if(!el)return;
+    el.addEventListener('touchstart',function(e){
+      sx=e.touches[0].clientX;sy=e.touches[0].clientY;horiz=false;
+    },{passive:true});
+    el.addEventListener('touchmove',function(e){
+      var dx=Math.abs(e.touches[0].clientX-sx);
+      var dy=Math.abs(e.touches[0].clientY-sy);
+      if(!horiz&&(dx>10||dy>10)) horiz=dx>dy;
+      if(horiz) e.preventDefault();
+    },{passive:false});
+    el.addEventListener('touchend',function(e){
+      if(!horiz)return;
+      var t=e.changedTouches[0];if(!t)return;
+      var dx=t.clientX-sx;
+      if(Math.abs(dx)<50)return;
+      var idx=TABS.indexOf(_mobActive);
+      if(dx<0&&idx<TABS.length-1) mobSel(TABS[idx+1]);
+      else if(dx>0&&idx>0) mobSel(TABS[idx-1]);
+    },{passive:true});
   }
-  document.addEventListener('touchstart',function(e){
-    if(!isMob())return;
-    sx=e.touches[0].clientX;
-    sy=e.touches[0].clientY;
-  },{passive:true});
-  document.addEventListener('touchend',function(e){
-    if(!isMob())return;
-    onSwipeEnd(e.changedTouches[0]);
-  },{passive:true});
-  document.addEventListener('touchcancel',function(e){
-    if(!isMob())return;
-    onSwipeEnd(e.changedTouches[0]);
-  },{passive:true});
+  window.addEventListener('load',function(){
+    ['.inbox','.main','.profile-col','#srcOverlay'].forEach(function(s){
+      attachSwipe(document.querySelector(s));
+    });
+  });
 })();
 </script>
 
