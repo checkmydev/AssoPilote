@@ -776,7 +776,7 @@ Mathieu Leroux — Service Donateurs`,
     autoTags:["📋 Dossier 'Don en mémoire' créé","📩 Mme L. Martin notifiée","📎 Formulaire transfert joint","🕯️ Jean-Paul Rousseau : mention rapport annuel"]
   },
   {
-    id:11,from:"René Gauthier",fromEmail:"Courrier postal",
+    id:11,from:"René Gauthier",fromEmail:"Courrier postal",letterImg:"assets/lettre_gauthier.jpg",
     subject:"Lettre manuscrite + chèque 200 € — Courrier scanné",
     preview:"Don par chèque, fille ancienne patiente Émilie, premier contact…",
     body:`Cher Monsieur ou Madame,
@@ -907,7 +907,7 @@ Mathieu Leroux — Service Donateurs`,
     autoTags:["📎 RF-2023-003847 régénéré","📮 Reçu papier à expédier (Nantes)","✅ Dossier clôturé"]
   },
   {
-    id:13,from:"Yves Beaumont",fromEmail:"06 71 84 32 17",
+    id:13,from:"Yves Beaumont",fromEmail:"06 71 84 32 17",audioSrc:"assets/appel_beaumont.mp3",
     subject:"Appel — Transfert des dons au nom de l'épouse",
     preview:"Souhaite transférer dons et reçus fiscaux à Francine Beaumont…",
     body:`📋 Résumé de l'appel — 18 juin 2024, 14h32 (5 min 42s)
@@ -974,7 +974,7 @@ Mathieu Leroux — Service Donateurs`,
     autoTags:["👤 Fiche Francine Beaumont créée (SF-00912847)","✅ Transfert dons confirmé","📊 Excel mis à jour"]
   },
   {
-    id:14,from:"Sandrine Mercier",fromEmail:"06 53 28 74 91",
+    id:14,from:"Sandrine Mercier",fromEmail:"06 53 28 74 91",audioSrc:"assets/appel_mercier.mp3",
     subject:"Appel — Don en mémoire de Marc Mercier (décédé)",
     preview:"Frère ancien patient décédé, souhaite faire 500 € en sa mémoire…",
     body:`📋 Résumé de l'appel — 18 juin 2024, 15h47 (8 min 15s)
@@ -1680,17 +1680,34 @@ init();
 
 // ═══════════════════════════ PDF MODAL ═══════════════════════════
 
+let _curPdfEmail = null;
+
 function openPdf(id) {
   const e = EMAILS.find(x=>x.id===id);
   if(!e||e.sourceType!=='courrier') return;
+  _curPdfEmail = e;
   const isHand = e.ocrConf < 93;
   document.getElementById('pdfFilename').textContent = e.pdfFile;
   const page = document.getElementById('pdfPage');
+  if (e.letterImg) {
+    page.className = 'pdf-page img-mode';
+    page.innerHTML = `<img src="${e.letterImg}" alt="Lettre scannée" style="width:100%;border-radius:4px" onerror="_pdfFallback()">`;
+  } else {
+    _pdfRenderText(page, e, isHand);
+  }
+  document.getElementById('pdfFooterInfo').textContent = `${isHand?'Lettre manuscrite':'Lettre imprimée'} · Confiance OCR : ${e.ocrConf}% · Généré à partir du scan AssoPilot`;
+  document.getElementById('pdfOverlay').classList.add('show');
+}
+
+function _pdfFallback() {
+  const e = _curPdfEmail; if(!e) return;
+  _pdfRenderText(document.getElementById('pdfPage'), e, e.ocrConf < 93);
+}
+
+function _pdfRenderText(page, e, isHand) {
   page.className = 'pdf-page ' + (isHand ? 'hand' : 'print');
   const safe = (e.ocrRaw||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   page.innerHTML = `<div class="pdf-tag">${e.pdfFile} · OCR ${e.ocrConf}%</div>${safe}`;
-  document.getElementById('pdfFooterInfo').textContent = `${isHand?'Lettre manuscrite':'Lettre imprimée'} · Confiance OCR : ${e.ocrConf}% · Généré à partir du scan AssoPilot`;
-  document.getElementById('pdfOverlay').classList.add('show');
 }
 
 function closePdf() {
@@ -1700,18 +1717,26 @@ function closePdf() {
 // ═══════════════════════════ AUDIO MODAL ═══════════════════════════
 
 const WV_H = [8,18,28,14,36,22,31,11,40,24,33,17,38,20,29,13,44,26,19,35,23,31,15,41,25,34,18,39,21,30,14,43,24,32,17,37,27,22,33,16,40,20,31,13,44,26,19,35,22,28,16,32];
-let _aLines=[], _aIdx=0, _aPlaying=false;
+let _aLines=[], _aIdx=0, _aPlaying=false, _useFileAudio=false, _curAudioEmail=null, _lineTimes=[];
 
 function openAudio(id) {
   const e = EMAILS.find(x=>x.id===id);
   if(!e||e.sourceType!=='appel') return;
   stopAudio();
+  _curAudioEmail = e;
+  _useFileAudio = !!e.audioSrc;
   document.getElementById('audioFilename').textContent = e.audioFile;
   document.getElementById('apDur').textContent = e.audioDuration;
   _aLines = _parseLines(e.transcript||'');
   _aIdx = 0;
   document.getElementById('wvRow').innerHTML = WV_H.map((h,i)=>`<div class="wvb" id="wvb-${i}" style="height:${h}px"></div>`).join('');
   _renderTr();
+  if (_useFileAudio) {
+    const af = document.getElementById('audioFileEl');
+    af.src = e.audioSrc;
+    af.load();
+    _setupFileListeners(af);
+  }
   document.getElementById('audioOverlay').classList.add('show');
 }
 
@@ -1753,7 +1778,37 @@ function togglePlay() {
   _aPlaying ? _pauseA() : _startA();
 }
 
+function _parseDurSecs(s) {
+  const m=s.match(/(\d+)\s*min\s*(\d+)s/); if(m) return parseInt(m[1])*60+parseInt(m[2]);
+  const q=s.match(/(\d+)s/); return q?parseInt(q[1]):0;
+}
+
+function _setupFileListeners(af) {
+  const realLines = _aLines.filter(l=>!l.sys);
+  const totalWords = realLines.reduce((s,l)=>s+(l.txt.split(' ').length),0);
+  const totalSecs = _curAudioEmail ? _parseDurSecs(_curAudioEmail.audioDuration) : 0;
+  _lineTimes=[];
+  let cum=0;
+  for(const l of _aLines) {
+    if(l.sys){_lineTimes.push(null);continue;}
+    _lineTimes.push(cum);
+    cum += (l.txt.split(' ').length/Math.max(totalWords,1))*totalSecs;
+  }
+  af.ontimeupdate = ()=>{
+    const t=af.currentTime;
+    let last=0;
+    for(let i=0;i<_aLines.length;i++){if(_lineTimes[i]!==null&&_lineTimes[i]<=t)last=i;}
+    if(last!==_aIdx){_aIdx=last;_hlLine(last);}
+    const pf=document.getElementById('apFill');
+    if(pf&&af.duration)pf.style.width=(t/af.duration*100)+'%';
+  };
+  af.onplay  = ()=>{_aPlaying=true; document.getElementById('btnPlay').textContent='⏸';};
+  af.onpause = ()=>{_aPlaying=false;document.getElementById('btnPlay').textContent='▶';};
+  af.onended = ()=>{_aPlaying=false;document.getElementById('btnPlay').textContent='▶';};
+}
+
 function _startA() {
+  if(_useFileAudio){document.getElementById('audioFileEl').play().catch(()=>{});return;}
   if(!window.speechSynthesis){alert('Synthèse vocale non disponible dans ce navigateur (essayez Chrome ou Edge).');return;}
   _aPlaying=true;
   document.getElementById('btnPlay').textContent='⏸';
@@ -1762,12 +1817,18 @@ function _startA() {
 }
 
 function _pauseA() {
+  if(_useFileAudio){document.getElementById('audioFileEl').pause();return;}
   if(window.speechSynthesis&&window.speechSynthesis.speaking) window.speechSynthesis.pause();
   _aPlaying=false;
   document.getElementById('btnPlay').textContent='▶';
 }
 
 function stopAudio() {
+  if(_useFileAudio){
+    const af=document.getElementById('audioFileEl');
+    if(af){af.pause();af.currentTime=0;af.src='';af.ontimeupdate=null;af.onplay=null;af.onpause=null;af.onended=null;}
+  }
+  _useFileAudio=false; _curAudioEmail=null;
   if(window.speechSynthesis) window.speechSynthesis.cancel();
   _aPlaying=false; _aIdx=0;
   const btn=document.getElementById('btnPlay'); if(btn)btn.textContent='▶';
@@ -1830,5 +1891,6 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closePdf();closeA
   </div>
 </div>
 
+<audio id="audioFileEl" style="display:none" preload="none"></audio>
 </body>
 </html>
