@@ -1903,6 +1903,7 @@ function _hlLine(idx) {
   document.querySelectorAll('.atr-line').forEach(el=>el.classList.remove('cur'));
   const el=document.getElementById('atr-'+idx);
   if(el){el.classList.add('cur');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  if(_useFileAudio) return; // waveform & progress driven continuously by ontimeupdate
   const real = _aLines.filter(l=>!l.sys);
   const ri = real.indexOf(_aLines[idx]);
   const pct = real.length>1 ? (ri/(real.length-1))*100 : 0;
@@ -1933,13 +1934,24 @@ function _setupFileListeners(af) {
   }
   af.ontimeupdate = ()=>{
     const t=af.currentTime;
+    // Transcript line highlight (word-count proportional timestamps)
     let last=0;
     for(let i=0;i<_aLines.length;i++){if(_lineTimes[i]!==null&&_lineTimes[i]<=t)last=i;}
     if(last!==_aIdx){_aIdx=last;_hlLine(last);}
-    const pf=document.getElementById('apFill');
-    if(pf&&af.duration)pf.style.width=(t/af.duration*100)+'%';
+    // Progress bar + waveform: driven continuously by actual time ratio
+    if(af.duration){
+      const pf=document.getElementById('apFill');
+      if(pf) pf.style.width=(t/af.duration*100)+'%';
+      const wv=Math.floor(WV_H.length*(t/af.duration));
+      document.querySelectorAll('.wvb').forEach((el,i)=>el.classList.toggle('on',i<=wv));
+    }
   };
-  af.onplay  = ()=>{_aPlaying=true; document.getElementById('btnPlay').textContent='⏸';};
+  af.onplay = ()=>{
+    _aPlaying=true;
+    document.getElementById('btnPlay').textContent='⏸';
+    // Highlight first dialogue line immediately on play start
+    if(_aIdx===0){const fi=_aLines.findIndex(l=>!l.sys);if(fi>=0){_aIdx=fi;_hlLine(fi);}}
+  };
   af.onpause = ()=>{_aPlaying=false;document.getElementById('btnPlay').textContent='▶';};
   af.onended = ()=>{_aPlaying=false;document.getElementById('btnPlay').textContent='▶';};
 }
