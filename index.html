@@ -525,6 +525,13 @@
       font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
     .btn-reset-demo:hover{background:var(--red);color:#fff}
     .btn-reset-demo:disabled{opacity:.5;cursor:wait}
+    .adm-tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .adm-tbl th,.adm-tbl td{white-space:nowrap}
+    @media(max-width:767px){
+      .adm-cards{gap:.6rem} .adm-card{min-width:130px} .adm-card .v{font-size:1.3rem}
+      .adm-bar-lbl{width:104px;font-size:.7rem}
+      .btn-reset-demo{font-size:.68rem;padding:.3rem .55rem}
+    }
   </style>
 </head>
 <body>
@@ -2299,7 +2306,7 @@ async function renderAdmin() {
       + '</div>';
 
     // Tableau par utilisateur
-    html += '<div class="adm-sec"><h3>👥 Activité par utilisateur</h3><table class="adm-tbl"><thead><tr>'
+    html += '<div class="adm-sec"><h3>👥 Activité par utilisateur</h3><div class="adm-tbl-wrap"><table class="adm-tbl"><thead><tr>'
       + '<th>Utilisateur</th><th>Rôle</th><th>Emails traités</th><th>Temps gagné</th><th>Dernière activité</th>'
       + '</tr></thead><tbody>';
     users.sort((a,b)=>b.minutes-a.minutes).forEach(u => {
@@ -2308,7 +2315,7 @@ async function renderAdmin() {
         + `<td>${u.emails.size}</td><td>${fmtH(u.minutes)}</td><td>${timeAgo(u.last)}</td></tr>`;
     });
     if(!users.length) html += '<tr><td colspan="5" class="adm-empty">Aucun utilisateur.</td></tr>';
-    html += '</tbody></table></div>';
+    html += '</tbody></table></div></div>';
 
     // Répartition par type
     html += '<div class="adm-sec"><h3>📈 Répartition par type d\'action</h3>';
