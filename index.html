@@ -2364,23 +2364,19 @@ function pwaDismiss() {
 // Swipe horizontal pour changer d'onglet (mobile)
 (function(){
   var TABS=['inbox','main','profile','sources'];
-  var sx=0,sy=0,locked=null,active=false;
+  var sx=0,sy=0;
   document.addEventListener('touchstart',function(e){
     if(!isMob())return;
-    sx=e.touches[0].clientX;sy=e.touches[0].clientY;
-    active=true;locked=null;
-  },{passive:true});
-  document.addEventListener('touchmove',function(e){
-    if(!active||locked)return;
-    var dx=Math.abs(e.touches[0].clientX-sx);
-    var dy=Math.abs(e.touches[0].clientY-sy);
-    if(dx>8||dy>8) locked=dx>dy?'h':'v';
+    sx=e.touches[0].clientX;
+    sy=e.touches[0].clientY;
   },{passive:true});
   document.addEventListener('touchend',function(e){
-    if(!active)return;active=false;
-    if(locked!=='h')return;
-    var dx=(e.changedTouches[0]?e.changedTouches[0].clientX:sx)-sx;
-    if(Math.abs(dx)<50)return;
+    if(!isMob())return;
+    var t=e.changedTouches[0];if(!t)return;
+    var dx=t.clientX-sx;
+    var dy=t.clientY-sy;
+    // Doit être principalement horizontal et > 50px
+    if(Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)*1.2)return;
     var idx=TABS.indexOf(_mobActive);
     if(dx<0&&idx<TABS.length-1) mobSel(TABS[idx+1]);
     else if(dx>0&&idx>0) mobSel(TABS[idx-1]);
