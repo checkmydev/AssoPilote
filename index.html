@@ -2281,12 +2281,15 @@ async function renderAdmin() {
   if(!SB){ body.innerHTML = '<div class="adm-empty">Service indisponible.</div>'; return; }
   body.innerHTML = '<div class="adm-empty">Chargement…</div>';
   try {
-    const [{ data: profiles }, { data: actions }] = await Promise.all([
+    const [pRes, aRes] = await Promise.all([
       SB.from('members').select('*'),
       SB.from('actions').select('*').order('created_at', { ascending: false })
     ]);
-    const profs = profiles || [];
-    const acts = actions || [];
+    if(pRes.error) console.error('❌ renderAdmin members:', pRes.error.message, pRes.error);
+    if(aRes.error) console.error('❌ renderAdmin actions:', aRes.error.message, aRes.error);
+    const profs = pRes.data || [];
+    const acts = aRes.data || [];
+    console.log('renderAdmin → members:', profs.length, '| actions:', acts.length);
     const nameOf = {};
     profs.forEach(p => { nameOf[p.id] = p.full_name || p.email || '—'; });
 
