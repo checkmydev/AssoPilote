@@ -268,7 +268,55 @@
     .tbl-total-bar{padding:.5rem 1.25rem;background:var(--g50);border-top:1px solid var(--g200);font-size:.72rem;color:var(--g500);flex-shrink:0;display:flex;align-items:center;gap:1rem}
     .tbl-stat{font-weight:700;color:var(--g700)}
 
+    /* ── View-source buttons ── */
+    .btn-view-src{background:#fff;border:1px solid #fed7aa;color:#9a3412;padding:.28rem .72rem;border-radius:6px;font-size:.71rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+    .btn-view-src:hover{background:#fff7ed}
+    .btn-view-src.audio{border-color:#bbf7d0;color:#065f46}
+    .btn-view-src.audio:hover{background:#f0fdf4}
+
+    /* ── Modals ── */
+    .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:500;display:none;align-items:center;justify-content:center;padding:1.25rem;animation:fadeIn .18s ease}
+    .modal-ov.show{display:flex}
+    .modal-box{background:#fff;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 24px 72px rgba(0,0,0,.45);animation:fadeUp .22s ease;max-height:92vh}
+    .mhd{padding:.72rem 1.1rem;border-bottom:1px solid var(--g200);display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+    .mhd-title{font-size:.85rem;font-weight:700;flex:1;display:flex;align-items:center;gap:.35rem}
+    .mhd-sub{font-size:.7rem;color:var(--g500);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
+    .mhd-close{background:var(--g100);border:1px solid var(--g200);border-radius:6px;padding:.22rem .6rem;font-size:.78rem;cursor:pointer;font-family:inherit;color:var(--g700);flex-shrink:0}
+    .mhd-close:hover{background:var(--g200)}
+
+    /* PDF Modal */
+    .pdf-modal-box{width:min(640px,96vw)}
+    .pdf-scroll{flex:1;overflow-y:auto;background:#525659;padding:1.5rem;display:flex;justify-content:center;min-height:0}
+    .pdf-page{background:#fefdf8;width:100%;max-width:490px;min-height:660px;padding:3.5rem 4rem;box-shadow:0 4px 24px rgba(0,0,0,.38);position:relative;line-height:1.9;color:#2c2c2c;font-size:.83rem;white-space:pre-wrap}
+    .pdf-page.print{font-family:'Times New Roman',serif}
+    .pdf-page.hand{font-family:'Segoe Script','Comic Sans MS',cursive;color:#1a1a42;font-size:.88rem;line-height:2.2}
+    .pdf-tag{position:absolute;top:.35rem;right:.45rem;font-size:.58rem;background:rgba(0,0,0,.07);color:#888;padding:.08rem .38rem;border-radius:3px;letter-spacing:.03em;font-family:monospace}
+    .pdf-footer{padding:.55rem 1.1rem;border-top:1px solid var(--g100);background:var(--g50);flex-shrink:0;font-size:.7rem;color:var(--g400);display:flex;align-items:center;gap:.5rem}
+
+    /* Audio Modal */
+    .audio-modal-box{width:min(540px,96vw)}
+    .ap-panel{padding:.8rem 1.1rem;border-bottom:1px solid var(--g100);background:#f0fdf4;flex-shrink:0}
+    .wv-row{display:flex;align-items:flex-end;gap:2px;height:38px;margin-bottom:.6rem;overflow:hidden}
+    .wvb{width:4px;border-radius:2px 2px 0 0;background:var(--g300);flex-shrink:0;transition:background .1s}
+    .wvb.on{background:var(--green)}
+    .ap-ctrl{display:flex;align-items:center;gap:.6rem}
+    .ap-btn{background:var(--i600);color:#fff;border:none;border-radius:50%;width:30px;height:30px;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;flex-shrink:0}
+    .ap-btn:hover{background:var(--i700)}
+    .ap-stop{border-radius:6px;width:auto;padding:0 .55rem;font-size:.7rem;height:26px;background:var(--g400)}
+    .ap-progress{flex:1;height:4px;background:var(--g200);border-radius:999px;overflow:hidden}
+    .ap-fill{height:100%;background:var(--i500);border-radius:999px;width:0%;transition:width .4s}
+    .ap-dur{font-size:.68rem;color:var(--g500);font-family:monospace;flex-shrink:0}
+    .atr-area{flex:1;overflow-y:auto;padding:.6rem 1.1rem}
+    .atr-sys{font-size:.68rem;color:var(--g400);font-style:italic;padding:.2rem .3rem;display:block}
+    .atr-line{display:flex;gap:.4rem;padding:.28rem .38rem;border-radius:6px;margin-bottom:.12rem;transition:background .2s}
+    .atr-line.cur{background:var(--i50);border-left:2px solid var(--i500)}
+    .atr-spk{font-size:.67rem;font-weight:700;padding:.1rem .3rem;border-radius:4px;flex-shrink:0;align-self:flex-start;margin-top:.18rem;white-space:nowrap}
+    .atr-spk.svc{background:#d1fae5;color:#065f46}
+    .atr-spk.cal{background:#dbeafe;color:#1e40af}
+    .atr-txt{font-size:.76rem;line-height:1.6;color:var(--g700)}
+
     @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     @keyframes spin{to{transform:rotate(360deg)}}
     ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--g300);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--g400)}
   </style>
@@ -1245,6 +1293,9 @@ function renderEmail(id) {
         <span class="ocr-score">Confiance OCR : ${e.ocrConf}%</span>
       </div>
       <div class="ocr-raw">${safe}</div>
+      <div style="display:flex;justify-content:flex-end;margin-top:.45rem">
+        <button class="btn-view-src" onclick="openPdf(${id})">📄 Voir le PDF original</button>
+      </div>
     </div>`;
   } else if(e.sourceType==='appel') {
     const safe = (e.transcript||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -1258,6 +1309,9 @@ function renderEmail(id) {
         <span class="audio-score">Whisper STT</span>
       </div>
       <div class="audio-transcript">${safe}</div>
+      <div style="display:flex;justify-content:flex-end;margin-top:.45rem">
+        <button class="btn-view-src audio" onclick="openAudio(${id})">🎧 Écouter l'enregistrement</button>
+      </div>
     </div>`;
   }
 
@@ -1623,6 +1677,158 @@ function sortBy(col) {
 }
 
 init();
+
+// ═══════════════════════════ PDF MODAL ═══════════════════════════
+
+function openPdf(id) {
+  const e = EMAILS.find(x=>x.id===id);
+  if(!e||e.sourceType!=='courrier') return;
+  const isHand = e.ocrConf < 93;
+  document.getElementById('pdfFilename').textContent = e.pdfFile;
+  const page = document.getElementById('pdfPage');
+  page.className = 'pdf-page ' + (isHand ? 'hand' : 'print');
+  const safe = (e.ocrRaw||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  page.innerHTML = `<div class="pdf-tag">${e.pdfFile} · OCR ${e.ocrConf}%</div>${safe}`;
+  document.getElementById('pdfFooterInfo').textContent = `${isHand?'Lettre manuscrite':'Lettre imprimée'} · Confiance OCR : ${e.ocrConf}% · Généré à partir du scan AssoPilot`;
+  document.getElementById('pdfOverlay').classList.add('show');
+}
+
+function closePdf() {
+  document.getElementById('pdfOverlay').classList.remove('show');
+}
+
+// ═══════════════════════════ AUDIO MODAL ═══════════════════════════
+
+const WV_H = [8,18,28,14,36,22,31,11,40,24,33,17,38,20,29,13,44,26,19,35,23,31,15,41,25,34,18,39,21,30,14,43,24,32,17,37,27,22,33,16,40,20,31,13,44,26,19,35,22,28,16,32];
+let _aLines=[], _aIdx=0, _aPlaying=false;
+
+function openAudio(id) {
+  const e = EMAILS.find(x=>x.id===id);
+  if(!e||e.sourceType!=='appel') return;
+  stopAudio();
+  document.getElementById('audioFilename').textContent = e.audioFile;
+  document.getElementById('apDur').textContent = e.audioDuration;
+  _aLines = _parseLines(e.transcript||'');
+  _aIdx = 0;
+  document.getElementById('wvRow').innerHTML = WV_H.map((h,i)=>`<div class="wvb" id="wvb-${i}" style="height:${h}px"></div>`).join('');
+  _renderTr();
+  document.getElementById('audioOverlay').classList.add('show');
+}
+
+function closeAudio() {
+  stopAudio();
+  document.getElementById('audioOverlay').classList.remove('show');
+}
+
+function _parseLines(tr) {
+  return tr.split('\n').map(l=>l.trim()).map(l=>{
+    if(l.startsWith('[')) return {sys:true,txt:l};
+    const c=l.indexOf(':'); if(c<0) return null;
+    const spk=l.substring(0,c).trim(), txt=l.substring(c+1).trim().replace(/\[.*?\]/g,'').trim();
+    if(!txt) return null;
+    return {sys:false,spk,txt,type:spk.startsWith('Conseiller')?'svc':'cal'};
+  }).filter(Boolean);
+}
+
+function _renderTr() {
+  document.getElementById('atrArea').innerHTML = _aLines.map((l,i)=>{
+    if(l.sys) return `<span class="atr-sys">${l.txt}</span>`;
+    return `<div class="atr-line" id="atr-${i}"><span class="atr-spk ${l.type}">${l.spk}</span><span class="atr-txt">${l.txt}</span></div>`;
+  }).join('');
+}
+
+function _hlLine(idx) {
+  document.querySelectorAll('.atr-line').forEach(el=>el.classList.remove('cur'));
+  const el=document.getElementById('atr-'+idx);
+  if(el){el.classList.add('cur');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  const real = _aLines.filter(l=>!l.sys);
+  const ri = real.indexOf(_aLines[idx]);
+  const pct = real.length>1 ? (ri/(real.length-1))*100 : 0;
+  const pf=document.getElementById('apFill');if(pf)pf.style.width=pct+'%';
+  const wv=Math.floor(WV_H.length*(ri/Math.max(real.length-1,1)));
+  document.querySelectorAll('.wvb').forEach((el,i)=>el.classList.toggle('on',i<=wv));
+}
+
+function togglePlay() {
+  _aPlaying ? _pauseA() : _startA();
+}
+
+function _startA() {
+  if(!window.speechSynthesis){alert('Synthèse vocale non disponible dans ce navigateur (essayez Chrome ou Edge).');return;}
+  _aPlaying=true;
+  document.getElementById('btnPlay').textContent='⏸';
+  if(window.speechSynthesis.paused){window.speechSynthesis.resume();return;}
+  _speakIdx(_aIdx);
+}
+
+function _pauseA() {
+  if(window.speechSynthesis&&window.speechSynthesis.speaking) window.speechSynthesis.pause();
+  _aPlaying=false;
+  document.getElementById('btnPlay').textContent='▶';
+}
+
+function stopAudio() {
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  _aPlaying=false; _aIdx=0;
+  const btn=document.getElementById('btnPlay'); if(btn)btn.textContent='▶';
+  const pf=document.getElementById('apFill'); if(pf)pf.style.width='0%';
+  document.querySelectorAll('.wvb').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.atr-line').forEach(el=>el.classList.remove('cur'));
+}
+
+function _speakIdx(idx) {
+  if(!_aPlaying||idx>=_aLines.length){
+    _aPlaying=false;
+    const btn=document.getElementById('btnPlay');if(btn)btn.textContent='▶';
+    return;
+  }
+  _aIdx=idx;
+  const l=_aLines[idx];
+  if(l.sys){setTimeout(()=>{if(_aPlaying)_speakIdx(idx+1);},350);return;}
+  _hlLine(idx);
+  const utt=new SpeechSynthesisUtterance(l.txt);
+  utt.lang='fr-FR'; utt.rate=0.92;
+  utt.pitch=l.type==='svc'?0.88:1.18;
+  utt.onend=()=>{if(_aPlaying)_speakIdx(idx+1);};
+  window.speechSynthesis.speak(utt);
+}
+
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closePdf();closeAudio();}});
 </script>
+
+<!-- PDF Viewer Modal -->
+<div class="modal-ov" id="pdfOverlay" onclick="if(event.target===this)closePdf()">
+  <div class="modal-box pdf-modal-box">
+    <div class="mhd">
+      <span class="mhd-title">📄 Document scanné</span>
+      <span class="mhd-sub" id="pdfFilename"></span>
+      <button class="mhd-close" onclick="closePdf()">✕ Fermer</button>
+    </div>
+    <div class="pdf-scroll"><div class="pdf-page" id="pdfPage"></div></div>
+    <div class="pdf-footer" id="pdfFooterInfo"></div>
+  </div>
+</div>
+
+<!-- Audio Player Modal -->
+<div class="modal-ov" id="audioOverlay" onclick="if(event.target===this)closeAudio()">
+  <div class="modal-box audio-modal-box">
+    <div class="mhd">
+      <span class="mhd-title">🎙️ Enregistrement d'appel</span>
+      <span class="mhd-sub" id="audioFilename"></span>
+      <button class="mhd-close" onclick="closeAudio()">✕ Fermer</button>
+    </div>
+    <div class="ap-panel">
+      <div class="wv-row" id="wvRow"></div>
+      <div class="ap-ctrl">
+        <button class="ap-btn" id="btnPlay" onclick="togglePlay()">▶</button>
+        <button class="ap-btn ap-stop" onclick="stopAudio()">■ Stop</button>
+        <div class="ap-progress"><div class="ap-fill" id="apFill"></div></div>
+        <span class="ap-dur" id="apDur"></span>
+      </div>
+    </div>
+    <div class="atr-area" id="atrArea"></div>
+  </div>
+</div>
+
 </body>
 </html>
