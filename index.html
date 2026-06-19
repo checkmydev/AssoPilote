@@ -55,6 +55,27 @@
     .tt-reclamation{background:#fce7f3;color:#9d174d}
     .tt-partenariat{background:#f3e8ff;color:#6b21a8}
     .tt-sensible{background:#f1f5f9;color:#334155}
+    .tt-courrier{background:#ffedd5;color:#7c2d12}
+    .tt-appel{background:#cffafe;color:#0e7490}
+
+    /* OCR source block */
+    .ocr-blk{padding:.7rem 1.1rem;background:linear-gradient(135deg,#fffbf0,#fff7ed);border-bottom:1px solid #fed7aa}
+    .ocr-hd{display:flex;align-items:center;gap:.45rem;margin-bottom:.42rem;flex-wrap:wrap}
+    .ocr-badge{background:#c2410c;color:#fff;font-size:.63rem;font-weight:700;padding:.1rem .42rem;border-radius:4px;flex-shrink:0}
+    .ocr-filename{font-size:.71rem;color:var(--g500);font-style:italic;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .ocr-score{font-size:.65rem;background:#fff;border:1px solid #fed7aa;color:#9a3412;padding:.08rem .38rem;border-radius:999px;font-weight:700;flex-shrink:0}
+    .ocr-raw{background:#fdf6ec;border:1px solid #fde8cc;border-radius:7px;padding:.6rem .75rem;font-size:.72rem;line-height:1.65;color:#574a3a;white-space:pre-wrap;font-family:'Courier New',monospace;max-height:150px;overflow-y:auto}
+
+    /* Audio source block */
+    .audio-blk{padding:.7rem 1.1rem;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border-bottom:1px solid #bbf7d0}
+    .audio-hd{display:flex;align-items:center;gap:.45rem;margin-bottom:.42rem;flex-wrap:wrap}
+    .audio-badge{background:#059669;color:#fff;font-size:.63rem;font-weight:700;padding:.1rem .42rem;border-radius:4px;flex-shrink:0}
+    .audio-filename{font-size:.71rem;color:var(--g500);font-style:italic;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .audio-dur{font-size:.71rem;color:var(--g500);flex-shrink:0}
+    .audio-score{font-size:.65rem;background:#fff;border:1px solid #bbf7d0;color:#065f46;padding:.08rem .38rem;border-radius:999px;font-weight:700;flex-shrink:0}
+    .audio-transcript{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:.6rem .75rem;font-size:.72rem;line-height:1.75;color:#1a4a33;white-space:pre-wrap;max-height:175px;overflow-y:auto}
+    .spk-svc{color:#065f46;font-weight:700}
+    .spk-cal{color:#1e40af;font-weight:700}
     .udot{width:7px;height:7px;background:var(--i600);border-radius:50%;position:absolute;top:.85rem;right:.85rem}
 
     /* MAIN */
@@ -306,7 +327,7 @@
 <div class="layout" id="mainLayout">
   <div class="inbox">
     <div class="inbox-hd">
-      <div class="inbox-hd-l">Boîte de réception <span class="cnt-b" id="cnt">10</span></div>
+      <div class="inbox-hd-l">Boîte de réception <span class="cnt-b" id="cnt">14</span></div>
       <div class="inbox-src">📧 Outlook</div>
     </div>
     <div class="inbox-scroll" id="email-list"></div>
@@ -705,6 +726,269 @@ Notre coordinatrice Mme Laure Martin prendra contact avec vous cette semaine.
 Avec toute notre sympathie,
 Mathieu Leroux — Service Donateurs`,
     autoTags:["📋 Dossier 'Don en mémoire' créé","📩 Mme L. Martin notifiée","📎 Formulaire transfert joint","🕯️ Jean-Paul Rousseau : mention rapport annuel"]
+  },
+  {
+    id:11,from:"René Gauthier",fromEmail:"Courrier postal",
+    subject:"Lettre manuscrite + chèque 200 € — Courrier scanné",
+    preview:"Don par chèque, fille ancienne patiente Émilie, premier contact…",
+    body:`Cher Monsieur ou Madame,
+
+Je vous écris pour vous faire parvenir mon chèque de deux cents euros (200 €) en soutien de votre belle action auprès des malades et de leurs familles.
+
+Ma femme Lucette et moi suivons votre association depuis que notre petite fille Émilie a été soignée chez vous il y a 5 ans. Elle va bien aujourd'hui et c'est en partie grâce à vous.
+
+Veuillez trouver ci-joint le chèque N° 1483721 de la BNP.
+
+Avec toute notre gratitude et admiration,
+
+René Gauthier
+12 rue du Moulin Vieux, 63000 Clermont-Ferrand — Tél. : 04 73 42 18 97`,
+    time:"09:52",type:"courrier",typeLabel:"Courrier papier",icon:"📮",conf:94,donorId:11,
+    sourceType:"courrier",
+    pdfFile:"courrier_2024-06-18_gauthier_rene.pdf",
+    ocrConf:88,
+    ocrRaw:`Cher Monsieur ou Madame,
+
+Je v0us ecris afin de vous fair3 parvenir
+mon cheque de deux cents euros (200 €)
+en soutient de votre be1le action aupres
+des malades et de leurs familles.
+
+Ma femm€ Lucette et moi suivons votre
+assoclation depuis que notre petite fille
+Emilie a ete soignee chez v0us il y a 5 ans.
+E1le va bien aujourd'hui et c'est en partie
+grace a vous.
+
+Veuillez trouver ci-joint le cheque N° 1483721
+de la BNP.
+
+Avec toute notre grat1tude et admiration,
+
+René Gauthier
+12 rue du Moulin Vieux
+63000 Clermont-Ferrand
+Tel : 04 73 42 18 97`,
+    tBefore:"~25 min",tAfter:"~2 min",saved:23,
+    steps:[
+      {e:"📂",t:"Ouvrir le scan, décrypter la lettre manuscrite",d:"5 min"},
+      {e:"🔍",t:"Rechercher René Gauthier dans Salesforce",d:"3 min"},
+      {e:"💳",t:"Enregistrer le chèque dans le registre des dons",d:"4 min"},
+      {e:"📝",t:"Créer la fiche donateur (nouveau contact)",d:"5 min"},
+      {e:"📧",t:"Rédiger et envoyer le courrier de remerciement",d:"5 min"},
+      {e:"📮",t:"Préparer le reçu fiscal papier à poster",d:"3 min"}
+    ],
+    genEmail:`Objet : Votre don de 200 € reçu — Merci infiniment
+
+Cher Monsieur Gauthier,
+
+Nous avons bien reçu votre courrier et votre chèque de 200 € (N° 1483721). Merci du fond du cœur pour ce geste généreux.
+
+Nous sommes très heureux d'apprendre qu'Émilie va bien — c'est pour nous la plus belle des nouvelles.
+
+Votre reçu fiscal (RF-2024-006147) vous sera adressé par courrier dans les 8 jours ouvrés à l'adresse suivante :
+  12 rue du Moulin Vieux, 63000 Clermont-Ferrand
+
+Votre fiche donateur a été créée dans notre système (réf. SF-00812543).
+
+Avec toute notre gratitude,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["💳 Chèque 1483721 — 200 € enregistré","👤 Fiche créée SF-00812543","📎 RF-2024-006147 généré","📮 Reçu papier à expédier"]
+  },
+  {
+    id:12,from:"Madeleine Charpentier",fromEmail:"Courrier postal",
+    subject:"Demande de reçu fiscal 2023 — Lettre imprimée",
+    preview:"Donatrice N° 00247158 depuis 2019, reçu 2023 jamais reçu…",
+    body:`Objet : Demande de reçu fiscal 2023
+
+Monsieur, Madame,
+
+Je suis donatrice auprès de votre association depuis 2019 et je n'ai pas reçu mon reçu fiscal pour l'année 2023. Pourriez-vous me le faire parvenir par courrier à l'adresse suivante :
+
+Mme Madeleine Charpentier
+8 impasse des Lilas, 44000 Nantes
+
+Mon numéro de donatrice est le 00247158.
+
+Je vous remercie par avance,
+Madeleine Charpentier`,
+    time:"10:15",type:"courrier",typeLabel:"Courrier papier",icon:"📮",conf:97,donorId:12,
+    sourceType:"courrier",
+    pdfFile:"courrier_2024-06-18_charpentier_m.pdf",
+    ocrConf:97,
+    ocrRaw:`Objet : Demande de recu fiscal 2023
+
+Monsieur, Madame,
+
+Je suis donatrice aupres de votre association depuis 2019 et
+je n'ai pas recu mon recu fiscal pour l'annee 2023.
+Pourriez-vous me le faire parvenir par courrier a l'adresse
+suivante :
+
+Mme Madeleine Charpentier
+8 impasse des Lilas
+44000 Nantes
+
+Mon numero de donatrice est le 00247158.
+
+Je vous remercie par avance,
+
+Madeleine Charpentier`,
+    tBefore:"~18 min",tAfter:"~45 sec",saved:17,
+    steps:[
+      {e:"📂",t:"Lire et analyser le courrier scanné",d:"3 min"},
+      {e:"🔍",t:"Retrouver Madeleine Charpentier (N° 00247158)",d:"2 min"},
+      {e:"📊",t:"Retrouver les dons 2023 dans Excel",d:"3 min"},
+      {e:"📝",t:"Régénérer le reçu fiscal 2023",d:"4 min"},
+      {e:"📮",t:"Préparer l'envoi postal du reçu",d:"4 min"},
+      {e:"📧",t:"Confirmer par email si adresse connue",d:"2 min"}
+    ],
+    genEmail:`Objet : Votre reçu fiscal 2023 — Envoi par courrier
+
+Chère Madame Charpentier,
+
+Nous avons bien reçu votre courrier et nous vous prions de nous excuser pour cette omission.
+
+Votre reçu fiscal 2023 (Réf. RF-2023-003847 — total 240,00 €) a été régénéré et vous sera adressé par courrier dans les 5 jours ouvrés :
+  Mme Madeleine Charpentier — 8 impasse des Lilas, 44000 Nantes
+
+Si vous souhaitez également le recevoir par email à l'avenir, n'hésitez pas à nous communiquer votre adresse électronique.
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["📎 RF-2023-003847 régénéré","📮 Reçu papier à expédier (Nantes)","✅ Dossier clôturé"]
+  },
+  {
+    id:13,from:"Yves Beaumont",fromEmail:"06 71 84 32 17",
+    subject:"Appel — Transfert des dons au nom de l'épouse",
+    preview:"Souhaite transférer dons et reçus fiscaux à Francine Beaumont…",
+    body:`📋 Résumé de l'appel — 18 juin 2024, 14h32 (5 min 42s)
+
+Yves Beaumont (donateur depuis avr. 2021, 1 400 € total) souhaite transférer les dons et reçus fiscaux au nom de son épouse Francine Beaumont.
+
+Informations collectées :
+  • Nom : Francine Beaumont (même adresse : 47 avenue des Cèdres, 69003 Lyon)
+  • Tél. Francine : 06 84 32 17 59
+  • Accord verbal confirmé par M. Beaumont
+
+Actions requises : créer fiche Francine dans Salesforce, mise à jour Excel, email de confirmation.`,
+    time:"14:32",type:"appel",typeLabel:"Appel téléphonique",icon:"📞",conf:96,donorId:13,
+    sourceType:"appel",
+    audioFile:"appel_2024-06-18_14h32_beaumont.mp3",
+    audioDuration:"5 min 42s",
+    transcript:`[Enregistrement — 18 juin 2024, 14h32 | Durée : 5 min 42s]
+
+Conseiller : Association Leucémie Espoir, bonjour, Mathieu à votre service.
+
+Appelant : Bonjour Monsieur, Yves Beaumont à l'appareil. Je suis donateur depuis quelques années et je voudrais modifier quelque chose sur mon compte.
+
+Conseiller : Bien sûr Monsieur Beaumont, je vous écoute.
+
+Appelant : Voilà, ma femme veut maintenant faire les dons en son propre nom — Francine Beaumont. Elle aimerait recevoir les reçus fiscaux à son nom. C'est possible ?
+
+Conseiller : Tout à fait ! Il faudra créer une fiche à son nom. Elle a la même adresse que vous ?
+
+Appelant : Oui bien sûr, on est mariés ! [rires] 47 avenue des Cèdres, 69003 Lyon.
+
+Conseiller : Et son numéro de téléphone ?
+
+Appelant : Elle a son propre mobile : 06 84 32 17 59.
+
+Conseiller : Très bien. Je crée la fiche de Madame Beaumont et je vous envoie un email de confirmation. Les prochains dons et reçus seront à son nom.
+
+Appelant : Parfait, merci beaucoup Monsieur.
+
+Conseiller : Merci à vous. Bonne journée Monsieur Beaumont !`,
+    tBefore:"~15 min",tAfter:"~1 min",saved:14,
+    steps:[
+      {e:"📞",t:"Réécouter et retranscrire l'appel manuellement",d:"5 min"},
+      {e:"🔍",t:"Retrouver Yves Beaumont dans Salesforce",d:"2 min"},
+      {e:"👤",t:"Créer la fiche Francine Beaumont",d:"4 min"},
+      {e:"📊",t:"Mettre à jour le fichier Excel des dons",d:"2 min"},
+      {e:"📧",t:"Envoyer email de confirmation",d:"2 min"}
+    ],
+    genEmail:`Objet : Confirmation — Transfert des dons au nom de Francine Beaumont
+
+Bonjour Monsieur Beaumont,
+
+Suite à notre appel de cet après-midi, nous avons bien pris en compte votre demande.
+
+Voici ce qui a été mis à jour dans notre système :
+  • Création de la fiche de Mme Francine Beaumont (SF-00912847)
+  • Adresse : 47 avenue des Cèdres, 69003 Lyon
+  • Tél. : 06 84 32 17 59
+  • Les prochains dons et reçus fiscaux seront à son nom
+
+Les dons antérieurs à votre nom restent dans nos archives pour votre historique fiscal.
+
+Bien cordialement,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["👤 Fiche Francine Beaumont créée (SF-00912847)","✅ Transfert dons confirmé","📊 Excel mis à jour"]
+  },
+  {
+    id:14,from:"Sandrine Mercier",fromEmail:"06 53 28 74 91",
+    subject:"Appel — Don en mémoire de Marc Mercier (décédé)",
+    preview:"Frère ancien patient décédé, souhaite faire 500 € en sa mémoire…",
+    body:`📋 Résumé de l'appel — 18 juin 2024, 15h47 (8 min 15s)
+
+Appel sensible. Sandrine Mercier annonce le décès de son frère Marc Mercier, ancien patient de l'association, survenu le 11 juin 2024. Elle souhaite faire un don de 500 € en sa mémoire et que son nom figure dans le rapport annuel.
+
+Informations collectées :
+  • Appelante : Sandrine Mercier — 23 rue de la Paix, 13000 Marseille
+  • Email : s.mercier@hotmail.fr
+  • Don souhaité : 500 € (mode de paiement à confirmer)
+
+Actions requises : créer la fiche Sandrine Mercier, ouvrir dossier "Don en mémoire", notifier Mme Laure Martin (coordinatrice).`,
+    time:"15:47",type:"appel",typeLabel:"Appel téléphonique",icon:"📞",conf:91,donorId:14,
+    sourceType:"appel",
+    audioFile:"appel_2024-06-18_15h47_mercier.mp3",
+    audioDuration:"8 min 15s",
+    transcript:`[Enregistrement — 18 juin 2024, 15h47 | Durée : 8 min 15s]
+
+Conseiller : Association Leucémie Espoir, bonjour, Sophie à votre service.
+
+Appelante : [voix émue] Bonjour... Mon frère Marc est décédé la semaine dernière. Il était patient chez vous.
+
+Conseiller : Je suis vraiment désolée pour votre perte, Madame. Prenez le temps qu'il vous faut.
+
+Appelante : Merci... Marc Mercier. Il tenait beaucoup à votre association, il nous en parlait souvent. Je voudrais faire un don à sa mémoire.
+
+Conseiller : C'est un très beau geste. Nous avons un programme "Don en mémoire" qui permet de mentionner la personne dans notre rapport annuel.
+
+Appelante : Oui, ça lui aurait vraiment plu. Je voudrais donner 500 euros. Je m'appelle Sandrine Mercier, sa sœur.
+
+Conseiller : Merci Madame Mercier. Je vais noter vos coordonnées. Votre adresse ?
+
+Appelante : 23 rue de la Paix, 13000 Marseille. Et mon email c'est s.mercier@hotmail.fr.
+
+Conseiller : Je vous envoie le formulaire par email et je transmets à notre coordinatrice Mme Martin qui vous recontactera. Toutes nos condoléances à vous et votre famille.
+
+Appelante : Merci beaucoup, c'est très gentil de votre part.`,
+    tBefore:"~35 min",tAfter:"~4 min",saved:31,
+    steps:[
+      {e:"📞",t:"Réécouter et analyser l'appel (situation sensible)",d:"10 min"},
+      {e:"🔍",t:"Rechercher Marc Mercier dans Salesforce",d:"3 min"},
+      {e:"👤",t:"Créer la fiche Sandrine Mercier",d:"4 min"},
+      {e:"📋",t:"Ouvrir le dossier 'Don en mémoire'",d:"5 min"},
+      {e:"📝",t:"Rédiger une réponse empathique et adaptée",d:"10 min"},
+      {e:"📧",t:"Envoyer formulaire + contacts coordinatrice",d:"3 min"}
+    ],
+    genEmail:`Objet : Nos sincères condoléances — Programme Don en Mémoire
+
+Chère Madame Mercier,
+
+Toute l'équipe de l'Association Leucémie Espoir s'associe à votre deuil. Marc était parmi nous et son souvenir restera.
+
+Pour honorer sa mémoire conformément à votre souhait :
+  1. Complétez le formulaire "Don en Mémoire" ci-joint
+  2. Votre don de 500 € sera entièrement consacré à la recherche, en son nom
+  3. Marc Mercier figurera dans notre rapport annuel 2024
+
+Notre coordinatrice Mme Laure Martin vous contactera personnellement cette semaine.
+
+Avec toute notre sympathie,
+Mathieu Leroux — Service Donateurs`,
+    autoTags:["🕯️ Marc Mercier : mention rapport annuel 2024","📋 Dossier Don en Mémoire créé","📩 Mme L. Martin notifiée","👤 Fiche Sandrine Mercier créée"]
   }
 ];
 
@@ -868,7 +1152,38 @@ Bien cordialement, Mathieu Leroux`}
   xlRows:[
     {ref:"DON-2025-001",donateur:"Jean-Paul Rousseau",date:"01/02/2025",montant:"200,00 €",type:"Semestriel",prelev:"Virement",recuFiscal:"RF-2024-003892",statut:"Émis"},
     {ref:"DON-2024-001",donateur:"Jean-Paul Rousseau",date:"05/01/2024",montant:"200,00 €",type:"Semestriel",prelev:"Virement",recuFiscal:"RF-2024-003892",statut:"Émis"}
-  ]}
+  ]},
+  11:{prenom:"René",nom:"Gauthier",age:78,job:"Retraité (ancien instituteur)",ville:"Clermont-Ferrand",email:"—",tel:"04 73 42 18 97",sfId:"SF-00812543",since:"Juin 2024",status:"nouveau",statusLbl:"Nouveau donateur",tags:["Courrier papier","Chèque"],
+  note:"Première prise de contact par lettre manuscrite. Fille Émilie, ancienne patiente (2019). Pas d'adresse email connue — correspondance uniquement par courrier.",
+  dons:[{yr:2024,amt:200,dtl:"1 chèque (juin)"}],total:200,
+  emailHistory:[],dossiers:[],
+  sfRow:{id:"SF-00812543",prenom:"René",nom:"Gauthier",email:"—",ville:"Clermont-Ferrand",statut:"Nouveau",total:"200 €",donMensuel:"—",benevole:"Non",depuis:"2024-06-18"},
+  xlRows:[{ref:"DON-2024-013",donateur:"René Gauthier",date:"18/06/2024",montant:"200,00 €",type:"Ponctuel",prelev:"Chèque",recuFiscal:"RF-2024-006147",statut:"Émis"}]},
+  12:{prenom:"Madeleine",nom:"Charpentier",age:69,job:"Retraitée (professeure de piano)",ville:"Nantes",email:"—",tel:"—",sfId:"SF-00247158",since:"Janvier 2019",status:"actif",statusLbl:"Active",tags:["Don annuel","Courrier papier"],
+  note:"Préfère exclusivement la correspondance par courrier postal. Aucune adresse email connue. Donatrice fidèle depuis 2019.",
+  dons:[{yr:2024,amt:120,dtl:"1×120€"},{yr:2023,amt:240,dtl:"2×120€"},{yr:2022,amt:120,dtl:"1×120€"},{yr:2021,amt:120,dtl:"1×120€"},{yr:2020,amt:120,dtl:"1×120€"},{yr:2019,amt:120,dtl:"1×120€"}],total:840,
+  emailHistory:[],dossiers:[],
+  sfRow:{id:"SF-00247158",prenom:"Madeleine",nom:"Charpentier",email:"—",ville:"Nantes",statut:"Actif",total:"840 €",donMensuel:"—",benevole:"Non",depuis:"2019-01-15"},
+  xlRows:[
+    {ref:"DON-2024-014",donateur:"Madeleine Charpentier",date:"15/03/2024",montant:"120,00 €",type:"Annuel",prelev:"Chèque",recuFiscal:"RF-2024-007234",statut:"Émis"},
+    {ref:"DON-2023-002",donateur:"Madeleine Charpentier",date:"12/04/2023",montant:"120,00 €",type:"Annuel",prelev:"Chèque",recuFiscal:"RF-2023-003847",statut:"Non envoyé"}
+  ]},
+  13:{prenom:"Yves",nom:"Beaumont",age:62,job:"Directeur de production (retraité anticipé)",ville:"Lyon",email:"yves.beaumont.69@gmail.com",tel:"06 71 84 32 17",sfId:"SF-00647293",since:"Avril 2021",status:"actif",statusLbl:"Actif",tags:["Don trimestriel","Appel entrant"],
+  note:"Souhaite transférer dons au nom de son épouse Francine Beaumont (06 84 32 17 59). Même adresse. Fiche Francine à créer.",
+  dons:[{yr:2024,amt:300,dtl:"3×100€"},{yr:2023,amt:400,dtl:"4×100€"},{yr:2022,amt:400,dtl:"4×100€"},{yr:2021,amt:300,dtl:"3×100€"}],total:1400,
+  emailHistory:[],dossiers:[],
+  sfRow:{id:"SF-00647293",prenom:"Yves",nom:"Beaumont",email:"yves.beaumont.69@gmail.com",ville:"Lyon",statut:"Actif",total:"1 400 €",donMensuel:"—",benevole:"Non",depuis:"2021-04-01"},
+  xlRows:[
+    {ref:"DON-2024-003",donateur:"Yves Beaumont",date:"01/04/2024",montant:"100,00 €",type:"Trimestriel",prelev:"Virement",recuFiscal:"RF-2024-008123",statut:"Émis"},
+    {ref:"DON-2024-001",donateur:"Yves Beaumont",date:"10/01/2024",montant:"100,00 €",type:"Trimestriel",prelev:"Virement",recuFiscal:"RF-2024-008123",statut:"Émis"}
+  ]},
+  14:{prenom:"Sandrine",nom:"Mercier",age:47,job:"Responsable RH",ville:"Marseille",email:"s.mercier@hotmail.fr",tel:"06 53 28 74 91",sfId:"À CRÉER",since:"Juin 2024",status:"nouveau",statusLbl:"Nouveau contact",tags:["Don en mémoire","Appel entrant","Situation sensible"],
+  note:"Sœur de Marc Mercier, ancien patient décédé le 11/06/2024. Don de 500 € en sa mémoire. À créer dans Salesforce. Contacter Mme Laure Martin (coordinatrice).",
+  dons:[{yr:2024,amt:500,dtl:"1 don en mémoire (juin)"}],total:500,
+  emailHistory:[],
+  dossiers:[{ref:"DOS-2024-0847",type:"Don en mémoire — Marc Mercier",opened:"18 juin 2024",status:"En attente formulaire signé",warn:"",responsible:"Mme Laure Martin — Coordinatrice"}],
+  sfRow:{id:"À CRÉER",prenom:"Sandrine",nom:"Mercier",email:"s.mercier@hotmail.fr",ville:"Marseille",statut:"Nouveau",total:"500 €",donMensuel:"—",benevole:"Non",depuis:"2024-06-18"},
+  xlRows:[{ref:"DON-2024-015",donateur:"Sandrine Mercier",date:"18/06/2024",montant:"500,00 €",type:"Don en mémoire",prelev:"À confirmer",recuFiscal:"En attente",statut:"En attente"}]}
 };
 
 // ═══════════════════════════ FLAT TABLES ═══════════════════════════
@@ -886,7 +1201,7 @@ let srcActive = 'sf', srcSort = {col: null, dir: 1};
 function init() { renderList(); buildSrcFilters(); }
 
 function renderList() {
-  const tc = {recu:"tt-recu",arret:"tt-arret",dossier:"tt-dossier",general:"tt-general",coords:"tt-coords",reclamation:"tt-reclamation",partenariat:"tt-partenariat",sensible:"tt-sensible"};
+  const tc = {recu:"tt-recu",arret:"tt-arret",dossier:"tt-dossier",general:"tt-general",coords:"tt-coords",reclamation:"tt-reclamation",partenariat:"tt-partenariat",sensible:"tt-sensible",courrier:"tt-courrier",appel:"tt-appel"};
   document.getElementById('email-list').innerHTML = EMAILS.map(e=>`
     <div class="er${activeId===e.id?' active':''}" onclick="sel(${e.id})">
       ${!generated.has(e.id)?'<div class="udot"></div>':''}
@@ -912,15 +1227,50 @@ function renderEmail(id) {
   const steps = e.steps.map((s,i)=>`<div class="step-row${done?' x':''}" id="sr-${id}-${i}"><span>${s.e}</span><span>${s.t}</span><span class="step-dur">${s.d}</span></div>`).join('');
   const tags = e.autoTags.map(t=>`<span class="auto-tag">${t}</span>`).join('');
 
+  // Adapt labels by source type
+  const fromLabel = e.sourceType==='appel' ? 'Appelant :' : e.sourceType==='courrier' ? 'Expéditeur :' : 'De :';
+  const genLabel = e.sourceType==='appel' ? '✓ Email de suivi généré par AssoPilot' : '✓ Réponse générée par AssoPilot';
+  const btnLabel = done
+    ? (e.sourceType==='appel' ? '✓ Email de suivi envoyé' : '✓ Réponse générée et envoyée')
+    : (e.sourceType==='appel' ? '⚡ Générer l\'email de suivi' : e.sourceType==='courrier' ? '⚡ Générer la réponse courrier' : '⚡ Générer la réponse automatiquement');
+
+  // Source block (OCR or Audio)
+  let sourceBlock = '';
+  if(e.sourceType==='courrier') {
+    const safe = (e.ocrRaw||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    sourceBlock = `<div class="ocr-blk">
+      <div class="ocr-hd">
+        <span class="ocr-badge">📄 OCR</span>
+        <span class="ocr-filename">${e.pdfFile}</span>
+        <span class="ocr-score">Confiance OCR : ${e.ocrConf}%</span>
+      </div>
+      <div class="ocr-raw">${safe}</div>
+    </div>`;
+  } else if(e.sourceType==='appel') {
+    const safe = (e.transcript||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/(Conseiller\s*:)/g,'<span class="spk-svc">$1</span>')
+      .replace(/(Appelant[e]?\s*:)/g,'<span class="spk-cal">$1</span>');
+    sourceBlock = `<div class="audio-blk">
+      <div class="audio-hd">
+        <span class="audio-badge">🎙️ Audio</span>
+        <span class="audio-filename">${e.audioFile}</span>
+        <span class="audio-dur">${e.audioDuration}</span>
+        <span class="audio-score">Whisper STT</span>
+      </div>
+      <div class="audio-transcript">${safe}</div>
+    </div>`;
+  }
+
   document.getElementById('main').innerHTML = `
     <div class="card">
       <div class="email-hd">
         <div class="email-subj">${e.subject}</div>
         <div class="email-meta">
-          <div class="em-i"><b>De :</b> ${e.from} &lt;${e.fromEmail}&gt;</div>
+          <div class="em-i"><b>${fromLabel}</b> ${e.from} &lt;${e.fromEmail}&gt;</div>
           <div class="em-i"><b>Heure :</b> ${e.time}</div>
         </div>
       </div>
+      ${sourceBlock}
       <div class="email-body">${e.body}</div>
       <div class="det">
         <div class="det-l"><span class="det-ic">${e.icon}</span><span class="det-type">Type détecté : ${e.typeLabel}</span><span class="det-conf">Confiance ${e.conf}%</span></div>
@@ -932,12 +1282,12 @@ function renderEmail(id) {
       </div>
       <div class="act-blk">
         <button class="btn-gen${done?' done':''}" id="bg-${id}" onclick="gen(${id})" ${done?'disabled':''}>
-          ${done?'✓ Réponse générée et envoyée':'⚡ Générer la réponse automatiquement'}
+          ${btnLabel}
         </button>
       </div>
       <div class="gen-blk${done?' show':''}" id="gb-${id}">
         <div class="gen-hd">
-          <div class="gen-lbl">✓ Réponse générée par AssoPilot</div>
+          <div class="gen-lbl">${genLabel}</div>
           <button class="btn-send${done?' sent':''}" id="bs-${id}" onclick="markSent(${id})">${done?'✓ Envoyé':'📤 Envoyer'}</button>
         </div>
         <div class="gen-prev">${e.genEmail}</div>
@@ -995,14 +1345,18 @@ async function gen(id) {
   const btn = document.getElementById('bg-'+id);
   if(!btn) return;
   btn.disabled=true;
-  btn.innerHTML='<div class="spinner"></div> Lecture des sources…';
+  const msg1 = e.sourceType==='courrier' ? 'Analyse du document OCR…' : e.sourceType==='appel' ? 'Analyse de la transcription…' : 'Lecture des sources…';
+  const msg2 = e.sourceType==='courrier' ? 'Recherche du donateur…' : e.sourceType==='appel' ? 'Identification du donateur…' : 'Croisement Salesforce + Excel…';
+  const msg3 = e.sourceType==='courrier' ? 'Rédaction de la réponse…' : e.sourceType==='appel' ? 'Génération du compte-rendu…' : 'Génération de la réponse…';
+  const doneMsg = e.sourceType==='appel' ? '✓ Email de suivi envoyé' : '✓ Réponse générée et envoyée';
+  btn.innerHTML=`<div class="spinner"></div> ${msg1}`;
   await sleep(550);
-  btn.innerHTML='<div class="spinner"></div> Croisement Salesforce + Excel…';
+  btn.innerHTML=`<div class="spinner"></div> ${msg2}`;
   await sleep(500);
-  btn.innerHTML='<div class="spinner"></div> Génération de la réponse…';
+  btn.innerHTML=`<div class="spinner"></div> ${msg3}`;
   for(let i=0;i<e.steps.length;i++){await sleep(170);const s=document.getElementById(`sr-${id}-${i}`);if(s)s.classList.add('x');}
   await sleep(300);
-  btn.innerHTML='✓ Réponse générée et envoyée';btn.classList.add('done');
+  btn.innerHTML=doneMsg;btn.classList.add('done');
   const gb=document.getElementById('gb-'+id);if(gb)gb.classList.add('show');
   generated.add(id);totalSaved+=e.saved;
   document.getElementById('sav').textContent=totalSaved+' min';
