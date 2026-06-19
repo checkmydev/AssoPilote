@@ -2181,6 +2181,14 @@ async function bootstrap(session) {
   if(_booted) return;
   _booted = true;   // verrou synchrone : évite un double bootstrap (getSession + onAuthStateChange)
   currentUser = session.user;
+  // Filet de sécurité : crée le profil s'il n'existe pas encore (ne touche pas au rôle si déjà présent)
+  try {
+    const meta = currentUser.user_metadata || {};
+    await SB.from('profiles').upsert(
+      { id: currentUser.id, email: currentUser.email, full_name: meta.full_name || currentUser.email },
+      { onConflict: 'id', ignoreDuplicates: true }
+    );
+  } catch(e){ /* le profil existe déjà ou sera lu ci-dessous */ }
   // Profil + rôle
   try {
     const { data } = await SB.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
