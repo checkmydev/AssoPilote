@@ -2249,7 +2249,7 @@ let _deferredInstall = null;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   _deferredInstall = e;
-  if(!sessionStorage.getItem('pwaDismissed')) {
+  if(isMob() && !sessionStorage.getItem('pwaDismissed')) {
     document.getElementById('pwaBannerMsg').textContent = 'Disponible comme application mobile';
     document.getElementById('pwaInstallBtn').style.display = '';
     document.getElementById('pwaBanner').classList.add('show');
