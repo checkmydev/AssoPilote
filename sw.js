@@ -1,4 +1,4 @@
-const CACHE = 'assopilot-v1';
+const CACHE = 'assopilot-v2';
 const CORE = ['./index.html', './manifest.json', './icon.svg', './icon-maskable.svg'];
 
 self.addEventListener('install', e => {
