@@ -1556,7 +1556,7 @@ let _mobActive = 'inbox';
 const SUPABASE_URL = 'https://wzrcrszfubjsfoaxatvo.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6cmNyc3pmdWJqc2ZvYXhhdHZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMjcxMzEsImV4cCI6MjA5MTcwMzEzMX0.HSzERXdF0nBs0L4XVcKo-UsGe1PAcqiVD5gwZj15foY';
 const SB = (window.supabase && window.supabase.createClient)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'assopilot' } })
   : null;
 let currentUser = null, currentProfile = null, _booted = false;
 
@@ -2184,14 +2184,14 @@ async function bootstrap(session) {
   // Filet de sécurité : crée le profil s'il n'existe pas encore (ne touche pas au rôle si déjà présent)
   try {
     const meta = currentUser.user_metadata || {};
-    await SB.from('profiles').upsert(
+    await SB.from('members').upsert(
       { id: currentUser.id, email: currentUser.email, full_name: meta.full_name || currentUser.email },
       { onConflict: 'id', ignoreDuplicates: true }
     );
   } catch(e){ /* le profil existe déjà ou sera lu ci-dessous */ }
   // Profil + rôle
   try {
-    const { data } = await SB.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+    const { data } = await SB.from('members').select('*').eq('id', currentUser.id).maybeSingle();
     currentProfile = data || { role: 'user', full_name: currentUser.email };
   } catch(e){ currentProfile = { role: 'user', full_name: currentUser.email }; }
   applyRole(currentProfile);
@@ -2256,7 +2256,7 @@ async function renderAdmin() {
   body.innerHTML = '<div class="adm-empty">Chargement…</div>';
   try {
     const [{ data: profiles }, { data: actions }] = await Promise.all([
-      SB.from('profiles').select('*'),
+      SB.from('members').select('*'),
       SB.from('actions').select('*').order('created_at', { ascending: false })
     ]);
     const profs = profiles || [];
