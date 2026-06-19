@@ -1670,6 +1670,15 @@ function markSent(id) {
 
 // ═══════════════════════════ PROFILE ═══════════════════════════
 
+function _mailLink(v) {
+  if(!v||v==='—') return v||'—';
+  return '<a href="mailto:'+v+'" style="color:#4f46e5;text-decoration:underline">'+v+'</a>';
+}
+function _telLink(v) {
+  if(!v||v==='—') return v||'—';
+  return '<a href="tel:'+v.replace(/\s/g,'')+'" style="color:#4f46e5;text-decoration:underline">'+v+'</a>';
+}
+
 function renderProfile(donorId) {
   const d=DONORS[donorId];
   if(!activeTab[donorId]) activeTab[donorId]='profil';
@@ -1701,8 +1710,8 @@ function renderProfile(donorId) {
           <div class="kv"><span class="kv-k">Profession</span><span class="kv-v">${d.job}</span></div>
           <div class="kv"><span class="kv-k">Adresse</span><span class="kv-v">${d.adresse||'—'}</span></div>
           <div class="kv"><span class="kv-k">Ville</span><span class="kv-v">${d.ville}</span></div>
-          <div class="kv"><span class="kv-k">Email</span><span class="kv-v">${d.email&&d.email!=='—'?`<a href="mailto:${d.email}" style="color:var(--i600);text-decoration:none">${d.email}</a>`:d.email||'—'}</span></div>
-          <div class="kv"><span class="kv-k">Téléphone</span><span class="kv-v">${d.tel&&d.tel!=='—'?`<a href="tel:${d.tel.replace(/\s/g,'')}" style="color:var(--i600);text-decoration:none">${d.tel}</a>`:d.tel||'—'}</span></div>
+          <div class="kv"><span class="kv-k">Email</span><span class="kv-v">${_mailLink(d.email)}</span></div>
+          <div class="kv"><span class="kv-k">Téléphone</span><span class="kv-v">${_telLink(d.tel)}</span></div>
           <div class="kv"><span class="kv-k">ID Salesforce</span><span class="kv-v">${d.sfId}</span></div>
           <div class="kv"><span class="kv-k">Donateur depuis</span><span class="kv-v">${d.since}</span></div>
         </div>
