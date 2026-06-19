@@ -431,17 +431,19 @@
 
     /* ─── MOBILE ─────────────────────────────────────────────── */
     .mob-tabs{display:none}
+    .mob-refresh-btn{display:none}
     @media(max-width:767px){
       html,body{overflow:hidden}
       .nav{padding:0 .75rem;gap:.5rem}
       .nav-asso,.nav-sep,.btn-sources,.demo-pill{display:none}
+      .mob-refresh-btn{display:flex;align-items:center;justify-content:center;margin-left:auto;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:1.15rem;width:32px;height:32px;border-radius:50%;cursor:pointer;padding:0;line-height:1}
       .savings-pill{padding:.18rem .5rem;font-size:.67rem;gap:.25rem}
       .savings-pill .val{font-size:.82rem}
 
       .layout{flex-direction:column;height:calc(100vh - 50px - 56px);overflow:hidden}
-      .inbox{width:100%;height:100%;border-right:none}
-      .main{width:100%;height:100%}
-      .profile-col{width:100%;height:100%;border-left:none}
+      .inbox{width:100%;height:100%;border-right:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
+      .main{width:100%;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
+      .profile-col{width:100%;height:100%;border-left:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
       .layout>.inbox,.layout>.main,.layout>.profile-col{display:none}
       .layout>.inbox.mob-show{display:flex}
@@ -475,6 +477,7 @@
   <button class="btn-sources" id="btnSrc" onclick="toggleSources()">🗃️ Données sources</button>
   <div class="demo-pill">Démo</div>
   <div class="savings-pill">⚡ Économisé : <span class="val" id="sav">0 min</span></div>
+  <button class="mob-refresh-btn" onclick="location.reload(true)" aria-label="Rafraîchir">↺</button>
 </nav>
 
 <!-- DATA SOURCES OVERLAY -->
