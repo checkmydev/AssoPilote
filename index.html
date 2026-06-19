@@ -440,15 +440,11 @@
       .savings-pill{padding:.18rem .5rem;font-size:.67rem;gap:.25rem}
       .savings-pill .val{font-size:.82rem}
 
-      .layout{flex-direction:column;height:calc(100vh - 50px - 56px);overflow:hidden}
-      .inbox{width:100%;height:100%;border-right:none;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
-      .main{width:100%;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
-      .profile-col{width:100%;height:100%;border-left:none;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
-
-      .layout>.inbox,.layout>.main,.layout>.profile-col{display:none}
-      .layout>.inbox.mob-show{display:flex}
-      .layout>.main.mob-show{display:block}
-      .layout>.profile-col.mob-show{display:flex}
+      .layout{flex-direction:row;height:calc(100vh - 50px - 56px);overflow-x:scroll;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      .layout::-webkit-scrollbar{display:none}
+      .inbox{flex:0 0 100%;min-width:100%;height:100%;border-right:none;overflow-y:auto;-webkit-overflow-scrolling:touch;scroll-snap-align:start}
+      .main{flex:0 0 100%;min-width:100%;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;scroll-snap-align:start}
+      .profile-col{flex:0 0 100%;min-width:100%;height:100%;border-left:none;overflow-y:auto;-webkit-overflow-scrolling:touch;scroll-snap-align:start}
 
       .src-overlay{top:50px;bottom:56px}
       .src-nav{flex-wrap:wrap;gap:.3rem;padding:.6rem .9rem}
@@ -1472,9 +1468,9 @@ function mobSel(tab) {
     if(!overlay.classList.contains('show')) { overlay.classList.add('show'); renderSrcTable(); }
   } else {
     _mobActive = tab;
-    document.querySelector('.inbox').classList.toggle('mob-show', tab === 'inbox');
-    document.getElementById('main').classList.toggle('mob-show', tab === 'main');
-    document.querySelector('.profile-col').classList.toggle('mob-show', tab === 'profile');
+    const layout = document.querySelector('.layout');
+    const idx = ['inbox','main','profile'].indexOf(tab);
+    if(layout && idx >= 0) layout.scrollTo({left: idx * layout.clientWidth, behavior:'smooth'});
   }
   document.querySelectorAll('.mob-tab').forEach(b => b.classList.remove('active'));
   const btn = document.getElementById('mtab-' + tab);
@@ -1483,8 +1479,24 @@ function mobSel(tab) {
 
 function mobInit() {
   if(!isMob()) return;
-  document.querySelector('.inbox').classList.add('mob-show');
-  document.getElementById('mtab-inbox') && document.getElementById('mtab-inbox').classList.add('active');
+  const tb = document.getElementById('mtab-inbox');
+  if(tb) tb.classList.add('active');
+  const layout = document.querySelector('.layout');
+  if(!layout) return;
+  let _st;
+  layout.addEventListener('scroll', function(){
+    clearTimeout(_st);
+    _st = setTimeout(function(){
+      const idx = Math.round(layout.scrollLeft / layout.clientWidth);
+      const tab = ['inbox','main','profile'][Math.min(idx,2)]||'inbox';
+      if(tab !== _mobActive) {
+        _mobActive = tab;
+        document.querySelectorAll('.mob-tab').forEach(b=>b.classList.remove('active'));
+        const b = document.getElementById('mtab-'+tab);
+        if(b) b.classList.add('active');
+      }
+    }, 80);
+  });
 }
 
 // ═══════════════════════════ INBOX ═══════════════════════════
@@ -2361,37 +2373,6 @@ function pwaDismiss() {
   },{passive:true});
 })();
 
-// Swipe horizontal pour changer d'onglet (mobile)
-(function(){
-  var TABS=['inbox','main','profile','sources'];
-  var sx=0,sy=0,horiz=false;
-  function attachSwipe(el){
-    if(!el)return;
-    el.addEventListener('touchstart',function(e){
-      sx=e.touches[0].clientX;sy=e.touches[0].clientY;horiz=false;
-    },{passive:true});
-    el.addEventListener('touchmove',function(e){
-      var dx=Math.abs(e.touches[0].clientX-sx);
-      var dy=Math.abs(e.touches[0].clientY-sy);
-      if(!horiz&&(dx>10||dy>10)) horiz=dx>dy;
-      if(horiz) e.preventDefault();
-    },{passive:false});
-    el.addEventListener('touchend',function(e){
-      if(!horiz)return;
-      var t=e.changedTouches[0];if(!t)return;
-      var dx=t.clientX-sx;
-      if(Math.abs(dx)<50)return;
-      var idx=TABS.indexOf(_mobActive);
-      if(dx<0&&idx<TABS.length-1) mobSel(TABS[idx+1]);
-      else if(dx>0&&idx>0) mobSel(TABS[idx-1]);
-    },{passive:true});
-  }
-  window.addEventListener('load',function(){
-    ['.inbox','.main','.profile-col','#srcOverlay'].forEach(function(s){
-      attachSwipe(document.querySelector(s));
-    });
-  });
-})();
 </script>
 
 <!-- PDF Viewer Modal -->
