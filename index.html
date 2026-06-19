@@ -527,6 +527,17 @@
     .btn-reset-demo:disabled{opacity:.5;cursor:wait}
     .adm-tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
     .adm-tbl th,.adm-tbl td{white-space:nowrap}
+    .adm-newuser{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.6rem}
+    .adm-newuser input,.adm-newuser select{padding:.5rem .6rem;border:1px solid var(--g300);border-radius:7px;font-size:.78rem;font-family:inherit}
+    .adm-newuser input{flex:1;min-width:140px}
+    .adm-add-btn{background:var(--i600);color:#fff;border:none;border-radius:7px;padding:.5rem .9rem;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .adm-add-btn:hover{background:var(--i700)} .adm-add-btn:disabled{opacity:.6;cursor:wait}
+    .adm-msg{font-size:.74rem;min-height:1rem;margin-bottom:.6rem}
+    .adm-msg.err{color:var(--red);font-weight:600} .adm-msg.ok{color:#059669;font-weight:600}
+    .adm-role-sel{padding:.25rem .4rem;border:1px solid var(--g300);border-radius:6px;font-size:.72rem;font-family:inherit;background:#fff}
+    .adm-del-btn{background:#fff;border:1px solid var(--g300);color:var(--g600);border-radius:6px;padding:.22rem .55rem;font-size:.7rem;cursor:pointer;font-family:inherit}
+    .adm-del-btn:hover{border-color:var(--red);color:var(--red)}
+    .adm-self{font-size:.68rem;color:var(--g400);font-style:italic}
     @media(max-width:767px){
       .adm-cards{gap:.6rem} .adm-card{min-width:130px} .adm-card .v{font-size:1.3rem}
       .adm-bar-lbl{width:104px;font-size:.7rem}
@@ -1813,12 +1824,13 @@ async function gen(id) {
 
 // Persiste une génération : état partagé (email traité + modif de fiche) + journal d'actions
 async function persistGen(e) {
-  if(!SB || !currentUser) return;
+  if(!SB || !currentUser) { console.warn('persistGen: pas de session Supabase'); return; }
   const uid = currentUser.id;
   try {
     const shared = [{ kind:'email_handled', email_id:e.id, donor_id:e.donorId, created_by:uid }];
     if(e.dataUpdates) shared.push({ kind:'donor_patch', donor_id:e.donorId, patch:e.dataUpdates, created_by:uid });
-    await SB.from('shared_state').insert(shared);
+    const r1 = await SB.from('shared_state').insert(shared);
+    if(r1.error) console.error('❌ persistGen shared_state:', r1.error.message, r1.error);
 
     const acts = [{ user_id:uid, action_type:'reply_generated', email_id:e.id, donor_id:e.donorId, minutes_saved:e.saved||0 }];
     const du = e.dataUpdates && e.dataUpdates.donor ? e.dataUpdates.donor : null;
@@ -1827,8 +1839,10 @@ async function persistGen(e) {
       if(du.statusLbl || du.status) acts.push({ user_id:uid, action_type:'status_change', email_id:e.id, donor_id:e.donorId, minutes_saved:0, details:{ statut:du.statusLbl||du.status } });
       if(du.email) acts.push({ user_id:uid, action_type:'email_update', email_id:e.id, donor_id:e.donorId, minutes_saved:0, details:{ email:du.email } });
     }
-    await SB.from('actions').insert(acts);
-  } catch(err){ console.warn('persistGen', err); }
+    const r2 = await SB.from('actions').insert(acts);
+    if(r2.error) console.error('❌ persistGen actions:', r2.error.message, r2.error);
+    else console.log('✓ persistGen: action(s) enregistrée(s)', acts.length);
+  } catch(err){ console.error('❌ persistGen exception:', err); }
 }
 
 function markSent(id) {
@@ -2305,6 +2319,29 @@ async function renderAdmin() {
       + `<div class="adm-card"><div class="v">${activeUsers}/${profs.length}</div><div class="l">Utilisateurs actifs</div></div>`
       + '</div>';
 
+    // Gestion des utilisateurs (création + rôles)
+    html += '<div class="adm-sec"><h3>👤 Gestion des utilisateurs</h3>'
+      + '<div class="adm-newuser">'
+      + '<input id="nu-email" type="email" placeholder="email@association.org" autocomplete="off">'
+      + '<input id="nu-name" type="text" placeholder="Nom complet">'
+      + '<input id="nu-pwd" type="text" placeholder="Mot de passe (min. 6)">'
+      + '<select id="nu-role"><option value="user">Agent</option><option value="admin">Admin</option></select>'
+      + '<button class="adm-add-btn" id="nu-btn" onclick="adminCreateUser()">+ Créer le compte</button>'
+      + '</div>'
+      + '<div class="adm-msg" id="nu-msg"></div>'
+      + '<div class="adm-tbl-wrap"><table class="adm-tbl"><thead><tr>'
+      + '<th>Utilisateur</th><th>Email</th><th>Rôle</th><th></th></tr></thead><tbody>';
+    profs.sort((a,b)=>(a.full_name||a.email||'').localeCompare(b.full_name||b.email||'')).forEach(p => {
+      const isSelf = currentUser && p.id === currentUser.id;
+      html += `<tr><td class="nm">${esc(p.full_name||'—')}</td><td>${esc(p.email||'')}</td>`
+        + `<td><select class="adm-role-sel" ${isSelf?'disabled':''} onchange="adminSetRole('${p.id}', this.value)">`
+        + `<option value="user" ${p.role!=='admin'?'selected':''}>Agent</option>`
+        + `<option value="admin" ${p.role==='admin'?'selected':''}>Admin</option></select></td>`
+        + `<td>${isSelf?'<span class="adm-self">vous</span>':`<button class="adm-del-btn" onclick="adminRemoveUser('${p.id}','${esc(p.email||'')}')">Retirer</button>`}</td></tr>`;
+    });
+    if(!profs.length) html += '<tr><td colspan="4" class="adm-empty">Aucun utilisateur.</td></tr>';
+    html += '</tbody></table></div></div>';
+
     // Tableau par utilisateur
     html += '<div class="adm-sec"><h3>👥 Activité par utilisateur</h3><div class="adm-tbl-wrap"><table class="adm-tbl"><thead><tr>'
       + '<th>Utilisateur</th><th>Rôle</th><th>Emails traités</th><th>Temps gagné</th><th>Dernière activité</th>'
@@ -2352,6 +2389,60 @@ async function renderAdmin() {
 }
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+// Crée un compte (email + mot de passe + rôle) — admin uniquement.
+// signUp via un client JETABLE (persistSession:false) pour ne pas déconnecter l'admin.
+async function adminCreateUser() {
+  if(!SB || !currentProfile || currentProfile.role !== 'admin') return;
+  const email = (document.getElementById('nu-email').value||'').trim();
+  const name  = (document.getElementById('nu-name').value||'').trim();
+  const pwd   = document.getElementById('nu-pwd').value||'';
+  const role  = document.getElementById('nu-role').value;
+  const msg   = document.getElementById('nu-msg');
+  const btn   = document.getElementById('nu-btn');
+  msg.className = 'adm-msg'; msg.textContent = '';
+  if(!email || !pwd){ msg.className='adm-msg err'; msg.textContent='Email et mot de passe requis.'; return; }
+  if(pwd.length < 6){ msg.className='adm-msg err'; msg.textContent='Mot de passe : 6 caractères minimum.'; return; }
+  if(btn){ btn.disabled = true; btn.textContent = 'Création…'; }
+  try {
+    const SB2 = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY,
+      { auth: { persistSession:false, autoRefreshToken:false, storageKey:'sb-invite-tmp' } });
+    const { data, error } = await SB2.auth.signUp({ email, password: pwd, options:{ data:{ full_name: name||email } } });
+    if(error){ msg.className='adm-msg err'; msg.textContent='Erreur : ' + error.message; return; }
+    const newId = data && data.user && data.user.id;
+    if(newId){
+      const { error: e2 } = await SB.from('members').upsert(
+        { id:newId, email, full_name:name||email, role }, { onConflict:'id' });
+      if(e2){ msg.className='adm-msg err'; msg.textContent='Compte créé mais rôle non appliqué : ' + e2.message; return; }
+    }
+    msg.className='adm-msg ok';
+    msg.textContent='✓ Compte créé : ' + email + ' (' + (role==='admin'?'Admin':'Agent') + ').';
+    renderAdmin();
+  } catch(e){
+    msg.className='adm-msg err'; msg.textContent='Erreur : ' + (e.message||e);
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = '+ Créer le compte'; }
+  }
+}
+
+// Change le rôle d'un membre (admin uniquement)
+async function adminSetRole(id, role) {
+  try {
+    const { error } = await SB.from('members').update({ role }).eq('id', id);
+    if(error){ alert('Erreur changement de rôle : ' + error.message); renderAdmin(); }
+    else renderAdmin();
+  } catch(e){ alert('Erreur : ' + (e.message||e)); }
+}
+
+// Retire un membre de l'app (la fiche membre ; le compte auth reste dans Supabase)
+async function adminRemoveUser(id, email) {
+  if(!confirm('Retirer ' + email + ' de AssoPilot ?\n\nSa fiche membre et ses droits sont supprimés. Le compte de connexion reste dans Supabase (pour le supprimer définitivement : Authentication → Users).')) return;
+  try {
+    const { error } = await SB.from('members').delete().eq('id', id);
+    if(error) alert('Erreur : ' + error.message);
+    else renderAdmin();
+  } catch(e){ alert('Erreur : ' + (e.message||e)); }
+}
 
 // Réinitialise la démo : efface toutes les actions + l'état partagé (admin uniquement)
 async function resetDemo() {
