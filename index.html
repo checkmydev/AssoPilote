@@ -521,6 +521,10 @@
     .adm-log-act{color:var(--g600);flex:1}
     .adm-log-tm{color:var(--g400);font-size:.66rem;white-space:nowrap}
     .adm-empty{color:var(--g400);font-size:.78rem;text-align:center;padding:1.5rem}
+    .btn-reset-demo{background:#fff;border:1px solid var(--red);color:var(--red);border-radius:7px;padding:.32rem .7rem;
+      font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+    .btn-reset-demo:hover{background:var(--red);color:#fff}
+    .btn-reset-demo:disabled{opacity:.5;cursor:wait}
   </style>
 </head>
 <body>
@@ -604,6 +608,7 @@
   <div class="src-nav">
     <div class="src-title">📊 Pilotage — activité de l'équipe</div>
     <span class="nav-sp"></span>
+    <button class="btn-reset-demo" id="btnResetDemo" onclick="resetDemo()">↺ Réinitialiser la démo</button>
     <button class="btn-close-src" onclick="toggleAdmin()">✕ Fermer</button>
   </div>
   <div class="admin-body" id="adminBody">
@@ -2340,6 +2345,26 @@ async function renderAdmin() {
 }
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+// Réinitialise la démo : efface toutes les actions + l'état partagé (admin uniquement)
+async function resetDemo() {
+  if(!SB || !currentProfile || currentProfile.role !== 'admin') return;
+  if(!confirm('Réinitialiser la démo ?\n\nToutes les générations IA, modifications de fiches et statistiques seront effacées pour TOUS les utilisateurs. La démo repartira de zéro.\n\nCette action est irréversible.')) return;
+  const btn = document.getElementById('btnResetDemo');
+  if(btn){ btn.disabled = true; btn.textContent = 'Réinitialisation…'; }
+  try {
+    const r1 = await SB.from('actions').delete().gte('id', 0);
+    if(r1.error) throw r1.error;
+    const r2 = await SB.from('shared_state').delete().gte('id', 0);
+    if(r2.error) throw r2.error;
+    alert('Démo réinitialisée. La page va se recharger.');
+    location.reload();
+  } catch(e) {
+    console.warn('resetDemo', e);
+    alert('Erreur lors de la réinitialisation : ' + (e.message || e) + '\n\nVérifie que le SQL des politiques de suppression a bien été exécuté.');
+    if(btn){ btn.disabled = false; btn.textContent = '↺ Réinitialiser la démo'; }
+  }
+}
 
 // ═══════════════════════════ PDF MODAL ═══════════════════════════
 
