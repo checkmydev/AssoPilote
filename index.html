@@ -10,6 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AssoPilot">
   <link rel="apple-touch-icon" href="assets/Logo.png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -456,19 +457,107 @@
 
       .gen-prev,.audio-transcript,.ocr-raw{max-height:none}
       .email-subj{font-size:.88rem}
+      .user-nm,.user-role{display:none}
     }
+
+    /* ─── AUTH / RÔLES / PILOTAGE ─────────────────────────────── */
+    /* Masqué pour tous tant que le rôle admin n'est pas confirmé */
+    body:not(.role-admin) .admin-only{display:none!important}
+
+    .auth-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--i900),var(--i700));padding:1.25rem}
+    .auth-card{background:#fff;border-radius:16px;padding:2rem 1.75rem;width:100%;max-width:360px;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center;animation:fadeUp .3s ease}
+    .auth-logo{width:64px;height:64px;object-fit:contain;border-radius:14px;margin-bottom:.75rem}
+    .auth-card h1{font-size:1.4rem;color:var(--i900);font-weight:800;margin-bottom:.15rem}
+    .auth-card .auth-sub{color:var(--g500);font-size:.82rem;margin-bottom:1.4rem}
+    .auth-card form{display:flex;flex-direction:column;gap:.6rem;text-align:left}
+    .auth-card label{font-size:.7rem;font-weight:600;color:var(--g700);margin-bottom:-.35rem}
+    .auth-card input{padding:.65rem .8rem;border:1px solid var(--g300);border-radius:9px;font-size:.9rem;font-family:inherit;width:100%}
+    .auth-card input:focus{outline:none;border-color:var(--i500);box-shadow:0 0 0 3px var(--i100)}
+    .auth-btn{margin-top:.4rem;background:var(--i600);color:#fff;border:none;border-radius:9px;padding:.7rem;font-size:.92rem;
+      font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+    .auth-btn:hover{background:var(--i700)} .auth-btn:disabled{opacity:.6;cursor:wait}
+    .auth-err{color:var(--red);font-size:.76rem;min-height:1rem;text-align:center;font-weight:600}
+    .auth-foot{margin-top:1.1rem;font-size:.66rem;color:var(--g400)}
+
+    .user-chip{display:none;align-items:center;gap:.45rem}
+    .user-av{width:28px;height:28px;border-radius:50%;background:var(--i500);color:#fff;display:flex;align-items:center;
+      justify-content:center;font-weight:700;font-size:.74rem;flex-shrink:0}
+    .user-nm{color:#fff;font-size:.76rem;font-weight:600;white-space:nowrap}
+    .user-role{font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.1rem .35rem;
+      border-radius:999px;background:rgba(255,255,255,.16);color:#c7d2fe}
+    .user-role.admin{background:rgba(245,158,11,.22);color:#fbbf24}
+    .logout-btn{background:rgba(255,255,255,.12);border:none;color:#fff;width:28px;height:28px;border-radius:50%;
+      cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .logout-btn:hover{background:rgba(239,68,68,.4)}
+
+    /* Dashboard admin */
+    .admin-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:1.1rem 1.25rem;background:var(--g50)}
+    .adm-cards{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.2rem}
+    .adm-card{flex:1;min-width:150px;background:#fff;border:1px solid var(--g200);border-radius:12px;padding:.9rem 1rem}
+    .adm-card .v{font-size:1.5rem;font-weight:800;color:var(--i700)}
+    .adm-card .l{font-size:.68rem;color:var(--g500);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:.15rem}
+    .adm-sec{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1.1rem}
+    .adm-sec h3{font-size:.82rem;color:var(--g700);font-weight:700;margin-bottom:.7rem;display:flex;align-items:center;gap:.4rem}
+    .adm-tbl{width:100%;border-collapse:collapse;font-size:.76rem}
+    .adm-tbl th{text-align:left;color:var(--g500);font-weight:600;font-size:.66rem;text-transform:uppercase;
+      letter-spacing:.04em;padding:.4rem .5rem;border-bottom:1px solid var(--g200)}
+    .adm-tbl td{padding:.5rem .5rem;border-bottom:1px solid var(--g100)}
+    .adm-tbl tr:last-child td{border-bottom:none}
+    .adm-tbl .nm{font-weight:700;color:var(--g900)}
+    .adm-pill{font-size:.58rem;font-weight:700;text-transform:uppercase;padding:.08rem .35rem;border-radius:999px}
+    .adm-pill.admin{background:rgba(245,158,11,.18);color:#b45309}
+    .adm-pill.user{background:var(--i50);color:var(--i700)}
+    .adm-bar-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.45rem;font-size:.75rem}
+    .adm-bar-lbl{width:150px;flex-shrink:0;color:var(--g700);font-weight:600}
+    .adm-bar-track{flex:1;height:9px;background:var(--g100);border-radius:999px;overflow:hidden}
+    .adm-bar-fill{height:100%;background:var(--i500);border-radius:999px}
+    .adm-bar-v{width:34px;text-align:right;font-weight:700;color:var(--g700)}
+    .adm-log{font-size:.74rem}
+    .adm-log-row{display:flex;gap:.55rem;padding:.4rem 0;border-bottom:1px solid var(--g100);align-items:baseline}
+    .adm-log-row:last-child{border-bottom:none}
+    .adm-log-who{font-weight:700;color:var(--g900);white-space:nowrap}
+    .adm-log-act{color:var(--g600);flex:1}
+    .adm-log-tm{color:var(--g400);font-size:.66rem;white-space:nowrap}
+    .adm-empty{color:var(--g400);font-size:.78rem;text-align:center;padding:1.5rem}
   </style>
 </head>
 <body>
+
+<!-- ÉCRAN DE CONNEXION -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <img src="assets/Logo.png" alt="AssoPilot" class="auth-logo">
+    <h1>AssoPilot</h1>
+    <div class="auth-sub">Connectez-vous pour accéder à votre espace</div>
+    <form onsubmit="doLogin(event)">
+      <label for="authEmail">Email</label>
+      <input type="email" id="authEmail" autocomplete="username" placeholder="vous@association.org" required>
+      <label for="authPwd">Mot de passe</label>
+      <input type="password" id="authPwd" autocomplete="current-password" placeholder="••••••••" required>
+      <div class="auth-err" id="authErr"></div>
+      <button type="submit" class="auth-btn" id="authBtn">Se connecter</button>
+    </form>
+    <div class="auth-foot">Association Leucémie Espoir — Démo sécurisée</div>
+  </div>
+</div>
 
 <nav class="nav">
   <div class="nav-logo"><img src="assets/Logo.png" alt="AssoPilot" style="height:28px;width:28px;object-fit:contain;border-radius:6px"> AssoPilot</div>
   <div class="nav-sep"></div>
   <div class="nav-asso">Association Leucémie Espoir — Paris</div>
   <div class="nav-sp"></div>
+  <button class="btn-sources admin-only" id="btnAdmin" onclick="toggleAdmin()">📊 Pilotage</button>
   <button class="btn-sources" id="btnSrc" onclick="toggleSources()">🗃️ Données sources</button>
   <div class="demo-pill">Démo</div>
-  <div class="savings-pill">⚡ Économisé : <span class="val" id="sav">0 min</span></div>
+  <div class="savings-pill admin-only">⚡ Économisé : <span class="val" id="sav">0 min</span></div>
+  <div class="user-chip" id="userChip">
+    <span class="user-av" id="userAv"></span>
+    <span class="user-nm" id="userNm"></span>
+    <span class="user-role" id="userRole"></span>
+    <button class="logout-btn" onclick="doLogout()" title="Déconnexion">⎋</button>
+  </div>
   <button class="mob-refresh-btn" onclick="location.reload(true)" aria-label="Rafraîchir">↺</button>
 </nav>
 
@@ -508,6 +597,18 @@
     <div class="src-tbl-pane" id="pane-xl"><table class="data-tbl" id="tbl-xl"><thead></thead><tbody></tbody></table></div>
   </div>
   <div class="tbl-total-bar" id="tbl-totals"></div>
+</div>
+
+<!-- PILOTAGE / DASHBOARD ADMIN -->
+<div class="src-overlay" id="adminOverlay">
+  <div class="src-nav">
+    <div class="src-title">📊 Pilotage — activité de l'équipe</div>
+    <span class="nav-sp"></span>
+    <button class="btn-close-src" onclick="toggleAdmin()">✕ Fermer</button>
+  </div>
+  <div class="admin-body" id="adminBody">
+    <div class="adm-empty">Chargement…</div>
+  </div>
 </div>
 
 <!-- MAIN LAYOUT -->
@@ -1450,18 +1551,34 @@ let activeId = null, generated = new Set(), totalSaved = 0, activeTab = {};
 let srcActive = 'sf', srcSort = {col: null, dir: 1};
 let _mobActive = 'inbox';
 
+// ═══════════════════════════ SUPABASE ═══════════════════════════
+
+const SUPABASE_URL = 'https://wzrcrszfubjsfoaxatvo.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6cmNyc3pmdWJqc2ZvYXhhdHZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMjcxMzEsImV4cCI6MjA5MTcwMzEzMX0.HSzERXdF0nBs0L4XVcKo-UsGe1PAcqiVD5gwZj15foY';
+const SB = (window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+let currentUser = null, currentProfile = null, _booted = false;
+
 function isMob() { return window.innerWidth <= 767; }
 
 function mobSel(tab) {
   if(!isMob()) return;
-  const overlay = document.getElementById('srcOverlay');
+  const srcO = document.getElementById('srcOverlay');
+  const admO = document.getElementById('adminOverlay');
   const srcBtn = document.getElementById('btnSrc');
-  if(tab !== 'sources' && overlay.classList.contains('show')) {
-    overlay.classList.remove('show');
+  // Ferme les overlays sauf celui qu'on ouvre
+  if(tab !== 'sources' && srcO.classList.contains('show')) {
+    srcO.classList.remove('show');
     srcBtn && srcBtn.classList.remove('active');
   }
+  if(tab !== 'admin' && admO && admO.classList.contains('show')) {
+    admO.classList.remove('show');
+  }
   if(tab === 'sources') {
-    if(!overlay.classList.contains('show')) { overlay.classList.add('show'); renderSrcTable(); }
+    if(!srcO.classList.contains('show')) { srcO.classList.add('show'); renderSrcTable(); }
+  } else if(tab === 'admin') {
+    if(!admO.classList.contains('show')) { admO.classList.add('show'); renderAdmin(); }
   } else {
     _mobActive = tab;
     const layout = document.querySelector('.layout');
@@ -1648,6 +1765,7 @@ function toggleMail(bodyId, hdEl) {
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
 async function gen(id) {
+  if(generated.has(id)) return;
   const e = EMAILS.find(x=>x.id===id);
   const btn = document.getElementById('bg-'+id);
   if(!btn) return;
@@ -1678,6 +1796,27 @@ async function gen(id) {
     if(document.getElementById('srcOverlay').classList.contains('show')) renderSrcTable();
   }
   renderList();
+  persistGen(e);   // sauvegarde Supabase (asynchrone, non bloquant)
+}
+
+// Persiste une génération : état partagé (email traité + modif de fiche) + journal d'actions
+async function persistGen(e) {
+  if(!SB || !currentUser) return;
+  const uid = currentUser.id;
+  try {
+    const shared = [{ kind:'email_handled', email_id:e.id, donor_id:e.donorId, created_by:uid }];
+    if(e.dataUpdates) shared.push({ kind:'donor_patch', donor_id:e.donorId, patch:e.dataUpdates, created_by:uid });
+    await SB.from('shared_state').insert(shared);
+
+    const acts = [{ user_id:uid, action_type:'reply_generated', email_id:e.id, donor_id:e.donorId, minutes_saved:e.saved||0 }];
+    const du = e.dataUpdates && e.dataUpdates.donor ? e.dataUpdates.donor : null;
+    if(du){
+      if(du.adresse) acts.push({ user_id:uid, action_type:'address_update', email_id:e.id, donor_id:e.donorId, minutes_saved:0, details:{ adresse:du.adresse } });
+      if(du.statusLbl || du.status) acts.push({ user_id:uid, action_type:'status_change', email_id:e.id, donor_id:e.donorId, minutes_saved:0, details:{ statut:du.statusLbl||du.status } });
+      if(du.email) acts.push({ user_id:uid, action_type:'email_update', email_id:e.id, donor_id:e.donorId, minutes_saved:0, details:{ email:du.email } });
+    }
+    await SB.from('actions').insert(acts);
+  } catch(err){ console.warn('persistGen', err); }
 }
 
 function markSent(id) {
@@ -1788,6 +1927,8 @@ function renderDosHtml(d) {
 function toggleSources() {
   const overlay=document.getElementById('srcOverlay');
   const btn=document.getElementById('btnSrc');
+  const admO=document.getElementById('adminOverlay');
+  if(admO && admO.classList.contains('show')){ admO.classList.remove('show'); const ab=document.getElementById('btnAdmin'); if(ab) ab.classList.remove('active'); }
   const isOpen=overlay.classList.toggle('show');
   btn && btn.classList.toggle('active',isOpen);
   if(isOpen) renderSrcTable();
@@ -1966,7 +2107,231 @@ function sortBy(col) {
   renderSrcTable();
 }
 
-init();
+// ═══════════════════════════ AUTH & BOOTSTRAP ═══════════════════════════
+
+// Connexion
+async function doLogin(ev) {
+  ev.preventDefault();
+  const email = document.getElementById('authEmail').value.trim();
+  const pwd = document.getElementById('authPwd').value;
+  const btn = document.getElementById('authBtn');
+  const err = document.getElementById('authErr');
+  err.textContent = '';
+  if(!SB){ err.textContent = 'Service indisponible (connexion réseau requise).'; return; }
+  btn.disabled = true; btn.textContent = 'Connexion…';
+  try {
+    const { error } = await SB.auth.signInWithPassword({ email, password: pwd });
+    if(error){ err.textContent = 'Email ou mot de passe incorrect.'; }
+    // onAuthStateChange déclenche le bootstrap
+  } catch(e){ err.textContent = 'Erreur de connexion.'; }
+  finally { btn.disabled = false; btn.textContent = 'Se connecter'; }
+}
+
+// Déconnexion
+async function doLogout() {
+  if(SB) await SB.auth.signOut();
+  location.reload();
+}
+
+// Applique le rôle à l'interface
+function applyRole(profile) {
+  const isAdmin = profile && profile.role === 'admin';
+  document.body.classList.toggle('role-admin', !!isAdmin);
+  const name = (profile && profile.full_name) || (currentUser && currentUser.email) || '';
+  const av = document.getElementById('userAv');
+  const nm = document.getElementById('userNm');
+  const rl = document.getElementById('userRole');
+  const chip = document.getElementById('userChip');
+  if(av) av.textContent = (name||'?').trim().charAt(0).toUpperCase();
+  if(nm) nm.textContent = name;
+  if(rl){ rl.textContent = isAdmin ? 'Admin' : 'Agent'; rl.className = 'user-role' + (isAdmin?' admin':''); }
+  if(chip) chip.style.display = 'flex';
+}
+
+// Charge l'état partagé depuis Supabase et l'applique aux données en mémoire
+async function loadSharedState() {
+  if(!SB) return;
+  try {
+    const { data, error } = await SB.from('shared_state').select('*').order('created_at', { ascending: true });
+    if(error || !data) return;
+    let teamMin = 0;
+    data.forEach(row => {
+      if(row.kind === 'email_handled' && row.email_id != null) generated.add(row.email_id);
+      if(row.kind === 'donor_patch' && row.donor_id != null && row.patch){
+        const d = DONORS[row.donor_id];
+        if(d){
+          if(row.patch.donor) Object.assign(d, row.patch.donor);
+          if(row.patch.sfRow) Object.assign(d.sfRow, row.patch.sfRow);
+        }
+      }
+    });
+    // Total équipe (admin) : somme des minutes gagnées
+    if(currentProfile && currentProfile.role === 'admin'){
+      const { data: act } = await SB.from('actions').select('minutes_saved');
+      if(act) teamMin = act.reduce((s,a)=> s + (Number(a.minutes_saved)||0), 0);
+      totalSaved = teamMin;
+      const sav = document.getElementById('sav');
+      if(sav) sav.textContent = totalSaved + ' min';
+    }
+  } catch(e){ console.warn('loadSharedState', e); }
+}
+
+// Démarrage : vérifie la session, charge profil + état, lance l'app
+async function bootstrap(session) {
+  if(_booted) return;
+  _booted = true;   // verrou synchrone : évite un double bootstrap (getSession + onAuthStateChange)
+  currentUser = session.user;
+  // Profil + rôle
+  try {
+    const { data } = await SB.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+    currentProfile = data || { role: 'user', full_name: currentUser.email };
+  } catch(e){ currentProfile = { role: 'user', full_name: currentUser.email }; }
+  applyRole(currentProfile);
+  await loadSharedState();
+  init();
+  document.getElementById('authOverlay').style.display = 'none';
+  if(SB) SB.rpc('touch_last_active').then(()=>{}, ()=>{});
+}
+
+// Écoute l'état d'authentification au chargement
+if(SB){
+  SB.auth.getSession().then(({ data }) => {
+    if(data && data.session) bootstrap(data.session);
+    // sinon : l'écran de login reste affiché
+  });
+  SB.auth.onAuthStateChange((event, session) => {
+    if(session && !_booted) bootstrap(session);
+  });
+} else {
+  document.getElementById('authErr').textContent = 'Connexion réseau requise pour charger l\'application.';
+}
+
+// ═══════════════════════════ PILOTAGE (ADMIN) ═══════════════════════════
+
+function toggleAdmin() {
+  const overlay = document.getElementById('adminOverlay');
+  const btn = document.getElementById('btnAdmin');
+  // ferme l'overlay données si ouvert
+  const srcO = document.getElementById('srcOverlay');
+  if(srcO.classList.contains('show')){ srcO.classList.remove('show'); const sb=document.getElementById('btnSrc'); if(sb) sb.classList.remove('active'); }
+  const isOpen = overlay.classList.toggle('show');
+  btn && btn.classList.toggle('active', isOpen);
+  if(isOpen) renderAdmin();
+  if(isMob()){
+    document.querySelectorAll('.mob-tab').forEach(b=>b.classList.remove('active'));
+    const t = isOpen ? 'admin' : _mobActive;
+    const tb = document.getElementById('mtab-'+t);
+    if(tb) tb.classList.add('active');
+  }
+}
+
+const ACTION_LABELS = {
+  reply_generated: 'Réponse générée',
+  address_update: 'Changement d\'adresse',
+  status_change: 'Mise à jour de statut',
+  email_update: 'Mise à jour email'
+};
+
+function timeAgo(iso){
+  if(!iso) return '—';
+  const d = new Date(iso), now = new Date();
+  const s = Math.floor((now - d)/1000);
+  if(s < 60) return 'à l\'instant';
+  if(s < 3600) return 'il y a ' + Math.floor(s/60) + ' min';
+  if(s < 86400) return 'il y a ' + Math.floor(s/3600) + ' h';
+  return 'il y a ' + Math.floor(s/86400) + ' j';
+}
+
+async function renderAdmin() {
+  const body = document.getElementById('adminBody');
+  if(!SB){ body.innerHTML = '<div class="adm-empty">Service indisponible.</div>'; return; }
+  body.innerHTML = '<div class="adm-empty">Chargement…</div>';
+  try {
+    const [{ data: profiles }, { data: actions }] = await Promise.all([
+      SB.from('profiles').select('*'),
+      SB.from('actions').select('*').order('created_at', { ascending: false })
+    ]);
+    const profs = profiles || [];
+    const acts = actions || [];
+    const nameOf = {};
+    profs.forEach(p => { nameOf[p.id] = p.full_name || p.email || '—'; });
+
+    // Agrégats par utilisateur
+    const byUser = {};
+    profs.forEach(p => { byUser[p.id] = { name: nameOf[p.id], role: p.role, emails: new Set(), minutes: 0, last: p.last_active_at }; });
+    acts.forEach(a => {
+      const u = byUser[a.user_id] || (byUser[a.user_id] = { name: nameOf[a.user_id]||'—', role:'user', emails:new Set(), minutes:0, last:null });
+      u.minutes += Number(a.minutes_saved)||0;
+      if(a.action_type === 'reply_generated' && a.email_id != null) u.emails.add(a.email_id);
+      if(!u.last || a.created_at > u.last) u.last = a.created_at;
+    });
+    const users = Object.values(byUser);
+    const teamMin = users.reduce((s,u)=>s+u.minutes,0);
+    const teamEmails = acts.filter(a=>a.action_type==='reply_generated').length;
+    const activeUsers = users.filter(u=>u.minutes>0 || u.emails.size>0).length;
+
+    // Répartition par type d'action
+    const byType = {};
+    acts.forEach(a => { byType[a.action_type] = (byType[a.action_type]||0)+1; });
+    const maxType = Math.max(1, ...Object.values(byType));
+
+    const fmtH = m => m >= 60 ? (m/60).toFixed(1).replace('.0','') + ' h' : m + ' min';
+
+    let html = '';
+    // Cartes résumé
+    html += '<div class="adm-cards">'
+      + `<div class="adm-card"><div class="v">${fmtH(teamMin)}</div><div class="l">Temps gagné (équipe)</div></div>`
+      + `<div class="adm-card"><div class="v">${teamEmails}</div><div class="l">Réponses générées</div></div>`
+      + `<div class="adm-card"><div class="v">${activeUsers}/${profs.length}</div><div class="l">Utilisateurs actifs</div></div>`
+      + '</div>';
+
+    // Tableau par utilisateur
+    html += '<div class="adm-sec"><h3>👥 Activité par utilisateur</h3><table class="adm-tbl"><thead><tr>'
+      + '<th>Utilisateur</th><th>Rôle</th><th>Emails traités</th><th>Temps gagné</th><th>Dernière activité</th>'
+      + '</tr></thead><tbody>';
+    users.sort((a,b)=>b.minutes-a.minutes).forEach(u => {
+      html += `<tr><td class="nm">${esc(u.name)}</td>`
+        + `<td><span class="adm-pill ${u.role==='admin'?'admin':'user'}">${u.role==='admin'?'Admin':'Agent'}</span></td>`
+        + `<td>${u.emails.size}</td><td>${fmtH(u.minutes)}</td><td>${timeAgo(u.last)}</td></tr>`;
+    });
+    if(!users.length) html += '<tr><td colspan="5" class="adm-empty">Aucun utilisateur.</td></tr>';
+    html += '</tbody></table></div>';
+
+    // Répartition par type
+    html += '<div class="adm-sec"><h3>📈 Répartition par type d\'action</h3>';
+    const typeKeys = Object.keys(ACTION_LABELS).filter(k => byType[k]);
+    if(typeKeys.length){
+      typeKeys.forEach(k => {
+        const v = byType[k]||0;
+        html += `<div class="adm-bar-row"><span class="adm-bar-lbl">${ACTION_LABELS[k]}</span>`
+          + `<span class="adm-bar-track"><span class="adm-bar-fill" style="width:${(v/maxType*100).toFixed(0)}%"></span></span>`
+          + `<span class="adm-bar-v">${v}</span></div>`;
+      });
+    } else html += '<div class="adm-empty">Aucune action enregistrée.</div>';
+    html += '</div>';
+
+    // Journal d'audit
+    html += '<div class="adm-sec"><h3>🕑 Journal d\'audit récent</h3><div class="adm-log">';
+    const recent = acts.slice(0, 30);
+    if(recent.length){
+      recent.forEach(a => {
+        const donor = a.donor_id != null && DONORS[a.donor_id] ? (DONORS[a.donor_id].prenom + ' ' + DONORS[a.donor_id].nom) : '';
+        const lbl = ACTION_LABELS[a.action_type] || a.action_type;
+        html += `<div class="adm-log-row"><span class="adm-log-who">${esc(nameOf[a.user_id]||'—')}</span>`
+          + `<span class="adm-log-act">${lbl}${donor?(' · '+esc(donor)):''}</span>`
+          + `<span class="adm-log-tm">${timeAgo(a.created_at)}</span></div>`;
+      });
+    } else html += '<div class="adm-empty">Aucune activité pour le moment.</div>';
+    html += '</div></div>';
+
+    body.innerHTML = html;
+  } catch(e){
+    console.warn('renderAdmin', e);
+    body.innerHTML = '<div class="adm-empty">Erreur de chargement des données.</div>';
+  }
+}
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 // ═══════════════════════════ PDF MODAL ═══════════════════════════
 
@@ -2401,6 +2766,10 @@ function pwaDismiss() {
   <button class="mob-tab" id="mtab-sources" onclick="mobSel('sources')">
     <span class="mtab-ic">🗃️</span>
     <span>Données</span>
+  </button>
+  <button class="mob-tab admin-only" id="mtab-admin" onclick="mobSel('admin')">
+    <span class="mtab-ic">📊</span>
+    <span>Pilotage</span>
   </button>
 </nav>
 </body>
