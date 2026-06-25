@@ -545,6 +545,35 @@
       .adm-bar-lbl{width:104px;font-size:.7rem}
       .btn-reset-demo{font-size:.68rem;padding:.3rem .55rem}
     }
+    /* ─── CHATBOT ─────────────────────────────────────────────── */
+    .chat-fab{position:fixed;right:18px;bottom:18px;z-index:300;width:54px;height:54px;border-radius:50%;border:none;
+      background:var(--i600);color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 6px 20px rgba(79,70,229,.45);display:flex;align-items:center;justify-content:center}
+    .chat-fab:hover{background:var(--i700)}
+    .chat-panel{display:none;position:fixed;right:18px;bottom:84px;z-index:301;width:370px;max-width:calc(100vw - 24px);height:520px;max-height:calc(100vh - 120px);
+      background:#fff;border:1px solid var(--g200);border-radius:14px;box-shadow:0 14px 50px rgba(0,0,0,.28);flex-direction:column;overflow:hidden}
+    .chat-panel.show{display:flex}
+    .chat-hd{background:var(--i900);color:#fff;padding:.7rem .9rem;display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+    .chat-hd .ttl{font-weight:700;font-size:.85rem;flex:1}
+    .chat-hd .sub{font-size:.6rem;opacity:.6;font-weight:400}
+    .chat-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:1.1rem;cursor:pointer;line-height:1}
+    .chat-body{flex:1;overflow-y:auto;padding:.9rem;display:flex;flex-direction:column;gap:.6rem;background:var(--g50)}
+    .chat-msg{max-width:85%;padding:.5rem .7rem;border-radius:12px;font-size:.8rem;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+    .chat-msg.user{align-self:flex-end;background:var(--i600);color:#fff;border-bottom-right-radius:3px}
+    .chat-msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--g200);color:#1f2937;border-bottom-left-radius:3px}
+    .chat-msg.sys{align-self:center;background:transparent;color:var(--g400);font-size:.72rem;font-style:italic;text-align:center}
+    .chat-typing{align-self:flex-start;color:var(--g400);font-size:.78rem;font-style:italic}
+    .chat-foot{flex-shrink:0;border-top:1px solid var(--g200);padding:.55rem;display:flex;gap:.4rem;background:#fff}
+    .chat-foot input{flex:1;border:1px solid var(--g300);border-radius:9px;padding:.5rem .65rem;font-size:.82rem;font-family:inherit}
+    .chat-foot input:focus{outline:none;border-color:var(--i500)}
+    .chat-foot button{background:var(--i600);color:#fff;border:none;border-radius:9px;padding:0 .9rem;font-weight:700;cursor:pointer;font-family:inherit}
+    .chat-foot button:disabled{opacity:.5;cursor:wait}
+    .chat-sugg{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.2rem}
+    .chat-sugg button{background:#fff;border:1px solid var(--i100);color:var(--i700);border-radius:999px;padding:.25rem .6rem;font-size:.68rem;cursor:pointer;font-family:inherit}
+    .chat-sugg button:hover{background:var(--i50)}
+    @media(max-width:767px){
+      .chat-fab{bottom:68px;right:12px}
+      .chat-panel{bottom:130px;right:12px;height:60vh}
+    }
   </style>
 </head>
 <body>
@@ -1616,6 +1645,102 @@ const SB = (window.supabase && window.supabase.createClient)
   : null;
 let currentUser = null, currentProfile = null, _booted = false;
 
+// ═══════════════════════════ CHATBOT ═══════════════════════════
+const CHAT_FN_URL = SUPABASE_URL + '/functions/v1/chat';
+let chatHistory = [];      // [{role:'user'|'assistant', content:'...'}]
+let _chatBusy = false;
+
+function chatToggle() {
+  const p = document.getElementById('chatPanel');
+  const open = p.classList.toggle('show');
+  if(open) {
+    if(!chatHistory.length) chatGreet();
+    setTimeout(() => { const i = document.getElementById('chatInput'); if(i) i.focus(); }, 50);
+  }
+}
+
+function chatGreet() {
+  const body = document.getElementById('chatBody');
+  body.innerHTML =
+    '<div class="chat-msg bot">Bonjour 👋 Je peux répondre à vos questions sur les emails et leur statut. Par exemple :</div>'
+    + '<div class="chat-sugg">'
+    + '<button onclick="chatAsk(this.textContent)">Quels mails ne sont pas traités ?</button>'
+    + '<button onclick="chatAsk(this.textContent)">Combien de réclamations RGPD ?</button>'
+    + '<button onclick="chatAsk(this.textContent)">Statut du mail de Claire Martin ?</button>'
+    + '</div>';
+}
+
+function chatAsk(q) { const i = document.getElementById('chatInput'); i.value = q; chatSend(); }
+
+// Snapshot des emails + statut (en prod : remplacé par une requête Supabase/Outlook)
+function chatSnapshot() {
+  return EMAILS.map(e => ({
+    id: e.id,
+    from: e.from,
+    subject: e.subject,
+    type: e.typeLabel,
+    donor: DONORS[e.donorId] ? (DONORS[e.donorId].prenom + ' ' + DONORS[e.donorId].nom) : '',
+    handled: generated.has(e.id),
+    date: e.time
+  }));
+}
+
+function chatAddMsg(role, text) {
+  const body = document.getElementById('chatBody');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+  div.textContent = text;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  return div;
+}
+
+async function chatSend() {
+  if(_chatBusy) return;
+  const input = document.getElementById('chatInput');
+  const q = (input.value || '').trim();
+  if(!q) return;
+  input.value = '';
+  // efface le bloc suggestions au premier message
+  const sugg = document.querySelector('#chatBody .chat-sugg'); if(sugg) sugg.remove();
+  chatAddMsg('user', q);
+  chatHistory.push({ role: 'user', content: q });
+  _chatBusy = true;
+  document.getElementById('chatSendBtn').disabled = true;
+  const typing = chatAddMsg('typing', 'Assistant écrit…'); typing.className = 'chat-typing';
+  try {
+    const { data: { session } } = await SB.auth.getSession();
+    const res = await fetch(CHAT_FN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + (session ? session.access_token : SUPABASE_ANON_KEY),
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({
+        messages: chatHistory,
+        emails: chatSnapshot(),
+        isAdmin: currentProfile && currentProfile.role === 'admin'
+      })
+    });
+    typing.remove();
+    const out = await res.json().catch(() => ({}));
+    if(!res.ok || out.error) {
+      chatAddMsg('sys', '⚠️ ' + (out.error || ('Erreur ' + res.status)) + ' — l\'assistant n\'est peut-être pas encore configuré (Edge Function + clé API).');
+    } else {
+      chatAddMsg('bot', out.answer || '(réponse vide)');
+      chatHistory.push({ role: 'assistant', content: out.answer || '' });
+    }
+  } catch(e) {
+    typing.remove();
+    chatAddMsg('sys', '⚠️ Connexion impossible à l\'assistant : ' + (e.message || e));
+  } finally {
+    _chatBusy = false;
+    document.getElementById('chatSendBtn').disabled = false;
+    input.focus();
+  }
+}
+
 function isMob() { return window.innerWidth <= 767; }
 
 function mobSel(tab) {
@@ -2311,6 +2436,7 @@ async function bootstrap(session) {
   await loadSharedState();
   init();
   document.getElementById('authOverlay').style.display = 'none';
+  const _cf = document.getElementById('chatFab'); if(_cf) _cf.style.display = 'flex';
   if(SB) SB.rpc('touch_last_active').then(()=>{}, ()=>{});
 }
 
@@ -3000,5 +3126,20 @@ function pwaDismiss() {
     <span>Pilotage</span>
   </button>
 </nav>
+
+<!-- CHATBOT -->
+<button class="chat-fab" id="chatFab" onclick="chatToggle()" style="display:none" aria-label="Assistant">💬</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-hd">
+    <span style="font-size:1.1rem">🤖</span>
+    <span class="ttl">Assistant AssoPilot <span class="sub">— questions sur les emails</span></span>
+    <button class="chat-close" onclick="chatToggle()" aria-label="Fermer">✕</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-foot">
+    <input type="text" id="chatInput" placeholder="Posez une question sur les emails…" onkeydown="if(event.key==='Enter')chatSend()">
+    <button id="chatSendBtn" onclick="chatSend()">➤</button>
+  </div>
+</div>
 </body>
 </html>
