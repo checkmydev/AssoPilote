@@ -570,6 +570,19 @@
     .chat-sugg{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.2rem}
     .chat-sugg button{background:#fff;border:1px solid var(--i100);color:var(--i700);border-radius:999px;padding:.25rem .6rem;font-size:.68rem;cursor:pointer;font-family:inherit}
     .chat-sugg button:hover{background:var(--i50)}
+    /* rendu Markdown des réponses du bot */
+    .chat-msg.bot{max-width:94%;white-space:normal}
+    .chat-msg.bot .cmd-p{margin:.3rem 0} .chat-msg.bot .cmd-p:first-child{margin-top:0} .chat-msg.bot .cmd-p:last-child{margin-bottom:0}
+    .chat-msg.bot .cmd-h{font-weight:700;margin:.4rem 0 .2rem}
+    .chat-msg.bot strong{font-weight:700} .chat-msg.bot em{font-style:italic}
+    .chat-msg.bot code{background:var(--g100);border-radius:4px;padding:.03rem .25rem;font-size:.92em}
+    .chat-msg.bot ul,.chat-msg.bot ol{margin:.3rem 0 .3rem 1.15rem;padding:0}
+    .chat-msg.bot li{margin:.14rem 0}
+    .chat-msg.bot .cmd-tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:.4rem 0;border:1px solid var(--g200);border-radius:7px}
+    .chat-msg.bot table{border-collapse:collapse;font-size:.72rem;width:100%}
+    .chat-msg.bot th,.chat-msg.bot td{border-bottom:1px solid var(--g100);border-right:1px solid var(--g100);padding:.3rem .45rem;text-align:left;white-space:nowrap}
+    .chat-msg.bot thead th{background:var(--g50);font-weight:700}
+    .chat-msg.bot tr:last-child td{border-bottom:none} .chat-msg.bot th:last-child,.chat-msg.bot td:last-child{border-right:none}
     @media(max-width:767px){
       .chat-fab{bottom:68px;right:12px}
       .chat-panel{bottom:130px;right:12px;height:60vh}
@@ -1685,11 +1698,51 @@ function chatSnapshot() {
   }));
 }
 
+// Mini-rendu Markdown (gras, italique, code, listes, titres, tableaux) — sécurisé (échappe le HTML)
+function chatMd(src) {
+  const esc = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inline = (s) => esc(s)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+  const row = (l) => l.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(c => c.trim());
+  const lines = String(src).replace(/\r/g,'').split('\n');
+  let html = '', i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    // Tableau : ligne avec | suivie d'une ligne séparatrice |---|
+    if (line.includes('|') && i+1 < lines.length && /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(lines[i+1])) {
+      const head = row(line); i += 2; const body = [];
+      while (i < lines.length && lines[i].includes('|')) { body.push(row(lines[i])); i++; }
+      html += '<div class="cmd-tbl"><table><thead><tr>' + head.map(h => '<th>'+inline(h)+'</th>').join('')
+            + '</tr></thead><tbody>' + body.map(r => '<tr>'+r.map(c => '<td>'+inline(c)+'</td>').join('')+'</tr>').join('')
+            + '</tbody></table></div>';
+      continue;
+    }
+    const h = line.match(/^(#{1,4})\s+(.*)$/);
+    if (h) { html += '<div class="cmd-h">'+inline(h[2])+'</div>'; i++; continue; }
+    if (/^\s*[-*]\s+/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) { items.push(lines[i].replace(/^\s*[-*]\s+/,'')); i++; }
+      html += '<ul>'+items.map(it => '<li>'+inline(it)+'</li>').join('')+'</ul>'; continue;
+    }
+    if (/^\s*\d+\.\s+/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) { items.push(lines[i].replace(/^\s*\d+\.\s+/,'')); i++; }
+      html += '<ol>'+items.map(it => '<li>'+inline(it)+'</li>').join('')+'</ol>'; continue;
+    }
+    if (line.trim() === '') { i++; continue; }
+    html += '<div class="cmd-p">'+inline(line)+'</div>'; i++;
+  }
+  return html;
+}
+
 function chatAddMsg(role, text) {
   const body = document.getElementById('chatBody');
   const div = document.createElement('div');
   div.className = 'chat-msg ' + role;
-  div.textContent = text;
+  if (role === 'bot') div.innerHTML = chatMd(text);
+  else div.textContent = text;
   body.appendChild(div);
   body.scrollTop = body.scrollHeight;
   return div;
