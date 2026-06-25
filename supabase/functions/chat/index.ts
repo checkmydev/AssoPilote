@@ -13,9 +13,6 @@
 // ============================================================
 import Anthropic from "npm:@anthropic-ai/sdk@^0.65.0";
 
-const MODEL = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-opus-4-8";
-const anthropic = new Anthropic({ apiKey: Deno.env.get("ANTHROPIC_API_KEY") ?? "" });
-
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -73,7 +70,11 @@ Deno.serve(async (req) => {
     new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
   try {
-    if (!Deno.env.get("ANTHROPIC_API_KEY")) return json({ error: "ANTHROPIC_API_KEY non configurée." }, 500);
+    // Lecture par requête (et non au boot) : un changement de secret s'applique sans redéploiement
+    const apiKey = (Deno.env.get("ANTHROPIC_API_KEY") ?? "").trim();
+    if (!apiKey) return json({ error: "ANTHROPIC_API_KEY non configurée." }, 500);
+    const MODEL = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-opus-4-8";
+    const anthropic = new Anthropic({ apiKey });
     const { messages = [], emails = [], isAdmin = false } = await req.json();
 
     const system =
