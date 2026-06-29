@@ -1913,11 +1913,11 @@ function tourEligible(){
 
 function _tourVisible(el){
   if(!el) return false;
-  const r = el.getBoundingClientRect();
-  if(r.width === 0 && r.height === 0) return false;
   const cs = getComputedStyle(el);
   if(cs.display === 'none' || cs.visibility === 'hidden') return false;
-  return r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth;
+  const r = el.getBoundingClientRect();
+  // rendered with a real box → targetable (tourRender scrolls it into view before measuring)
+  return r.width > 0 || r.height > 0;
 }
 
 function _placeBubble(bub, arrow, r, side){
@@ -1956,6 +1956,7 @@ function tourRender(step){
   document.getElementById('tourNextBtn').textContent = (_tourIdx === _tourList.length - 1) ? 'Terminer' : 'Suivant ›';
   document.getElementById('tourPrevBtn').style.visibility = (_tourIdx === 0) ? 'hidden' : 'visible';
   if(_tourVisible(el)){
+    el.scrollIntoView({ block:'center', inline:'nearest' });
     const r = el.getBoundingClientRect();
     hole.style.display = 'block';
     hole.style.left = (r.left - 6) + 'px';
@@ -1999,6 +2000,7 @@ function tourNext(){
 function tourPrev(){ tourGo(_tourIdx - 1); }
 function tourSkip(){ tourFinish(); }
 function tourFinish(){
+  clearTimeout(_trpTimer);
   localStorage.setItem('assopilot_tourSeen', '1');
   document.getElementById('tourMask').classList.remove('show');
   document.removeEventListener('keydown', _tourKey);
