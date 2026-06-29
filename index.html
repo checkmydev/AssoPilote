@@ -1875,6 +1875,42 @@ function mobInit() {
   });
 }
 
+// ═══════════════════════════ TOUR GUIDÉ ═══════════════════════════
+const TOUR_STEPS = [
+  { sel:'#email-list', side:'right',
+    title:'📥 Votre boîte de réception',
+    body:'Tous les emails entrants, déjà pré-triés par l\'IA. Cliquez-en un pour voir le traitement.',
+    before:()=>{ if(isMob()) mobSel('inbox'); } },
+  { sel:'.det-l', side:'bottom',
+    title:'🏷️ Classification automatique',
+    body:'L\'IA détecte le type de demande et son niveau de confiance — ici sans aucune saisie.',
+    before:()=>{ if(typeof EMAILS!=='undefined' && EMAILS.length) sel(EMAILS[0].id); } },
+  { sel:'.btn-gen', side:'top',
+    title:'⚡ Réponse générée',
+    body:'Un clic et l\'assistant rédige une réponse adaptée et empathique, prête à envoyer.' },
+  { sel:'#chatFab', side:'left',
+    title:'💬 L\'assistant',
+    body:'Posez vos questions sur les emails et leur statut en langage naturel.' },
+  { sel:'#btnSrc', side:'bottom',
+    title:'🗃️ Données sources',
+    body:'Salesforce et l\'Excel des dons, consolidés et consultables ici.' },
+  { sel:'#btnAdmin', side:'bottom', adminOnly:true,
+    title:'📊 Pilotage',
+    body:'Vue d\'ensemble de l\'activité de l\'équipe et des gains.' },
+  { sel:'.savings-pill', side:'bottom', adminOnly:true,
+    title:'⏱️ Le temps gagné',
+    body:'Le ROI en clair : le temps que l\'association économise grâce à l\'automatisation.' },
+  { sel:null, side:'center',
+    title:'✅ C\'est tout !',
+    body:'Explorez librement — et relancez cette visite à tout moment via le « ? » en haut.' }
+];
+let _tourList = [], _tourIdx = 0, _trpTimer = null;
+
+function tourEligible(){
+  const admin = currentProfile && currentProfile.role === 'admin';
+  return TOUR_STEPS.filter(s => !s.adminOnly || admin);
+}
+
 // ═══════════════════════════ INBOX ═══════════════════════════
 
 function init() { renderList(); buildSrcFilters(); mobInit(); }
