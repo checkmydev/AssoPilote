@@ -675,6 +675,7 @@
   <div class="nav-sp"></div>
   <button class="btn-sources admin-only" id="btnAdmin" onclick="toggleAdmin()">📊 Pilotage</button>
   <button class="btn-sources" id="btnSrc" onclick="toggleSources()">🗃️ Données sources</button>
+  <button class="btn-tour" id="btnTour" onclick="startTour(true)" title="Visite guidée" aria-label="Visite guidée">?</button>
   <div class="demo-pill">Démo</div>
   <div class="savings-pill admin-only">⚡ Économisé : <span class="val" id="sav">0 min</span></div>
   <div class="user-chip" id="userChip">
@@ -3209,6 +3210,23 @@ function pwaDismiss() {
 </nav>
 
 <!-- CHATBOT -->
+<div class="tour-mask" id="tourMask">
+  <div class="tour-hole" id="tourHole"></div>
+  <div class="tour-arrow" id="tourArrow"></div>
+  <div class="tour-bub" id="tourBub">
+    <button class="tour-x" onclick="tourSkip()" aria-label="Fermer">✕</button>
+    <h4 id="tourTitle"></h4>
+    <p id="tourBody"></p>
+    <div class="tour-row">
+      <span class="tour-count" id="tourCount"></span>
+      <div class="tour-btns">
+        <button class="tour-prev" id="tourPrevBtn" onclick="tourPrev()">‹ Précédent</button>
+        <button class="tour-next" id="tourNextBtn" onclick="tourNext()">Suivant ›</button>
+      </div>
+    </div>
+    <button class="tour-skip" onclick="tourSkip()">Passer la visite</button>
+  </div>
+</div>
 <button class="chat-fab" id="chatFab" onclick="chatToggle()" style="display:none" aria-label="Assistant">💬</button>
 <div class="chat-panel" id="chatPanel">
   <div class="chat-hd">
