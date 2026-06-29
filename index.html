@@ -587,6 +587,34 @@
       .chat-fab{bottom:68px;right:12px}
       .chat-panel{bottom:130px;right:12px;height:60vh}
     }
+    /* ─── Tour guidé ─────────────────────────────────────── */
+    .tour-mask{position:fixed;inset:0;z-index:10000;display:none}
+    .tour-mask.show{display:block}
+    .tour-hole{position:absolute;border-radius:10px;box-shadow:0 0 0 9999px rgba(15,23,42,.55);
+      transition:left .2s,top .2s,width .2s,height .2s;pointer-events:none}
+    .tour-arrow{position:absolute;z-index:10001;width:14px;height:14px;background:#fff;
+      transform:rotate(45deg);box-shadow:-2px -2px 4px rgba(0,0,0,.04)}
+    .tour-bub{position:fixed;z-index:10002;width:300px;max-width:88vw;background:#fff;border-radius:14px;
+      box-shadow:0 10px 30px rgba(0,0,0,.18);padding:16px 16px 12px;font-family:inherit;color:#1e293b}
+    .tour-bub h4{margin:0 0 6px;font-size:.95rem;color:var(--i700,#4338ca)}
+    .tour-bub p{margin:0 0 12px;font-size:.84rem;line-height:1.45;color:#475569}
+    .tour-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .tour-count{font-size:.72rem;color:#94a3b8}
+    .tour-btns{display:flex;gap:6px}
+    .tour-prev,.tour-next{border:none;border-radius:7px;padding:.4rem .7rem;font-size:.78rem;
+      font-weight:600;cursor:pointer;font-family:inherit}
+    .tour-prev{background:#f1f5f9;color:#475569}
+    .tour-next{background:var(--i700,#4338ca);color:#fff}
+    .tour-skip{display:block;margin-top:10px;background:none;border:none;color:#94a3b8;
+      font-size:.74rem;cursor:pointer;text-decoration:underline;font-family:inherit;padding:0}
+    .tour-x{position:absolute;top:8px;right:10px;background:none;border:none;color:#94a3b8;
+      font-size:1rem;cursor:pointer;line-height:1}
+    .btn-tour{display:flex;align-items:center;justify-content:center;width:30px;height:30px;
+      background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);
+      border-radius:6px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;
+      transition:background .15s}
+    .btn-tour:hover{background:rgba(255,255,255,.2)}
+    @media(max-width:767px){ .btn-tour{display:flex} }
   </style>
 </head>
 <body>
