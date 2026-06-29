@@ -1992,6 +1992,25 @@ function startTour(force){
   tourGo(0);
 }
 
+function tourNext(){
+  if(_tourIdx >= _tourList.length - 1) return tourFinish();
+  tourGo(_tourIdx + 1);
+}
+function tourPrev(){ tourGo(_tourIdx - 1); }
+function tourSkip(){ tourFinish(); }
+function tourFinish(){
+  localStorage.setItem('assopilot_tourSeen', '1');
+  document.getElementById('tourMask').classList.remove('show');
+  document.removeEventListener('keydown', _tourKey);
+  window.removeEventListener('resize', _tourReposition);
+  window.removeEventListener('scroll', _tourReposition, true);
+}
+function _tourKey(e){ if(e.key === 'Escape') tourSkip(); }
+function _tourReposition(){
+  clearTimeout(_trpTimer);
+  _trpTimer = setTimeout(()=>{ if(_tourList[_tourIdx]) tourRender(_tourList[_tourIdx]); }, 80);
+}
+
 // ═══════════════════════════ INBOX ═══════════════════════════
 
 function init() { renderList(); buildSrcFilters(); mobInit(); }
