@@ -2655,6 +2655,7 @@ async function bootstrap(session) {
   init();
   document.getElementById('authOverlay').style.display = 'none';
   const _cf = document.getElementById('chatFab'); if(_cf) _cf.style.display = 'flex';
+  startTour(false);
   if(SB) SB.rpc('touch_last_active').then(()=>{}, ()=>{});
 }
 
