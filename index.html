@@ -1911,6 +1911,87 @@ function tourEligible(){
   return TOUR_STEPS.filter(s => !s.adminOnly || admin);
 }
 
+function _tourVisible(el){
+  if(!el) return false;
+  const r = el.getBoundingClientRect();
+  if(r.width === 0 && r.height === 0) return false;
+  const cs = getComputedStyle(el);
+  if(cs.display === 'none' || cs.visibility === 'hidden') return false;
+  return r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth;
+}
+
+function _placeBubble(bub, arrow, r, side){
+  bub.style.transform = 'none';
+  const bw = bub.offsetWidth, bh = bub.offsetHeight, gap = 14, vw = innerWidth, vh = innerHeight;
+  let s = side;
+  const space = { right: vw - r.right, left: r.left, top: r.top, bottom: vh - r.bottom };
+  if(s === 'right'  && space.right  < bw + gap) s = space.left   > space.right  ? 'left' : 'bottom';
+  if(s === 'left'   && space.left   < bw + gap) s = space.right  > space.left   ? 'right' : 'bottom';
+  if(s === 'bottom' && space.bottom < bh + gap) s = 'top';
+  if(s === 'top'    && space.top    < bh + gap) s = 'bottom';
+  let left, top;
+  if(s === 'right')      { left = r.right + gap;        top = r.top + r.height/2 - bh/2; }
+  else if(s === 'left')  { left = r.left - gap - bw;    top = r.top + r.height/2 - bh/2; }
+  else if(s === 'top')   { left = r.left + r.width/2 - bw/2; top = r.top - gap - bh; }
+  else                   { left = r.left + r.width/2 - bw/2; top = r.bottom + gap; }
+  left = Math.max(8, Math.min(left, vw - bw - 8));
+  top  = Math.max(8, Math.min(top,  vh - bh - 8));
+  bub.style.left = left + 'px';
+  bub.style.top  = top  + 'px';
+  arrow.style.display = 'block';
+  if(s === 'right')      { arrow.style.left = (r.right + gap - 7) + 'px';      arrow.style.top = (r.top + r.height/2 - 7) + 'px'; }
+  else if(s === 'left')  { arrow.style.left = (r.left - gap - 7) + 'px';       arrow.style.top = (r.top + r.height/2 - 7) + 'px'; }
+  else if(s === 'top')   { arrow.style.left = (r.left + r.width/2 - 7) + 'px'; arrow.style.top = (r.top - gap - 7) + 'px'; }
+  else                   { arrow.style.left = (r.left + r.width/2 - 7) + 'px'; arrow.style.top = (r.bottom + gap - 7) + 'px'; }
+}
+
+function tourRender(step){
+  const hole  = document.getElementById('tourHole');
+  const bub   = document.getElementById('tourBub');
+  const arrow = document.getElementById('tourArrow');
+  const el = step.sel ? document.querySelector(step.sel) : null;
+  document.getElementById('tourTitle').textContent = step.title;
+  document.getElementById('tourBody').textContent  = step.body;
+  document.getElementById('tourCount').textContent = (_tourIdx + 1) + ' / ' + _tourList.length;
+  document.getElementById('tourNextBtn').textContent = (_tourIdx === _tourList.length - 1) ? 'Terminer' : 'Suivant ›';
+  document.getElementById('tourPrevBtn').style.visibility = (_tourIdx === 0) ? 'hidden' : 'visible';
+  if(_tourVisible(el)){
+    const r = el.getBoundingClientRect();
+    hole.style.display = 'block';
+    hole.style.left = (r.left - 6) + 'px';
+    hole.style.top  = (r.top - 6) + 'px';
+    hole.style.width  = (r.width + 12) + 'px';
+    hole.style.height = (r.height + 12) + 'px';
+    _placeBubble(bub, arrow, r, step.side === 'center' ? 'bottom' : step.side);
+  } else {
+    hole.style.display = 'none';
+    arrow.style.display = 'none';
+    bub.style.left = '50%';
+    bub.style.top  = '50%';
+    bub.style.transform = 'translate(-50%,-50%)';
+  }
+}
+
+function tourGo(i){
+  if(i < 0 || i >= _tourList.length) return;
+  _tourIdx = i;
+  const step = _tourList[i];
+  if(step.before){ try{ step.before(); }catch(e){} }
+  setTimeout(()=>tourRender(step), 60);
+}
+
+function startTour(force){
+  if(!force && localStorage.getItem('assopilot_tourSeen')) return;
+  _tourList = tourEligible();
+  _tourIdx = 0;
+  if(!_tourList.length) return;
+  document.getElementById('tourMask').classList.add('show');
+  document.addEventListener('keydown', _tourKey);
+  window.addEventListener('resize', _tourReposition);
+  window.addEventListener('scroll', _tourReposition, true);
+  tourGo(0);
+}
+
 // ═══════════════════════════ INBOX ═══════════════════════════
 
 function init() { renderList(); buildSrcFilters(); mobInit(); }
